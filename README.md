@@ -2,7 +2,7 @@
 ## NAME: SAMUEL ABRENICA
 ## COURSE & YEAR: BSIT-3
 
-I am an IT student in my 3rd year. I love to watch movies and tv shows. I am currently studying in CIT-U. I have a dog named Conan which perfectly suits his name, barbaric. I play video games, chess, guitar, and badminton.
+I am an IT student in my 3rd year. I love to watch tv shows. I am currently studying in CIT-U. I have a dog named Conan which perfectly suits his name, barbaric. I play video games, chess, guitar, and badminton.
 
 ## NAME: HANZ HARVEY BALIGUAT
 ## COURSE & YEAR: BSIT-3

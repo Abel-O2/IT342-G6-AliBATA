@@ -7,7 +7,8 @@ I am an IT student in my 3rd year. I love to watch tv shows. I am currently stud
 ## NAME: HANZ HARVEY BALIGUAT
 ## COURSE & YEAR: BSIT-3
 
-I am an BSIT-3 Student. I enjoy playing instruments and listening to music. I have a passion in coding. I have a pug named Jabba, a terrier named Mathias, an askal named Doggymak and a Persian Cat named Yami. I love pop media like anime and films.
+I am an BSIT-3 Student. I enjoy playing instruments  and listening to music. I have a burning passion in coding. I have a pug named Jabba, a terrier named Mathias, an askal named Doggymak and a Persian Cat named Yami. I love pop media like anime and films.
+
 
 ## NAME: VERNON LASTIMADO
 ## COURSE & YEAR: BSIT-3

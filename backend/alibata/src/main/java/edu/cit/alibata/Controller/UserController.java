@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +17,7 @@ import edu.cit.alibata.Entity.UserEntity;
 import edu.cit.alibata.Service.UserService;
 
 @RestController
-@RequestMapping(method = RequestMethod.GET, path = "api/alibata/user")
+@RequestMapping("api/alibata/user")
 public class UserController {
     @Autowired
     UserService userServ;
@@ -41,13 +41,13 @@ public class UserController {
     }
 
     //Update
-    @PostMapping("/putUserEntity")
+    @PutMapping("/putUserEntity")
     public UserEntity putUserEntity(@RequestParam int id, @RequestBody UserEntity newUserEntity){
         return userServ.postUserEntity(newUserEntity);
     }
 
     //Delete
-    @DeleteMapping("/deleteUserEntity")
+    @DeleteMapping("/deleteUserEntity/{id}")
     public String deleteUserEntity(@PathVariable int id){
         return userServ.deleteUser(id);
     }

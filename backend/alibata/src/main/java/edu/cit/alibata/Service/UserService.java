@@ -15,22 +15,22 @@ public class UserService {
     @Autowired
     UserRepository userRepo;
     
-    //Create
+    // Create
     public UserEntity postUserEntity(UserEntity user){
         return userRepo.save(user);
     }
 
-    //Read All Users
+    // Read All Users
     public List<UserEntity> getAllUserEntity(){
         return userRepo.findAll();
     }
 
-    //Read User
+    // Read Single User
     public UserEntity getUserEntity(int userId){
         return userRepo.findById(userId).get();
     }
 
-    //Update
+    // Update
     public UserEntity putUserEntity(int userId, UserEntity newUser){
         try {
             UserEntity user = userRepo.findById(userId).get();
@@ -44,17 +44,14 @@ public class UserService {
         }
     }
 
-    //Delete
+    // Delete
     @SuppressWarnings("unused")
-    public String deleteUser(int id){
-        String msg="";
-
-        if (userRepo.findById(id) != null){
-            userRepo.deleteById(id);
-            msg="User " +id+ "Deleted Successfully!";
+    public String deleteUserEntity(int userId){
+        if (userRepo.findById(userId) != null){
+            userRepo.deleteById(userId);
+            return "User " +userId+ "Deleted Successfully!";
         } else {
-            msg="User " +id+ "not found!";
+            return "User " +userId+ "not found!";
         }
-        return msg;
     }
 }

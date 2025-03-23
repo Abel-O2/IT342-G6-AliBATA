@@ -19,36 +19,37 @@ import edu.cit.alibata.Service.UserService;
 @RestController
 @RequestMapping("api/alibata/user")
 public class UserController {
+    
     @Autowired
     UserService userServ;
 
-    //Create
+    // Create
     @PostMapping("/postUserEntity")
     public UserEntity postUserEntity(@RequestBody UserEntity user){
         return userServ.postUserEntity(user);
     }
 
-    //Read All Users
+    // Read All Users
     @GetMapping("/getAllUserEntity")
     public List<UserEntity> getAllUserEntity(){
         return userServ.getAllUserEntity();
     }
 
-    //Read User
+    // Read Single User
     @GetMapping("/getUserEntity")
     public UserEntity getUserEntity(@RequestParam int id){
         return userServ.getUserEntity(id);
     }
 
-    //Update
+    // Update
     @PutMapping("/putUserEntity")
     public UserEntity putUserEntity(@RequestParam int id, @RequestBody UserEntity newUserEntity){
         return userServ.postUserEntity(newUserEntity);
     }
 
-    //Delete
+    // Delete
     @DeleteMapping("/deleteUserEntity/{id}")
     public String deleteUserEntity(@PathVariable int id){
-        return userServ.deleteUser(id);
+        return userServ.deleteUserEntity(id);
     }
 }

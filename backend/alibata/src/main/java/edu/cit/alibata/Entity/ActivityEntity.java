@@ -1,5 +1,7 @@
 package edu.cit.alibata.Entity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,6 +9,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class ActivityEntity {
@@ -21,16 +25,21 @@ public class ActivityEntity {
     @Enumerated(EnumType.STRING)
     private GameType gameType;
 
+    @OneToMany(mappedBy = "activity")
+    private List<QuestionEntity> questions;
+
+    @ManyToMany(mappedBy = "activities")
+    private List<UserEntity> users;
+
     public enum GameType {
-        // input game type unya
+        GAME1, GAME2, GAME3
     }
 
     public ActivityEntity(){
         super();
     }
 
-    public ActivityEntity(int activityId, String activityName, boolean isCompleted, GameType gameType) {
-        this.activityId = activityId;
+    public ActivityEntity(String activityName, boolean isCompleted, GameType gameType) {
         this.activityName = activityName;
         this.isCompleted = isCompleted;
         this.gameType = gameType;
@@ -62,6 +71,22 @@ public class ActivityEntity {
 
     public void setGameType(GameType gameType) {
         this.gameType = gameType;
+    }
+
+    public List<QuestionEntity> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<QuestionEntity> questions) {
+        this.questions = questions;
+    }
+
+    public List<UserEntity> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserEntity> users) {
+        this.users = users;
     }
 
 }

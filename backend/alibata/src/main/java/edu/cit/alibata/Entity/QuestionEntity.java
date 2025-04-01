@@ -1,11 +1,17 @@
 package edu.cit.alibata.Entity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class QuestionEntity {
@@ -20,12 +26,22 @@ public class QuestionEntity {
     @Column(name = "question_image", columnDefinition = "MEDIUMBLOB", nullable = true)
     private byte[] questionImage;
 
+    @OneToMany(mappedBy = "question")
+    private List<ChoiceEntity> choices;
+
+    @OneToOne
+    @JoinColumn(name = "score_id")
+    private ScoreEntity score;
+
+    @ManyToOne
+    @JoinColumn(name = "activity_id")
+    private ActivityEntity activity;
+
     public QuestionEntity(){
         super();
     }
 
-    public QuestionEntity(int questionId, String questionDescription, String questionText, byte[] questionImage) {
-        this.questionId = questionId;
+    public QuestionEntity(String questionDescription, String questionText, byte[] questionImage) {
         this.questionDescription = questionDescription;
         this.questionText = questionText;
         this.questionImage = questionImage;
@@ -57,6 +73,30 @@ public class QuestionEntity {
 
     public void setQuestionImage(byte[] questionImage) {
         this.questionImage = questionImage;
+    }
+
+    public List<ChoiceEntity> getChoices() {
+        return choices;
+    }
+
+    public void setChoices(List<ChoiceEntity> choices) {
+        this.choices = choices;
+    }
+
+    public ScoreEntity getScore() {
+        return score;
+    }
+
+    public void setScore(ScoreEntity score) {
+        this.score = score;
+    }
+
+    public ActivityEntity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(ActivityEntity activity) {
+        this.activity = activity;
     }
    
 }

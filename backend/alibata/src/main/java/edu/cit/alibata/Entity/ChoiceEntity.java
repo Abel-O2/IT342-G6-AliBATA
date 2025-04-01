@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class ChoiceEntity {
@@ -16,12 +18,15 @@ public class ChoiceEntity {
     private String choiceText;
     private boolean isCorrect;
 
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private QuestionEntity question;
+
     public ChoiceEntity() {
         super();
     }
 
-    public ChoiceEntity(int choiceId, String choiceText, boolean isCorrect) {
-        this.choiceId = choiceId;
+    public ChoiceEntity(String choiceText, boolean isCorrect) {
         this.choiceText = choiceText;
         this.isCorrect = isCorrect;
     }
@@ -44,6 +49,14 @@ public class ChoiceEntity {
 
     public void setCorrect(boolean isCorrect) {
         this.isCorrect = isCorrect;
+    }
+
+    public QuestionEntity getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(QuestionEntity question) {
+        this.question = question;
     }
    
 }

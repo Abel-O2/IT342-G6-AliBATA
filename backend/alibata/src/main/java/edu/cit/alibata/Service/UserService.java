@@ -17,6 +17,12 @@ public class UserService {
     
     // Create
     public UserEntity postUserEntity(UserEntity user){
+        if (user.isAdmin() == false){
+            user.setAdmin(false);
+        }
+        if (user.getSubscriptionStatus() == false){
+            user.setSubscriptionStatus(false);
+        }
         return userRepo.save(user);
     }
 
@@ -38,6 +44,8 @@ public class UserService {
             user.setEmail(newUser.getEmail());
             user.setGender(newUser.getGender());
             user.setPassword(newUser.getPassword());
+            user.setAdmin(newUser.isAdmin());
+            user.setSubscriptionStatus(newUser.getSubscriptionStatus());
             return userRepo.save(user);
         } catch (NoSuchElementException e) {
             throw new EntityNotFoundException("User "+ userId + "not found!");

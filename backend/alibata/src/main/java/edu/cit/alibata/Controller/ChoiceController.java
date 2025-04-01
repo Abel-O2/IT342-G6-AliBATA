@@ -17,38 +17,38 @@ import edu.cit.alibata.Entity.ChoiceEntity;
 import edu.cit.alibata.Service.ChoiceService;
 
 @RestController
-@RequestMapping("api/alibata/choice")
+@RequestMapping("api/alibata/choices")
 public class ChoiceController {
 
     @Autowired
     private ChoiceService choiceService;
 
     // Create
-    @PostMapping("/postChoiceEntity")
+    @PostMapping("")
     public ChoiceEntity postChoiceEntity(@RequestBody ChoiceEntity choice) {
         return choiceService.postChoiceEntity(choice);
     }
 
     // Read All Choices
-    @GetMapping("/getAllChoiceEntity")
+    @GetMapping("")
     public List<ChoiceEntity> getAllChoiceEntity() {
         return choiceService.getAllChoiceEntity();
     }
 
     // Read Single Choice
-    @GetMapping("/getChoiceEntity")
-    public ChoiceEntity getChoiceEntity(@RequestParam int id) {
+    @GetMapping("/{id}")
+    public ChoiceEntity getChoiceEntity(@PathVariable int id) {
         return choiceService.getChoiceEntity(id);
     }
 
     // Update
-    @PutMapping("/putChoiceEntity")
+    @PutMapping("")
     public ChoiceEntity putChoiceEntity(@RequestParam int id, @RequestBody ChoiceEntity newChoice) {
         return choiceService.putChoiceEntity(id, newChoice);
     }
 
     // Delete
-    @DeleteMapping("/deleteChoiceEntity/{id}")
+    @DeleteMapping("/{id}")
     public String deleteChoiceEntity(@PathVariable int id) {
         return choiceService.deleteChoiceEntity(id);
     }

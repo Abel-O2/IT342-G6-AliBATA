@@ -15,40 +15,58 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.cit.alibata.Entity.ActivityEntity;
 import edu.cit.alibata.Service.ActivityService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("api/alibata/activity")
+@RequestMapping("api/alibata/activities")
+@Tag(name = "Activity")
 public class ActivityController {
 
     @Autowired
     ActivityService activityServ;
 
+    /*@Operation(
+        description = "Get endpoint for activity",
+        responses = {
+            @ApiResponse(
+                description = "Success",
+                responseCode = "200"
+            ),
+            @ApiResponse(
+                description = "Unauthorized",
+                responseCode = "403"
+            )
+        }
+    )*/
+
     // Create
-    @PostMapping("/postActivityEntity")
+    @PostMapping("")
     public ActivityEntity postActivityEntity(@RequestBody ActivityEntity activity) {
         return activityServ.postActivityEntity(activity);
     }
 
     // Read All Activities
-    @GetMapping("/getAllActivityEntity")
+    @GetMapping("")
     public List<ActivityEntity> getAllActivityEntity() {
         return activityServ.getAllActivityEntity();
     }
 
     // Read Single Activity
-    @GetMapping("/getActivityEntity")
-    public ActivityEntity getActivityEntity(@RequestParam int id) {
+    @GetMapping("/{id}")
+    public ActivityEntity getActivityEntity(@PathVariable int id) {
         return activityServ.getActivityEntity(id);
     }
 
     // Update
-    @PutMapping("/putActivityEntity")
+    @PutMapping("")
     public ActivityEntity putActivityEntity(@RequestParam int id, @RequestBody ActivityEntity newActivity) {
         return activityServ.putActivityEntity(id, newActivity);
     }
 
     // Delete
-    @DeleteMapping("/deleteActivityEntity/{id}")
+    @DeleteMapping("/{id}")
     public String deleteActivityEntity(@PathVariable int id) {
         return activityServ.deleteActivityEntity(id);
     }

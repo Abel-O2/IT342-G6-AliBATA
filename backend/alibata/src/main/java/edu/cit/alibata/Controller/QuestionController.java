@@ -17,40 +17,39 @@ import edu.cit.alibata.Entity.QuestionEntity;
 import edu.cit.alibata.Service.QuestionService;
 
 @RestController
-@RequestMapping("api/alibata/question")
+@RequestMapping("api/alibata/questions")
 public class QuestionController {
 
     @Autowired
     private QuestionService questionService;
 
     // Create
-    @PostMapping("/postQuestionEntity")
+    @PostMapping("")
     public QuestionEntity postQuestionEntity(@RequestBody QuestionEntity question) {
         return questionService.postQuestionEntity(question);
     }
 
     // Read All Questions
-    @GetMapping("/getAllQuestionEntity")
+    @GetMapping("")
     public List<QuestionEntity> getAllQuestionEntity() {
         return questionService.getAllQuestionEntity();
     }
 
     // Read Single Question
-    @GetMapping("/getQuestionEntity")
-    public QuestionEntity getQuestionEntity(@RequestParam int id) {
+    @GetMapping("/{id}")
+    public QuestionEntity getQuestionEntity(@PathVariable int id) {
         return questionService.getQuestionEntity(id);
     }
 
     // Update
-    @PutMapping("/putQuestionEntity")
+    @PutMapping("")
     public QuestionEntity putQuestionEntity(@RequestParam int id, @RequestBody QuestionEntity newQuestion) {
         return questionService.putQuestionEntity(id, newQuestion);
     }
 
     // Delete
-    @DeleteMapping("/deleteQuestionEntity/{id}")
+    @DeleteMapping("/{id}")
     public String deleteQuestionEntity(@PathVariable int id) {
         return questionService.deleteQuestionEntity(id);
     }
 }
-

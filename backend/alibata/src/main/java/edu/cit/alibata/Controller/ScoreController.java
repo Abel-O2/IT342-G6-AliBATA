@@ -17,38 +17,38 @@ import edu.cit.alibata.Entity.ScoreEntity;
 import edu.cit.alibata.Service.ScoreService;
 
 @RestController
-@RequestMapping("api/alibata/score")
+@RequestMapping("api/alibata/scores")
 public class ScoreController {
 
     @Autowired
     private ScoreService scoreService;
 
     // Create
-    @PostMapping("/postScoreEntity")
+    @PostMapping("")
     public ScoreEntity postScoreEntity(@RequestBody ScoreEntity score) {
         return scoreService.postScoreEntity(score);
     }
 
     // Read All Scores
-    @GetMapping("/getAllScoreEntity")
+    @GetMapping("")
     public List<ScoreEntity> getAllScoreEntity() {
         return scoreService.getAllScoreEntity();
     }
 
     // Read Single Score
-    @GetMapping("/getScoreEntity")
-    public ScoreEntity getScoreEntity(@RequestParam int id) {
+    @GetMapping("/{id}")
+    public ScoreEntity getScoreEntity(@PathVariable int id) {
         return scoreService.getScoreEntity(id);
     }
 
     // Update
-    @PutMapping("/putScoreEntity")
+    @PutMapping("")
     public ScoreEntity putScoreEntity(@RequestParam int id, @RequestBody ScoreEntity newScore) {
         return scoreService.putScoreEntity(id, newScore);
     }
 
     // Delete
-    @DeleteMapping("/deleteScoreEntity/{id}")
+    @DeleteMapping("/{id}")
     public String deleteScoreEntity(@PathVariable int id) {
         return scoreService.deleteScoreEntity(id);
     }

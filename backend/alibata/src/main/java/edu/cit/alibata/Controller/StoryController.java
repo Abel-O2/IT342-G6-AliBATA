@@ -17,38 +17,38 @@ import edu.cit.alibata.Entity.StoryEntity;
 import edu.cit.alibata.Service.StoryService;
 
 @RestController
-@RequestMapping("api/alibata/story")
+@RequestMapping("api/alibata/stories")
 public class StoryController {
 
     @Autowired
     private StoryService storyService;
 
     // Create a new StoryEntity
-    @PostMapping("/postStoryEntity")
+    @PostMapping("")
     public StoryEntity postStoryEntity(@RequestBody StoryEntity story) {
         return storyService.postStoryEntity(story);
     }
 
     // Retrieve all StoryEntities
-    @GetMapping("/getAllStoryEntity")
+    @GetMapping("")
     public List<StoryEntity> getAllStoryEntity() {
         return storyService.getAllStoryEntity();
     }
 
     // Retrieve a single StoryEntity by id
-    @GetMapping("/getStoryEntity")
-    public StoryEntity getStoryEntity(@RequestParam int id) {
+    @GetMapping("/{id}")
+    public StoryEntity getStoryEntity(@PathVariable int id) {
         return storyService.getStoryEntity(id);
     }
 
     // Update an existing StoryEntity
-    @PutMapping("/putStoryEntity")
+    @PutMapping("")
     public StoryEntity putStoryEntity(@RequestParam int id, @RequestBody StoryEntity newStory) {
         return storyService.putStoryEntity(id, newStory);
     }
 
     // Delete a StoryEntity by id
-    @DeleteMapping("/deleteStoryEntity/{id}")
+    @DeleteMapping("/{id}")
     public String deleteStoryEntity(@PathVariable int id) {
         return storyService.deleteStoryEntity(id);
     }

@@ -62,9 +62,9 @@ const Payment = () => {
           <List sx={{ mt: 4 }}>
             {[
               { text: "🏠 Home", action: () => navigate("/home") },
-              { text: "⚙️ Settings", action: () => console.log("Go to Settings") },
+              //{ text: "⚙️ Settings", action: () => console.log("Go to Settings") },
               { text: "💳 Subscriptions", action: () => navigate("/payment") },
-              { text: "📞 Contact Us", action: () => console.log("Go to Contact Us") },
+              { text: "📞 Contact Us", action: () => navigate("/contact") },
               { text: "🚪 Log Out", action: handleLogout },
             ].map((item, index) => (
               <ListItem

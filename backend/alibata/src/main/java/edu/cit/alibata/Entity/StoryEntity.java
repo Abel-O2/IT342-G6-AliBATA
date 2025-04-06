@@ -20,6 +20,7 @@ public class StoryEntity {
     private String storyText;
 
     private String youtubeVideoId;
+    private boolean isCompleted; 
 
     @ManyToMany(mappedBy = "stories")
     private List<UserEntity> users;
@@ -28,10 +29,11 @@ public class StoryEntity {
         super();
     }
 
-    public StoryEntity(String title, String storyText, String youtubeVideoId) {
+    public StoryEntity(String title, String storyText, String youtubeVideoId, boolean isCompleted) {
         this.title = title;
         this.storyText = storyText;
         this.youtubeVideoId = youtubeVideoId;
+        this.isCompleted = isCompleted;
     }
 
     public int getStoryId() {
@@ -60,6 +62,14 @@ public class StoryEntity {
 
     public void setYoutubeVideoId(String youtubeVideoId) {
         this.youtubeVideoId = youtubeVideoId;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean isCompleted) {
+        this.isCompleted = isCompleted;
     }
 
     public List<UserEntity> getUsers() {

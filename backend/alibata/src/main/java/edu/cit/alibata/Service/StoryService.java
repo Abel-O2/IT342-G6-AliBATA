@@ -38,6 +38,7 @@ public class StoryService {
         story.setTitle(newStory.getTitle());
         story.setStoryText(newStory.getStoryText());
         story.setYoutubeVideoId(newStory.getYoutubeVideoId());
+        story.setCompleted(newStory.isCompleted());
         return storyRepo.save(story);
         } catch (NoSuchElementException e) {
             throw new EntityNotFoundException("Activity " + storyId + " not found!");

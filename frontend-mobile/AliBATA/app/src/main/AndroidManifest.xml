@@ -10,13 +10,31 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AliBATA"
+        android:theme="@style/Theme.Alibata"
         tools:targetApi="31">
         <activity
+            android:name=".Homepage"
+            android:exported="false"
+            android:theme="@style/Theme.Alibata" />
+        <activity
+            android:name=".Stories"
+            android:exported="false" />
+        <activity
+            android:name=".Levels"
+            android:exported="false" />
+        <activity
+            android:name=".Register"
+            android:exported="false" />
+        <activity
+            android:name=".Login"
+            android:exported="false" />
+        <activity
+            android:name=".RegisterPage"
+            android:exported="false"
+            android:theme="@style/Theme.Alibata" />
+        <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AliBATA">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

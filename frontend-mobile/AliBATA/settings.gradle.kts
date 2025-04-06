@@ -19,6 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AliBATA"
+rootProject.name = "Alibata"
 include(":app")
- 

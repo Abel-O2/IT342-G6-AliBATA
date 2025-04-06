@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import TermsNConditions from "./TermsNConditions"; 
+import axios from 'axios';
 
 const SignUp = () => {
   const navigate = useNavigate(); 
@@ -16,21 +17,38 @@ const SignUp = () => {
 
   const [error, setError] = useState(""); 
 
+  const API = axios.create({
+    baseURL: 'http://localhost:8080/api/alibata/users',
+  });
+
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     
     if (user.password !== user.confirmPassword) {
       setError("Passwords do not match!");
       return;
     }
-    
-    setError(""); 
-    console.log("User Registered:", user);
-    navigate("/"); 
+
+    try {
+      const payload = {
+        name: `${user.firstName} ${user.middleName} ${user.lastName}`.trim(),
+        email: user.email,
+        password: user.password,
+        gender: "N/A" 
+      };
+
+      await API.post('', payload);
+
+      console.log("User registered:", payload);
+      navigate("/login");
+    } catch(err){
+      console.error(err);
+      setError("Signup failed. Please try again.");
+    }
   };
 
   return (

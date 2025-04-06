@@ -1,24 +1,37 @@
 import { useState } from "react";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import "./App.css";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
   const [schoolId, setSchoolId] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // Navigation Hook
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const API = axios.create({
+    baseURL: 'http://localhost:8080/api/alibata/users',
+  });
+
+  const handleLogin = async () => {
     e.preventDefault();
 
-    /*if (!schoolId || !password) {
-      alert("Please enter your School ID and Password.");
+    if (!email || !password) {
+      setError("Please enter your email and password.");
       return;
-    }*/
+    }
+    
+    try{
+      const res = await API.post('/login', { email, password });
+      console.log("Login successful:", res.data);
 
-    console.log("Logging in...", { schoolId, password });
-
-    navigate("/home");
+      navigate("/home");
+    } catch(err){
+      console.error("Login failed:", err.response?.data || err.message);
+      setError("Invalid email or password.");
+    }
   };
 
   return (

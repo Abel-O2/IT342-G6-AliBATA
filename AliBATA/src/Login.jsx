@@ -34,6 +34,22 @@ const Login = () => {
     }
   };
 
+  /*
+  const handleLogin = asynch () => {
+    try{
+      const res = await API.post('/login')
+    }
+    if (!schoolId || !password) {
+      alert("Please enter your School ID and Password.");
+      return;
+    
+
+    console.log("Logging in...", { schoolId, password });
+
+    navigate("/home");
+  };
+  */
+
   return (
     <Box
       sx={{

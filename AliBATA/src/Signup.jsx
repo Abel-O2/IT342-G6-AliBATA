@@ -51,6 +51,21 @@ const SignUp = () => {
     }
   };
 
+  /*
+  const handleSignUp = (e) => {
+    e.preventDefault();
+    
+    if (user.password !== user.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+    
+    setError(""); 
+    console.log("User Registered:", user);
+    navigate("/"); 
+  };
+  */ 
+
   return (
     <Box
       sx={{

@@ -15,7 +15,7 @@ const HomePage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("username");
-    navigate("/"); 
+    navigate("/login"); 
   };
 
   return (

@@ -16,7 +16,7 @@ const Payment = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("username");
-    navigate("/");
+    navigate("/login");
   };
 
   return (
@@ -81,9 +81,9 @@ const Payment = () => {
       </Box>
       <Box sx={{ flex: 1, padding: 3 }}>
         <Paper sx={{ bgcolor: "#222", p: 3, mb: 4, color: "white", textAlign: "center" }}>
-          <Typography variant="h5" fontWeight="bold">Subscriptions</Typography>
+          <Typography variant="h5" fontWeight="bold">Contact Us</Typography>
           <Typography variant="h6" sx={{ mt: 1 }}>
-            Current Tier: <strong>{currentPlan}</strong>
+           Tel: 1234-159 <strong></strong>
           </Typography>
         </Paper>
         <Grid container spacing={4} justifyContent="center">
@@ -98,23 +98,10 @@ const Payment = () => {
                 borderRadius: "10px",
               }}
             >
-              <Typography variant="h6" fontWeight="bold">Basic Tier</Typography>
+              <Typography variant="h6" fontWeight="bold">App/Software Gmail</Typography>
               <Typography sx={{ mt: 2, fontSize: "14px", color: "#bbb" }}>
-                Access to basic features
+                AliBATA@gmail.com
               </Typography>
-              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold" }}>Free</Typography>
-              <Button
-                variant="contained"
-                fullWidth
-                sx={{
-                  mt: 3,
-                  bgcolor: "#333",
-                  ":hover": { bgcolor: "#444" },
-                }}
-                disabled
-              >
-                Current Plan
-              </Button>
             </Paper>
           </Grid>
           <Grid item>
@@ -129,23 +116,10 @@ const Payment = () => {
                 boxShadow: "0px 4px 10px rgba(255,255,255,0.5)",
               }}
             >
-              <Typography variant="h6" fontWeight="bold">Premium Tier</Typography>
+              <Typography variant="h6" fontWeight="bold">Dev's Gmail</Typography>
               <Typography sx={{ mt: 2, fontSize: "14px" }}>
-                Full access with exclusive benefits
+                sample.com
               </Typography>
-              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold" }}>₱599.99 / month</Typography>
-              <Button
-                variant="contained"
-                fullWidth
-                sx={{
-                  mt: 3,
-                  bgcolor: "white",
-                  color: "#10B981",
-                  ":hover": { bgcolor: "#f1f1f1" },
-                }}
-              >
-                Upgrade Now
-              </Button>
             </Paper>
           </Grid>
         </Grid>

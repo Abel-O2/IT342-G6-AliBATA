@@ -6,6 +6,10 @@ import axios from 'axios';
 
 const SignUp = () => {
   const navigate = useNavigate(); 
+  //const nameRef = useRef();
+  //const emailRef = useRef();
+  //const passwordRef = useRef();
+  //const confirmpasswordRef = useRef();
   const [user, setUser] = useState({
     firstName: "",
     middleName: "",
@@ -13,42 +17,57 @@ const SignUp = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    subscriptionStatus: false,
   });
 
   const [error, setError] = useState(""); 
 
   const API = axios.create({
     baseURL: 'http://localhost:8080/api/alibata/users',
+    timeout: 100000,
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
   });
 
+  /*
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
-  };
+  };*/
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    
+
     if (user.password !== user.confirmPassword) {
       setError("Passwords do not match!");
       return;
     }
-
+    const userData = {
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+      email: user.email,
+      password: user.password,
+    };
+    /*
     try {
-      const payload = {
-        name: `${user.firstName} ${user.middleName} ${user.lastName}`.trim(),
-        email: user.email,
-        password: user.password,
-        gender: "N/A" 
-      };
-
-      await API.post('', payload);
-
-      console.log("User registered:", payload);
+      const response = await API.post('/createUser', userData);
+      console.log("User registered:", response);
       navigate("/login");
     } catch(err){
-      console.error(err);
-      setError("Signup failed. Please try again.");
-    }
+      if (err.response?.status === 403) {
+        setError("You do not have permission to perform this action.");
+      } else {
+        setError(err.response?.data?.message || "Signup failed. Please try again.");
+      }
+      console.error("Signup failed:", err);
+    }*/
+    navigate("/login");
+  };
+
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
 
   /*

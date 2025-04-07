@@ -2,29 +2,36 @@ import { useState } from "react";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import SignUp from "./Signup";
 import "./App.css";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
+export default function Login() {
+  //const emailRef = useRef();
   const [error, setError] = useState("");
   const [schoolId, setSchoolId] = useState("");
   const [password, setPassword] = useState("");
+  //const passwordRef = useRef();
   const navigate = useNavigate();
 
   const API = axios.create({
     baseURL: 'http://localhost:8080/api/alibata/users',
+    timeout: 1000,
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
   });
-
+/*
   const handleLogin = async () => {
-    e.preventDefault();
-
     if (!email || !password) {
       setError("Please enter your email and password.");
       return;
     }
-    
     try{
-      const res = await API.post('/login', { email, password });
+      const res = await API.post('/Login', { 
+        email: emailRef.current.value, 
+        password: passwordRef.current.value, 
+      });
       console.log("Login successful:", res.data);
 
       navigate("/home");
@@ -33,22 +40,29 @@ const Login = () => {
       setError("Invalid email or password.");
     }
   };
-
-  /*
-  const handleLogin = asynch () => {
+*/
+  
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    /*
     try{
-      const res = await API.post('/login')
+      const res = await API.post('/login',{email: schoolId, password})
+      console.log("Login successful:", res.data);
+      localStorage.setItem("token", res.data.token);
+      navigate("/home");
+    }catch (err) {
+      console.error("Login failed:", err.response?.data || err.message);
+      setError("Invalid email or password.");
     }
     if (!schoolId || !password) {
       alert("Please enter your School ID and Password.");
       return;
-    
-
+    }
     console.log("Logging in...", { schoolId, password });
+    */
 
     navigate("/home");
   };
-  */
 
   return (
     <Box
@@ -146,5 +160,3 @@ const Login = () => {
     </Box>
   );
 };
-
-export default Login;

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const Payment = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("Static pani"); // Placeholder until login system is added
+  const [username, setUsername] = useState("Sample"); // Placeholder until login system is added
   const [currentPlan, setCurrentPlan] = useState("Basic");
 
   useEffect(() => {

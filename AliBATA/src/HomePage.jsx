@@ -1,15 +1,29 @@
 import { Box, Typography, Button, Paper, List, ListItem, ListItemText } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import {jwtDecode} from "jwt-decode";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("Static pani"); // Placeholder until login system is added
+  const [username, setUsername] = useState("Sample"); // Placeholder until login system is added
+  
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const payloadBase64 = token.split(".")[1];
+        const decoded = jwtDecode(token);
+        console.log("Decoded token:", decoded);
+        const email = decoded?.email;
+
+        if (email) {
+          setUsername(email);
+          localStorage.setItem("username", email); 
+        } 
+      } catch (err) {
+        console.error("Failed to decode token:", err);
+      }
     }
   }, []);
 

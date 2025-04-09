@@ -2,66 +2,40 @@ import { useState } from "react";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import SignUp from "./Signup";
 import "./App.css";
 
 export default function Login() {
-  //const emailRef = useRef();
   const [error, setError] = useState("");
   const [schoolId, setSchoolId] = useState("");
   const [password, setPassword] = useState("");
-  //const passwordRef = useRef();
   const navigate = useNavigate();
 
   const API = axios.create({
-    baseURL: 'http://localhost:8080/api/alibata/users',
+    baseURL: 'http://localhost:8080/api/alibata/auth',
     timeout: 1000,
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-        },
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
   });
-/*
-  const handleLogin = async () => {
-    if (!email || !password) {
-      setError("Please enter your email and password.");
-      return;
-    }
-    try{
-      const res = await API.post('/Login', { 
-        email: emailRef.current.value, 
-        password: passwordRef.current.value, 
-      });
-      console.log("Login successful:", res.data);
 
-      navigate("/home");
-    } catch(err){
-      console.error("Login failed:", err.response?.data || err.message);
-      setError("Invalid email or password.");
-    }
-  };
-*/
-  
   const handleLogin = async (e) => {
     e.preventDefault();
-    /*
-    try{
-      const res = await API.post('/login',{email: schoolId, password})
+
+    if (!schoolId || !password) {
+      setError("Please enter your School ID and Password.");
+      return;
+    }
+
+    try {
+      const res = await API.post('/login', { email: schoolId, password });
       console.log("Login successful:", res.data);
       localStorage.setItem("token", res.data.token);
       navigate("/home");
-    }catch (err) {
+    } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
-      setError("Invalid email or password.");
+      setError("Invalid School ID or Password.");
     }
-    if (!schoolId || !password) {
-      alert("Please enter your School ID and Password.");
-      return;
-    }
-    console.log("Logging in...", { schoolId, password });
-    */
-
-    navigate("/home");
   };
 
   return (
@@ -102,9 +76,15 @@ export default function Login() {
           Log In
         </Typography>
 
+        {error && (
+          <Typography color="error" sx={{ mt: 1 }}>
+            {error}
+          </Typography>
+        )}
+
         <Box component="form" onSubmit={handleLogin} sx={{ mt: 3 }}>
           <TextField
-            label="School ID"
+            label="Email"
             variant="filled"
             fullWidth
             value={schoolId}
@@ -159,4 +139,4 @@ export default function Login() {
       </Paper>
     </Box>
   );
-};
+}

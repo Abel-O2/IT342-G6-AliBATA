@@ -24,7 +24,6 @@ const Subscriptions = () => {
     >
 
       <Box sx={{ flex: 1, padding: 3 }}>
-        {/* Current Subscription Status */}
         <Paper sx={{ bgcolor: "#222", p: 3, mb: 4, color: "white", textAlign: "center" }}>
           <Typography variant="h5" fontWeight="bold">Subscriptions</Typography>
           <Typography variant="h6" sx={{ mt: 1 }}>
@@ -32,9 +31,7 @@ const Subscriptions = () => {
           </Typography>
         </Paper>
 
-        {/* Subscription Options */}
         <Grid container spacing={4} justifyContent="center">
-          {/* Basic Plan */}
           <Grid item>
             <Paper
               sx={{
@@ -66,7 +63,6 @@ const Subscriptions = () => {
             </Paper>
           </Grid>
 
-          {/* Premium Plan */}
           <Grid item>
             <Paper
               sx={{

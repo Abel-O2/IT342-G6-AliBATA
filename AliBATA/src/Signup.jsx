@@ -23,7 +23,7 @@ const SignUp = () => {
   const [error, setError] = useState(""); 
 
   const API = axios.create({
-    baseURL: 'http://localhost:8080/api/alibata/users',
+    baseURL: 'http://localhost:8080/api/alibata/auth',
     timeout: 100000,
         headers: {
             "Content-Type": "application/json",
@@ -50,9 +50,9 @@ const SignUp = () => {
       email: user.email,
       password: user.password,
     };
-    /*
+    
     try {
-      const response = await API.post('/createUser', userData);
+      const response = await API.post('/register', userData);
       console.log("User registered:", response);
       navigate("/login");
     } catch(err){
@@ -62,8 +62,9 @@ const SignUp = () => {
         setError(err.response?.data?.message || "Signup failed. Please try again.");
       }
       console.error("Signup failed:", err);
-    }*/
-    navigate("/login");
+    }
+    
+    //navigate("/login");
   };
 
   const handleChange = (e) => {

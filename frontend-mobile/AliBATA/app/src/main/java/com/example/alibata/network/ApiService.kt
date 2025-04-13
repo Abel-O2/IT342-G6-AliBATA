@@ -24,8 +24,13 @@ interface ApiService {
     @POST("auth/login")
     suspend fun loginUser(@Body loginRequest: LoginRequest): AuthenticationResponse
 
+    @POST("auth/register") // Adjust the path if needed
+    suspend fun registerUser(@Body registerRequest: RegisterRequest): retrofit2.Response<Unit>
+
     @POST("auth/logout")
     suspend fun logoutuser()
+
+
 }
 
 

@@ -67,6 +67,26 @@ const SignUp = () => {
     //navigate("/login");
   };
 
+  /*
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await API.post('/signup', {
+        firstName,
+        middleName,
+        lastName,
+        email,
+        password,
+      });
+  
+      console.log("User registered:", response.data);
+      navigate("/login"); // Redirect to login after successful signup
+    } catch (err) {
+      console.error("Signup failed:", err.response?.data || err.message);
+    }
+  };*/
+
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
@@ -117,6 +137,7 @@ const SignUp = () => {
               name="firstName"
               variant="filled"
               fullWidth
+              required
               value={user.firstName}
               onChange={handleChange}
               sx={{ mb: 2, bgcolor: "#424242", input: { color: "white" } }}
@@ -126,6 +147,7 @@ const SignUp = () => {
               name="middleName"
               variant="filled"
               fullWidth
+              required
               value={user.middleName}
               onChange={handleChange}
               sx={{ mb: 2, bgcolor: "#424242", input: { color: "white" } }}
@@ -135,6 +157,7 @@ const SignUp = () => {
               name="lastName"
               variant="filled"
               fullWidth
+              required
               value={user.lastName}
               onChange={handleChange}
               sx={{ mb: 2, bgcolor: "#424242", input: { color: "white" } }}

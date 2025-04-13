@@ -30,8 +30,18 @@ export default function Login() {
     try {
       const res = await API.post('/login', { email: schoolId, password });
       console.log("Login successful:", res.data);
+
+      // Save token and user data to localStorage
       localStorage.setItem("token", res.data.token);
-      navigate("/home");
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // Check user role or ID and redirect accordingly
+      const user = res.data.user;
+      if (user.userId === 1 || user.role === "ADMIN") {
+        navigate("/admin"); // Redirect to AdminDashboard
+      } else {
+        navigate("/home"); // Redirect to homepage
+      }
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
       setError("Invalid School ID or Password.");

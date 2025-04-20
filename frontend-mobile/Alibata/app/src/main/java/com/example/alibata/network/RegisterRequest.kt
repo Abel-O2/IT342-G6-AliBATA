@@ -5,5 +5,7 @@ data class RegisterRequest(
     val middleName: String,
     val lastName: String,
     val email: String,
-    val password: String
+    val password: String,
+    val role: String = "USER",              // ← default USER
+    val subscriptionStatus: Boolean = true  // ← default true
 )

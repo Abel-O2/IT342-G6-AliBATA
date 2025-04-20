@@ -2,19 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Register">
+    android:background="@color/background_light">
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,195 +22,159 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="24dp">
 
                 <ImageButton
                     android:id="@+id/btnRegReturn"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="10dp"
-                    android:adjustViewBounds="true"
-                    android:background="@null"
-                    android:paddingEnd="10dp"
-                    android:paddingStart="1dp"
-                    android:contentDescription="Return image"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/return_button" />
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:backgroundTint="@color/pastel_green"
+                    android:src="@drawable/return_button"
+                    android:contentDescription="@string/return_label"/>
 
                 <TextView
-                    android:id="@+id/txtLogin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
                     android:text="@string/regSignUpLabel"
-                    android:textSize="32sp"
-                    android:textStyle="bold" />
-
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:fontFamily="sans-serif"
+                    android:layout_marginStart="8dp"/>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/txtRegFName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:text="@string/regFirstName" />
-
+            <!-- Inputs -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/PastelInput"
                 android:id="@+id/textInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_height="wrap_content"
+                android:hint="@string/regFirstNameInput">
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/regFirstNameInput" />
+                    android:fontFamily="sans-serif"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/txtRegMName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/regMiddleNameInput" />
-
-            <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </androidx.core.widget.NestedScrollView>
-
+            <!-- Middle Name -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/PastelInput"
                 android:id="@+id/textMNameInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_height="wrap_content"
+                android:hint="@string/regMiddleNameInput"
+                android:layout_marginTop="12dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/regMiddleNameInput" />
+                    android:fontFamily="sans-serif"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/txtLName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/regLastName" />
-
+            <!-- Last Name -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/PastelInput"
                 android:id="@+id/textLNameInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_height="wrap_content"
+                android:hint="@string/regLastNameInput"
+                android:layout_marginTop="12dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/regLastNameInput" />
+                    android:fontFamily="sans-serif"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/txtEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/regEmail" />
-
+            <!-- Email -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/PastelInput"
                 android:id="@+id/textEmailInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_height="wrap_content"
+                android:hint="@string/regEmailInput"
+                android:layout_marginTop="12dp">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:inputType="textEmailAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/regEmailInput" />
+                    android:fontFamily="sans-serif"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/txtPassword"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/userPasswordLabel" />
-
+            <!-- Password -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/PastelInput"
                 android:id="@+id/textPasswordInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_height="wrap_content"
+                android:hint="@string/userPasswordHint"
+                android:layout_marginTop="12dp">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:inputType="textPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/userPasswordHint"
-                    android:inputType="textPassword" />
+                    android:fontFamily="sans-serif"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/txtPasswordConfirm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/regPasswordAgain" />
-
+            <!-- Confirm Password -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/PastelInput"
                 android:id="@+id/textConfirmPasswordInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
+                android:layout_height="wrap_content"
+                android:hint="@string/regPasswordAgainInput"
+                android:layout_marginTop="12dp">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:inputType="textPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/regPasswordAgainInput"
-                    android:inputType="textPassword" />
+                    android:fontFamily="sans-serif"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-
+            <!-- Terms & Conditions -->
             <TextView
-                android:id="@+id/textView4"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/regTermsAndConditions" />
+                android:text="@string/regTermsAndConditions"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:fontFamily="sans-serif"
+                android:layout_marginTop="24dp"/>
 
-
-            <androidx.core.widget.NestedScrollView
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:padding="5dp"
-                >
-
-                <LinearLayout
+                android:layout_marginTop="8dp"
+                android:background="@color/pastel_yellow"
+                android:padding="8dp">
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/regTermsAndConditionsText" />
-                </LinearLayout>
-            </androidx.core.widget.NestedScrollView>
+                    android:text="@string/regTermsAndConditionsText"
+                    android:textColor="@color/text_primary"
+                    android:fontFamily="sans-serif"/>
+            </ScrollView>
 
             <CheckBox
                 android:id="@+id/regAgreeToTerms"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/regTermsAndConditionsAgree" />
+                android:text="@string/regTermsAndConditionsAgree"
+                android:textColor="@color/text_primary"
+                android:fontFamily="sans-serif"
+                android:layout_marginTop="12dp"/>
 
             <Button
                 android:id="@+id/btnRegister"
+                style="@style/PastelButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/regConfirm" />
-
+                android:text="@string/regConfirm"
+                android:fontFamily="sans-serif"
+                android:layout_marginTop="24dp"/>
         </LinearLayout>
-
     </ScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

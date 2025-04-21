@@ -1,5 +1,7 @@
 package edu.cit.alibata.Controller;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.cit.alibata.Entity.StoryEntity;
 import edu.cit.alibata.Service.StoryService;
+import edu.cit.alibata.dto.StoryDetailsDto;
 import edu.cit.alibata.model.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -81,12 +83,12 @@ public class StoryController {
             )
         }
     )
-    public StoryEntity getStoryEntity(@PathVariable int id) {
-        return storyService.getStoryEntity(id);
+    public StoryDetailsDto getStoryDetails(@PathVariable int id) throws GeneralSecurityException, IOException {
+        return storyService.getStoryDetails(id);
     }
 
     // Update an existing StoryEntity
-    @PutMapping("")
+    @PutMapping("/{id}")
     @Operation(
         description = "Update a story",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -106,7 +108,7 @@ public class StoryController {
             )
         }
     )
-    public StoryEntity putStoryEntity(@RequestParam int id, @RequestBody StoryEntity newStory) {
+    public StoryEntity putStoryEntity(@PathVariable int id, @RequestBody StoryEntity newStory) {
         return storyService.putStoryEntity(id, newStory);
     }
 

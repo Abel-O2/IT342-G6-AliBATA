@@ -3,6 +3,7 @@ package edu.cit.alibata.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.cit.alibata.Entity.UserEntity;
@@ -63,6 +63,8 @@ public class UserController {
             )
         }
     )
+    // access
+    @PreAuthorize("hasAuthority('admin:read')")
     public List<UserEntity> getAllUserEntity(){
         return userServ.getAllUserEntity();
     }
@@ -81,12 +83,14 @@ public class UserController {
             )
         }
     )
+    // access
+    @PreAuthorize("#id == principal.userId or hasAuthority('admin:read')")
     public UserEntity getUserEntity(@PathVariable int id){
         return userServ.getUserEntity(id);
     }
 
     // Update
-    @PutMapping("")
+    @PutMapping("/{id}")
     @Operation(
         description = "Update a user",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -106,7 +110,9 @@ public class UserController {
             )
         }
     )
-    public UserEntity putUserEntity(@RequestParam int id, @RequestBody UserEntity newUserEntity){
+    // access
+    @PreAuthorize("#id == principal.userId or hasAuthority('admin:update')")
+    public UserEntity putUserEntity(@PathVariable int id, @RequestBody UserEntity newUserEntity){
         return userServ.putUserEntity(id, newUserEntity);
     }
 
@@ -124,6 +130,8 @@ public class UserController {
             )
         }
     )
+    // access
+    @PreAuthorize("#id == principal.userId or hasAuthority('admin:delete')")
     public String deleteUserEntity(@PathVariable int id){
         return userServ.deleteUserEntity(id);
     }

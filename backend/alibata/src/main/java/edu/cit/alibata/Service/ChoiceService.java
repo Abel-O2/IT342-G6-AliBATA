@@ -39,7 +39,7 @@ public class ChoiceService {
         choice.setCorrect(newChoice.isCorrect());
         return choiceRepo.save(choice);
         } catch (NoSuchElementException e) {
-            throw new EntityNotFoundException("Activity " + choiceId + " not found!");
+            throw new EntityNotFoundException("Choice " + choiceId + " not found!");
         }
     }
 

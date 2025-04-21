@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.cit.alibata.Entity.ActivityEntity;
@@ -88,7 +87,7 @@ public class ActivityController {
     }
 
     // Update
-    @PutMapping("")
+    @PutMapping("/{id}")
     @Operation(
         description = "Update an activity",
         responses = {
@@ -104,7 +103,7 @@ public class ActivityController {
             )
         }
     )
-    public ActivityEntity putActivityEntity(@RequestParam int id, @RequestBody ActivityEntity newActivity) {
+    public ActivityEntity putActivityEntity(@PathVariable int id, @RequestBody ActivityEntity newActivity) {
         return activityServ.putActivityEntity(id, newActivity);
     }
 

@@ -19,7 +19,7 @@ public class StoryEntity {
     private String title;
     private String storyText;
 
-    private String youtubeVideoId;
+    private String youTubeVideoId;
     private boolean isCompleted; 
 
     @ManyToMany(mappedBy = "stories")
@@ -32,7 +32,7 @@ public class StoryEntity {
     public StoryEntity(String title, String storyText, String youtubeVideoId, boolean isCompleted) {
         this.title = title;
         this.storyText = storyText;
-        this.youtubeVideoId = youtubeVideoId;
+        this.youTubeVideoId = youtubeVideoId;
         this.isCompleted = isCompleted;
     }
 
@@ -57,11 +57,11 @@ public class StoryEntity {
     }
 
     public String getYoutubeVideoId() {
-        return youtubeVideoId;
+        return youTubeVideoId;
     }
 
     public void setYoutubeVideoId(String youtubeVideoId) {
-        this.youtubeVideoId = youtubeVideoId;
+        this.youTubeVideoId = youtubeVideoId;
     }
 
     public boolean isCompleted() {

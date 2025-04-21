@@ -27,10 +27,10 @@ interface ApiService {
         @Body user: UserEntity
     ): UserEntity
 
-    @PUT("users")
+    @PUT("users/{id}")
     suspend fun updateUser(
         @Header("Authorization") bearerToken: String,
-        @Query("id") id: Int,
+        @Path("id") id: Int,
         @Body user: UserEntity
     ): UserEntity
 

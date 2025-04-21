@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.alibata.databinding.ActivityProfileDetailsBinding
 import com.example.alibata.models.UserEntity
@@ -72,12 +73,17 @@ class ProfileDetails : AppCompatActivity() {    private lateinit var binding: Ac
         binding.etMiddleName.setText(user.middleName)
         binding.etLastName.setText(user.lastName)
         binding.etEmail.setText(user.email)
+
         val subscribed = user.subscriptionStatus
+        Log.d("SubscriptionCheck", "Subscription status: $subscribed")
+
         val colorRes = if (subscribed) R.color.green else android.R.color.darker_gray
-        binding.viewSubscriptionStatus.setBackgroundResource(colorRes)
+        val color = ContextCompat.getColor(this, colorRes)
+        binding.viewSubscriptionStatus.setBackgroundColor(color)
 
         binding.btnSave.visibility = View.GONE
         binding.btnEdit.visibility = View.VISIBLE
+
         setInputsEnabled(false)
     }
 

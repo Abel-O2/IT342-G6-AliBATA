@@ -1,11 +1,14 @@
 package edu.cit.alibata.auth;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import edu.cit.alibata.Entity.UserEntity;
+import edu.cit.alibata.Repository.ActivityRepository;
+import edu.cit.alibata.Repository.StoryRepository;
 import edu.cit.alibata.Repository.UserRepository;
 import edu.cit.alibata.config.JwtService;
 import edu.cit.alibata.token.Token;
@@ -14,6 +17,12 @@ import edu.cit.alibata.token.TokenType;
 
 @Service
 public class AuthenticationService {
+
+    @Autowired
+    private ActivityRepository activityRepo;
+    
+    @Autowired
+    private StoryRepository storyRepo;
 
     private final UserRepository repository;
     private final TokenRepository tokenRepository;
@@ -43,6 +52,14 @@ public class AuthenticationService {
             .subscriptionStatus(request.isSubscriptionStatus())
             .role(request.getRole())
             .build();
+        //assign activities to user
+        var allActivities = activityRepo.findAll();
+        user.setActivities(allActivities);
+
+        //assign stories to user
+        var allStories = storyRepo.findAll();
+        user.setStories(allStories);
+
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         //save token to db for logout

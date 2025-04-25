@@ -2,6 +2,9 @@ package edu.cit.alibata.Entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,9 +29,11 @@ public class ActivityEntity {
     private GameType gameType;
 
     @OneToMany(mappedBy = "activity")
+    @JsonManagedReference
     private List<QuestionEntity> questions;
 
     @ManyToMany(mappedBy = "activities")
+    @JsonBackReference
     private List<UserEntity> users;
 
     public enum GameType {

@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.cit.alibata.Entity.ActivityEntity;
+import edu.cit.alibata.Entity.UserEntity;
 import edu.cit.alibata.Repository.ActivityRepository;
+import edu.cit.alibata.Repository.QuestionRepository;
+import edu.cit.alibata.Repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -16,9 +19,23 @@ public class ActivityService {
     @Autowired
     ActivityRepository activityRepo;
 
-    // Create
+    @Autowired
+    UserRepository userRepo;
+
+    @Autowired
+    QuestionRepository questionRepo;
+
+    // Create and assign to users
     public ActivityEntity postActivityEntity(ActivityEntity activity) {
-        return activityRepo.save(activity);
+        ActivityEntity postActivity = activityRepo.save(activity);
+        
+        List<UserEntity> allUsers = userRepo.findAll();
+        for (UserEntity user : allUsers) {
+            user.getActivities().add(postActivity);
+            userRepo.save(user);
+        }
+
+        return postActivity;
     }
 
     // Read All Activities
@@ -31,6 +48,13 @@ public class ActivityService {
         return activityRepo.findById(activityId).get();
     }
 
+    // Read all activities for user
+    public List<ActivityEntity> getAllActivitiesForUser(int userId) {
+        UserEntity user = userRepo.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        return user.getActivities();
+    }
+
     // Update
     public ActivityEntity putActivityEntity(int activityId, ActivityEntity newActivity) {
         try {
@@ -38,6 +62,12 @@ public class ActivityService {
             activity.setActivityName(newActivity.getActivityName());
             activity.setCompleted(newActivity.isCompleted());
             activity.setGameType(newActivity.getGameType());
+            if (newActivity.getQuestions() != null) {
+                activity.setQuestions(newActivity.getQuestions());
+            }
+            if (newActivity.getUsers() != null) {
+                activity.setUsers(newActivity.getUsers());
+            }
             return activityRepo.save(activity);
         } catch (NoSuchElementException e) {
             throw new EntityNotFoundException("Activity " + activityId + " not found!");
@@ -53,6 +83,19 @@ public class ActivityService {
         } else {
             return "Activity " + activityId + " not found!";
         }
+    }
+
+    // Mark Activity as Completed
+    public void markAsCompleted(int userId, int activityId) {
+        UserEntity user = userRepo.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        ActivityEntity activity = activityRepo.findById(activityId)
+            .orElseThrow(() -> new EntityNotFoundException("Activity not found  with ID: " + activityId));
+        if (!user.getActivities().contains(activity)) {
+            throw new IllegalStateException("Activity not assigned to the user");
+        }
+        activity.setCompleted(true);
+        activityRepo.save(activity);
     }
 }
 

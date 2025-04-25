@@ -2,6 +2,10 @@ package edu.cit.alibata.Entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,10 +31,12 @@ public class QuestionEntity {
     private byte[] questionImage;
 
     @OneToMany(mappedBy = "question")
+    @JsonManagedReference
     private List<ChoiceEntity> choices;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "score_id")
+    @JsonBackReference
     private ScoreEntity score;
 
     @ManyToOne

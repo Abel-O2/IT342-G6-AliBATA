@@ -6,7 +6,10 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import edu.cit.alibata.token.Token;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,6 +44,7 @@ public class UserEntity implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<Token> tokens;
 
     @Override
@@ -74,7 +78,8 @@ public class UserEntity implements UserDetails {
     }
 
     //Entity Relations
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ScoreEntity> scores;
 
     @ManyToMany
@@ -83,6 +88,7 @@ public class UserEntity implements UserDetails {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "story_id")
     )
+    @JsonManagedReference
     private List<StoryEntity> stories;
 
     @ManyToMany
@@ -91,6 +97,7 @@ public class UserEntity implements UserDetails {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "activity_id")
     )
+    @JsonManagedReference
     private List<ActivityEntity> activities;
 
     public UserEntity(){

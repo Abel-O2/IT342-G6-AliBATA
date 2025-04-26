@@ -86,7 +86,7 @@ public class ActivityService {
     }
 
     // Mark Activity as Completed
-    public void markAsCompleted(int userId, int activityId) {
+    public void markActivityAsCompleted(int userId, int activityId) {
         UserEntity user = userRepo.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         ActivityEntity activity = activityRepo.findById(activityId)

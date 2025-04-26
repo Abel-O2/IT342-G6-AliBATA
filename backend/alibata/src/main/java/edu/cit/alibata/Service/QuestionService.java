@@ -21,9 +21,9 @@ public class QuestionService {
     private ActivityRepository activityRepo;
 
     // Create
-    public QuestionEntity postQuestionEntity(QuestionEntity question) {
+    /*public QuestionEntity postQuestionEntity(QuestionEntity question) {
         return questionRepo.save(question);
-    }
+    }*/
 
     // Create and Add Question to Activity
     public QuestionEntity postQuestionForActivity(int activityId, QuestionEntity question) {

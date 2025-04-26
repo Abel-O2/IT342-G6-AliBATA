@@ -27,12 +27,12 @@ public class ScoreService {
     private UserRepository userRepo;
 
     // Create
-    public ScoreEntity postScoreEntity(ScoreEntity score) {
+    /*public ScoreEntity postScoreEntity(ScoreEntity score) {
         return scoreRepo.save(score);
-    }
+    }*/
 
     // Create and Add Score to Question
-    public ScoreEntity setScoreForQuestion(int questionId, int userId, int scoreValue) {
+    public ScoreEntity setScoreForQuestion(int questionId, int scoreValue) {
         QuestionEntity question = questionRepo.findById(questionId)
             .orElseThrow(() -> new EntityNotFoundException("Question not found with ID: " + questionId));
         if (question.getScore() != null) {

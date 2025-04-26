@@ -21,9 +21,9 @@ public class ChoiceService {
     private QuestionRepository questionRepo;
 
     // Create
-    public ChoiceEntity postChoiceEntity(ChoiceEntity choice) {
+    /*public ChoiceEntity postChoiceEntity(ChoiceEntity choice) {
         return choiceRepo.save(choice);
-    }
+    }*/
 
     // Create and Add Choice to Question
     public ChoiceEntity postChoiceForQuestion(int questionId, ChoiceEntity choice) {

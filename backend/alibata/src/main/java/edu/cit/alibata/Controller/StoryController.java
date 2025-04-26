@@ -5,6 +5,7 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +36,8 @@ public class StoryController {
     // Create a new StoryEntity
     @PostMapping("")
     @Operation(
-        description = "Create a new story",
+        summary = "Create a new story",
+        description = "Creates a new story and assigns it to all users",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Story data to create (without ID)",
             content = @Content(schema = @Schema(implementation = StoryEntity.class))
@@ -50,14 +52,16 @@ public class StoryController {
             )
         }
     )
-    public StoryEntity postStoryEntity(@RequestBody StoryEntity story) {
-        return storyService.postStoryEntity(story);
+    public ResponseEntity<StoryEntity> postStoryEntity(@RequestBody StoryEntity story) {
+        StoryEntity postStory = storyService.postStoryEntity(story);
+        return ResponseEntity.status(201).body(postStory);
     }
 
     // Retrieve all StoryEntities
     @GetMapping("")
     @Operation(
-        description = "Get all stories",
+        summary = "Get all stories",
+        description = "Retrieves a list of all stories",
         responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "500", description = "Internal server error",
@@ -65,14 +69,36 @@ public class StoryController {
             )
         }
     )
-    public List<StoryEntity> getAllStoryEntity() {
-        return storyService.getAllStoryEntity();
+    public ResponseEntity<List<StoryEntity>> getAllStoryEntity() {
+        List<StoryEntity> stories = storyService.getAllStoryEntity();
+        return ResponseEntity.ok().body(stories);
     }
 
-    // Retrieve a single StoryEntity by id
+    // Read all stories for user
+    @GetMapping("/users/{userId}")
+    @Operation(
+        summary = "Get all stories for a user",
+        description = "Retrieves all stories assigned to a specific user",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+        }
+    )
+    public ResponseEntity<List<StoryEntity>> getAllStoriesForUser(@PathVariable int userId) {
+        List<StoryEntity> stories = storyService.getAllStoriesForUser(userId);
+        return ResponseEntity.ok().body(stories);
+    }
+
+    // Read a single StoryEntity by id with YouTube video details
     @GetMapping("/{id}")
     @Operation(
-        description = "Get a story by ID",
+        summary = "Get a story by ID",
+        description = "Retrieves a specific story by its ID",
         responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Story not found",
@@ -83,14 +109,16 @@ public class StoryController {
             )
         }
     )
-    public StoryDetailsDto getStoryDetails(@PathVariable int id) throws GeneralSecurityException, IOException {
-        return storyService.getStoryDetails(id);
+    public ResponseEntity<StoryDetailsDto> getStoryDetails(@PathVariable int id) throws GeneralSecurityException, IOException {
+        StoryDetailsDto story = storyService.getStoryDetails(id);
+        return ResponseEntity.ok().body(story);
     }
 
-    // Update an existing StoryEntity
+    // Update
     @PutMapping("/{id}")
     @Operation(
-        description = "Update a story",
+        summary = "Update a story",
+        description = "Updates an existing story by its ID",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Story data to update (with ID)",
             content = @Content(schema = @Schema(implementation = StoryEntity.class))
@@ -108,14 +136,16 @@ public class StoryController {
             )
         }
     )
-    public StoryEntity putStoryEntity(@PathVariable int id, @RequestBody StoryEntity newStory) {
-        return storyService.putStoryEntity(id, newStory);
+    public ResponseEntity<StoryEntity> putStoryEntity(@PathVariable int id, @RequestBody StoryEntity newStory) {
+        StoryEntity putStory = storyService.putStoryEntity(id, newStory);
+        return ResponseEntity.ok().body(putStory);
     }
 
-    // Delete a StoryEntity by id
+    // Delete
     @DeleteMapping("/{id}")
     @Operation(
-        description = "Delete a story by ID",
+        summary = "Delete a story",
+        description = "Deletes a story by its ID",
         responses = {
             @ApiResponse(responseCode = "200", description = "Story deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Story not found",
@@ -126,8 +156,29 @@ public class StoryController {
             )
         }
     )
-    public String deleteStoryEntity(@PathVariable int id) {
-        return storyService.deleteStoryEntity(id);
+    public ResponseEntity<String> deleteStoryEntity(@PathVariable int id) {
+        String result = storyService.deleteStoryEntity(id);
+        return ResponseEntity.ok().body(result);
+    }
+
+    // Mark Story as Completed
+    @PutMapping("/{id}/completed/{userId}")
+    @Operation(
+        summary = "Mark a story as completed",
+        description = "Marks a story as completed for a specific user",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Story marked as completed"),
+            @ApiResponse(responseCode = "404", description = "Story or user not found",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+        }
+    )
+    public ResponseEntity<Void> markStoryAsCompleted(@PathVariable int id, @PathVariable int userId) {
+        storyService.markStoryAsCompleted(userId, id);
+        return ResponseEntity.ok().build();
     }
 }
 

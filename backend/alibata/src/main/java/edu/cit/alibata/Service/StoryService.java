@@ -48,9 +48,9 @@ public class StoryService {
     }
 
     // Read a single StoryEntity by id
-    public StoryEntity getStoryEntity(int storyId) {
+    /*public StoryEntity getStoryEntity(int storyId) {
         return storyRepo.findById(storyId).get();
-    }
+    }*/
 
     // Read all stories for user
     public List<StoryEntity> getAllStoriesForUser(int userId) {

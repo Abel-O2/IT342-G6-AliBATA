@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import edu.cit.alibata.token.Token;
@@ -88,7 +89,8 @@ public class UserEntity implements UserDetails {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "story_id")
     )
-    @JsonManagedReference
+    //@JsonManagedReference
+    @JsonIgnore
     private List<StoryEntity> stories;
 
     @ManyToMany
@@ -97,7 +99,8 @@ public class UserEntity implements UserDetails {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "activity_id")
     )
-    @JsonManagedReference
+    //@JsonManagedReference
+    @JsonIgnore
     private List<ActivityEntity> activities;
 
     public UserEntity(){

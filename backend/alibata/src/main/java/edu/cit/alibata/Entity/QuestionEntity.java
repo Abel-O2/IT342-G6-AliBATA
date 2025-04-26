@@ -36,11 +36,12 @@ public class QuestionEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "score_id")
-    @JsonBackReference
+    @JsonManagedReference
     private ScoreEntity score;
 
     @ManyToOne
     @JoinColumn(name = "activity_id")
+    @JsonBackReference
     private ActivityEntity activity;
 
     public QuestionEntity(){

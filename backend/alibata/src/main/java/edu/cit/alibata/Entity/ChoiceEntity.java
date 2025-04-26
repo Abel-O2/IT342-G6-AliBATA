@@ -22,7 +22,7 @@ public class ChoiceEntity {
 
     @ManyToOne
     @JoinColumn(name = "question_id")
-    @JsonBackReference
+    @JsonBackReference(value = "question-choices")
     private QuestionEntity question;
 
     public ChoiceEntity() {

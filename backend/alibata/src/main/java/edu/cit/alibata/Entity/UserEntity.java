@@ -45,7 +45,7 @@ public class UserEntity implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference
+    @JsonManagedReference(value = "user-tokens")
     private List<Token> tokens;
 
     @Override
@@ -80,7 +80,7 @@ public class UserEntity implements UserDetails {
 
     //Entity Relations
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference(value = "user-scores")
     private List<ScoreEntity> scores;
 
     @ManyToMany

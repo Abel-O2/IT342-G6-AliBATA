@@ -29,7 +29,7 @@ public class ActivityEntity {
     private GameType gameType;
 
     @OneToMany(mappedBy = "activity")
-    @JsonManagedReference
+    @JsonManagedReference(value = "activity-questions")
     private List<QuestionEntity> questions;
 
     @ManyToMany(mappedBy = "activities")

@@ -38,6 +38,6 @@ public class Token {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    @JsonBackReference(value = "user-tokens")
     private UserEntity user;
 }

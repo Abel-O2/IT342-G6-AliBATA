@@ -31,17 +31,17 @@ public class QuestionEntity {
     private byte[] questionImage;
 
     @OneToMany(mappedBy = "question")
-    @JsonManagedReference
+    @JsonManagedReference(value = "question-choices")
     private List<ChoiceEntity> choices;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "score_id")
-    @JsonManagedReference
+    @JsonManagedReference(value = "question-score")
     private ScoreEntity score;
 
     @ManyToOne
     @JoinColumn(name = "activity_id")
-    @JsonBackReference
+    @JsonBackReference(value = "activity-questions")
     private ActivityEntity activity;
 
     public QuestionEntity(){

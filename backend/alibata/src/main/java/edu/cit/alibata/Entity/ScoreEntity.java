@@ -23,11 +23,11 @@ public class ScoreEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
+    @JsonBackReference(value = "user-scores")
     private UserEntity user;
 
     @OneToOne(mappedBy = "score", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonBackReference(value = "question-score")
     private QuestionEntity question;
 
     public ScoreEntity(){

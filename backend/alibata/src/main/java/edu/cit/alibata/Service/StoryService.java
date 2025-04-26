@@ -62,7 +62,7 @@ public class StoryService {
     public List<UserStory> getAllStoriesForUser(int userId) {
         UserEntity user = userRepo.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-            return userStoryRepo.findByUserId(userId);
+            return userStoryRepo.findByUser_UserId(userId);
     }
 
     // Read a single StoryEntity by id with YouTube video details
@@ -107,7 +107,7 @@ public class StoryService {
 
     // Mark a story as completed for a specific user
     public void markStoryAsCompleted(int userId, int storyId) {
-        UserStory userStory = userStoryRepo.findByUserIdAndStoryId(userId, storyId)
+        UserStory userStory = userStoryRepo.findByUser_UserIdAndStory_StoryId(userId, storyId)
             .orElseThrow(() -> new EntityNotFoundException("Story is not assigned to the user"));
         userStory.setCompleted(true);
         userStoryRepo.save(userStory);

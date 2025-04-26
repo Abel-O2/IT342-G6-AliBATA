@@ -54,7 +54,7 @@ public class ActivityService {
     public List<UserActivity> getAllActivitiesForUser(int userId) {
         UserEntity user = userRepo.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-        return userActivityRepo.findByUserId(userId);
+        return userActivityRepo.findByUser_UserId(userId);
     }
 
     // Update
@@ -88,7 +88,7 @@ public class ActivityService {
 
     // Mark Activity as Completed
     public void markActivityAsCompleted(int userId, int activityId) {
-        UserActivity userActivity = userActivityRepo.findByUserIdAndActivityId(userId, activityId)
+        UserActivity userActivity = userActivityRepo.findByUser_UserIdAndActivity_ActivityId(userId, activityId)
             .orElseThrow(() -> new EntityNotFoundException("Activity not assigned to user"));
         userActivity.setCompleted(true);
         userActivityRepo.save(userActivity);

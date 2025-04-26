@@ -10,6 +10,6 @@ import edu.cit.alibata.Entity.UserActivity;
 
 @Repository
 public interface UserActivityRepository extends JpaRepository<UserActivity, Integer>{
-    Optional<UserActivity> findByUserIdAndActivityId(int userId, int activityId);
-    List<UserActivity> findByUserId(int userId);
+    Optional<UserActivity> findByUser_UserIdAndActivity_ActivityId(int userId, int activityId);
+    List<UserActivity> findByUser_UserId(int userId);
 }

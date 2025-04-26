@@ -10,6 +10,6 @@ import edu.cit.alibata.Entity.UserStory;
 
 @Repository
 public interface UserStoryRepository extends JpaRepository<UserStory, Integer> {
-    Optional<UserStory> findByUserIdAndStoryId(int userId, int storyId);
-    List<UserStory> findByUserId(int userId);
+    Optional<UserStory> findByUser_UserIdAndStory_StoryId(int userId, int storyId);
+    List<UserStory> findByUser_UserId(int userId);
 }

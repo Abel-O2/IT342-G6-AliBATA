@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import edu.cit.alibata.Entity.StoryEntity;
 import edu.cit.alibata.Entity.UserEntity;
+import edu.cit.alibata.Entity.UserStory;
 import edu.cit.alibata.Repository.StoryRepository;
 import edu.cit.alibata.Repository.UserRepository;
+import edu.cit.alibata.Repository.UserStoryRepository;
 import edu.cit.alibata.config.YouTubeService;
 import edu.cit.alibata.dto.StoryDetailsDto;
 import edu.cit.alibata.dto.YouTubeVideoDto;
@@ -29,17 +31,20 @@ public class StoryService {
     @Autowired
     private UserRepository userRepo;
 
+    @Autowired
+    private UserStoryRepository userStoryRepo;
+
     // Create and assign new StoryEntity to users
     public StoryEntity postStoryEntity(StoryEntity story) {
-        StoryEntity savedStory = storyRepo.save(story);
+        StoryEntity postStory = storyRepo.save(story);
         
         List<UserEntity> allUsers = userRepo.findAll();
         for (UserEntity user : allUsers) {
-            user.getStories().add(savedStory);
-            userRepo.save(user);
+            UserStory userStory = new UserStory(user, postStory);
+            userStoryRepo.save(userStory);        
         }
 
-        return savedStory;
+        return postStory;
     }
 
     // Read all StoryEntities
@@ -53,10 +58,11 @@ public class StoryService {
     }*/
 
     // Read all stories for user
-    public List<StoryEntity> getAllStoriesForUser(int userId) {
+    @SuppressWarnings("unused")
+    public List<UserStory> getAllStoriesForUser(int userId) {
         UserEntity user = userRepo.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-        return user.getStories();
+            return userStoryRepo.findByUserId(userId);
     }
 
     // Read a single StoryEntity by id with YouTube video details
@@ -90,9 +96,8 @@ public class StoryService {
     }
 
     // Delete a StoryEntity by id
-    @SuppressWarnings("unused")
     public String deleteStoryEntity(int storyId) {
-        if (storyRepo.findById(storyId) != null) {
+        if (storyRepo.existsById(storyId)) {
             storyRepo.deleteById(storyId);
             return "Story " + storyId + " deleted successfully!";
         } else {
@@ -102,15 +107,10 @@ public class StoryService {
 
     // Mark a story as completed for a specific user
     public void markStoryAsCompleted(int userId, int storyId) {
-        UserEntity user = userRepo.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-        StoryEntity story = storyRepo.findById(storyId)
-            .orElseThrow(() -> new EntityNotFoundException("Story not found with ID: " + storyId));
-        if (!user.getStories().contains(story)) {
-            throw new IllegalStateException("Story is not assigned to the user");
-        }
-        story.setCompleted(true);
-        storyRepo.save(story);
+        UserStory userStory = userStoryRepo.findByUserIdAndStoryId(userId, storyId)
+            .orElseThrow(() -> new EntityNotFoundException("Story is not assigned to the user"));
+        userStory.setCompleted(true);
+        userStoryRepo.save(userStory);
     }
 }
 

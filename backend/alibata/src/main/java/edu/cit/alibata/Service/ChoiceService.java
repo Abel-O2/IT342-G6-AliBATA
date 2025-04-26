@@ -66,9 +66,8 @@ public class ChoiceService {
     }
 
     // Delete
-    @SuppressWarnings("unused")
     public String deleteChoiceEntity(int choiceId) {
-        if (choiceRepo.findById(choiceId) != null) {
+        if (choiceRepo.existsById(choiceId)) {
             choiceRepo.deleteById(choiceId);
             return "Choice " + choiceId + " deleted successfully!";
         } else {

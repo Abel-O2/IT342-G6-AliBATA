@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.cit.alibata.Entity.StoryEntity;
+import edu.cit.alibata.Entity.UserStory;
 import edu.cit.alibata.Service.StoryService;
 import edu.cit.alibata.dto.StoryDetailsDto;
 import edu.cit.alibata.model.ErrorResponse;
@@ -89,9 +90,9 @@ public class StoryController {
             )
         }
     )
-    public ResponseEntity<List<StoryEntity>> getAllStoriesForUser(@PathVariable int userId) {
-        List<StoryEntity> stories = storyService.getAllStoriesForUser(userId);
-        return ResponseEntity.ok().body(stories);
+    public ResponseEntity<List<UserStory>> getAllStoriesForUser(@PathVariable int userId) {
+        List<UserStory> userStories = storyService.getAllStoriesForUser(userId);
+        return ResponseEntity.ok().body(userStories);
     }
 
     // Read a single StoryEntity by id with YouTube video details

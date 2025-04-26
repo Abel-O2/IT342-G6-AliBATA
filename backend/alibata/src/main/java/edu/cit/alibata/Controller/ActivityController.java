@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.cit.alibata.Entity.ActivityEntity;
+import edu.cit.alibata.Entity.UserActivity;
 import edu.cit.alibata.Service.ActivityService;
 import edu.cit.alibata.model.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -106,9 +107,9 @@ public class ActivityController {
             )
         }
     )
-    public ResponseEntity<List<ActivityEntity>> getAllActivitiesForUser(@PathVariable int userId) {
-        List<ActivityEntity> activities = activityServ.getAllActivitiesForUser(userId);
-        return ResponseEntity.ok().body(activities);
+    public ResponseEntity<List<UserActivity>> getAllActivitiesForUser(@PathVariable int userId) {
+        List<UserActivity> userActivities = activityServ.getAllActivitiesForUser(userId);
+        return ResponseEntity.ok().body(userActivities);
     }
 
     // Update

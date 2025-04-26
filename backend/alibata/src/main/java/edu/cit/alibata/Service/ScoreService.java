@@ -82,9 +82,8 @@ public class ScoreService {
     }
 
     // Delete
-    @SuppressWarnings("unused")
     public String deleteScoreEntity(int scoreId) {
-        if (scoreRepo.findById(scoreId) != null) {
+        if (scoreRepo.existsById(scoreId)) {
             scoreRepo.deleteById(scoreId);
             return "Score " + scoreId + " deleted successfully!";
         } else {

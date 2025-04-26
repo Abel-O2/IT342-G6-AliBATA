@@ -7,9 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.cit.alibata.Entity.ActivityEntity;
+import edu.cit.alibata.Entity.UserActivity;
 import edu.cit.alibata.Entity.UserEntity;
 import edu.cit.alibata.Repository.ActivityRepository;
-import edu.cit.alibata.Repository.QuestionRepository;
+import edu.cit.alibata.Repository.UserActivityRepository;
 import edu.cit.alibata.Repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -17,13 +18,13 @@ import jakarta.persistence.EntityNotFoundException;
 public class ActivityService {
     
     @Autowired
-    ActivityRepository activityRepo;
+    private ActivityRepository activityRepo;
 
     @Autowired
-    UserRepository userRepo;
+    private UserRepository userRepo;
 
     @Autowired
-    QuestionRepository questionRepo;
+    private UserActivityRepository userActivityRepo;
 
     // Create and assign to users
     public ActivityEntity postActivityEntity(ActivityEntity activity) {
@@ -31,8 +32,8 @@ public class ActivityService {
         
         List<UserEntity> allUsers = userRepo.findAll();
         for (UserEntity user : allUsers) {
-            user.getActivities().add(postActivity);
-            userRepo.save(user);
+            UserActivity userActivity = new UserActivity(user, postActivity);
+            userActivityRepo.save(userActivity);
         }
 
         return postActivity;
@@ -49,10 +50,11 @@ public class ActivityService {
     }
 
     // Read all activities for user
-    public List<ActivityEntity> getAllActivitiesForUser(int userId) {
+    @SuppressWarnings("unused")
+    public List<UserActivity> getAllActivitiesForUser(int userId) {
         UserEntity user = userRepo.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-        return user.getActivities();
+        return userActivityRepo.findByUserId(userId);
     }
 
     // Update
@@ -75,9 +77,8 @@ public class ActivityService {
     }
 
     // Delete
-    @SuppressWarnings("unused")
     public String deleteActivityEntity(int activityId) {
-        if (activityRepo.findById(activityId) != null) {
+        if (activityRepo.existsById(activityId)) {
             activityRepo.deleteById(activityId);
             return "Activity " + activityId + " deleted successfully!";
         } else {
@@ -87,15 +88,10 @@ public class ActivityService {
 
     // Mark Activity as Completed
     public void markActivityAsCompleted(int userId, int activityId) {
-        UserEntity user = userRepo.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-        ActivityEntity activity = activityRepo.findById(activityId)
-            .orElseThrow(() -> new EntityNotFoundException("Activity not found  with ID: " + activityId));
-        if (!user.getActivities().contains(activity)) {
-            throw new IllegalStateException("Activity not assigned to the user");
-        }
-        activity.setCompleted(true);
-        activityRepo.save(activity);
+        UserActivity userActivity = userActivityRepo.findByUserIdAndActivityId(userId, activityId)
+            .orElseThrow(() -> new EntityNotFoundException("Activity not assigned to user"));
+        userActivity.setCompleted(true);
+        userActivityRepo.save(userActivity);
     }
 }
 

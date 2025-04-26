@@ -70,9 +70,8 @@ public class QuestionService {
     }
 
     // Delete
-    @SuppressWarnings("unused")
     public String deleteQuestionEntity(int questionId) {
-        if (questionRepo.findById(questionId) != null) {
+        if (questionRepo.existsById(questionId)) {
             questionRepo.deleteById(questionId);
             return "Question " + questionId + " deleted successfully!";
         } else {

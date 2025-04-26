@@ -15,7 +15,7 @@ import jakarta.transaction.Transactional;
 @Service
 public class UserService {
     @Autowired
-    UserRepository userRepo;
+    private UserRepository userRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -66,9 +66,8 @@ public class UserService {
     }
 
     // Delete
-    @SuppressWarnings("unused")
     public String deleteUserEntity(int userId){
-        if (userRepo.findById(userId) != null){
+        if (userRepo.existsById(userId)){
             userRepo.deleteById(userId);
             return "User " +userId+ "Deleted Successfully!";
         } else {

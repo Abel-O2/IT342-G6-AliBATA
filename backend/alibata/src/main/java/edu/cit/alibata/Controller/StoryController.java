@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.cit.alibata.Entity.StoryEntity;
-import edu.cit.alibata.Entity.UserStory;
 import edu.cit.alibata.Service.StoryService;
 import edu.cit.alibata.dto.StoryDetailsDto;
 import edu.cit.alibata.model.ErrorResponse;
+import edu.cit.alibata.model.UserStoryProjection;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -90,8 +90,8 @@ public class StoryController {
             )
         }
     )
-    public ResponseEntity<List<UserStory>> getAllStoriesForUser(@PathVariable int userId) {
-        List<UserStory> userStories = storyService.getAllStoriesForUser(userId);
+    public ResponseEntity<List<UserStoryProjection>> getAllStoriesForUser(@PathVariable int userId) {
+        List<UserStoryProjection> userStories = storyService.getAllStoriesForUser(userId);
         return ResponseEntity.ok().body(userStories);
     }
 

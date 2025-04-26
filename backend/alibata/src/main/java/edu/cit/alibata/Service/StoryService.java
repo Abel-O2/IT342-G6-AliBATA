@@ -17,6 +17,7 @@ import edu.cit.alibata.Repository.UserStoryRepository;
 import edu.cit.alibata.config.YouTubeService;
 import edu.cit.alibata.dto.StoryDetailsDto;
 import edu.cit.alibata.dto.YouTubeVideoDto;
+import edu.cit.alibata.model.UserStoryProjection;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -59,10 +60,10 @@ public class StoryService {
 
     // Read all stories for user
     @SuppressWarnings("unused")
-    public List<UserStory> getAllStoriesForUser(int userId) {
+    public List<UserStoryProjection> getAllStoriesForUser(int userId) {
         UserEntity user = userRepo.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
-            return userStoryRepo.findByUser_UserId(userId);
+        return userStoryRepo.findByUser_UserId(userId);
     }
 
     // Read a single StoryEntity by id with YouTube video details

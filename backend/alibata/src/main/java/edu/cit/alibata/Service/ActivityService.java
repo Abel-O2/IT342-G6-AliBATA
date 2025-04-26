@@ -12,6 +12,7 @@ import edu.cit.alibata.Entity.UserEntity;
 import edu.cit.alibata.Repository.ActivityRepository;
 import edu.cit.alibata.Repository.UserActivityRepository;
 import edu.cit.alibata.Repository.UserRepository;
+import edu.cit.alibata.model.UserActivityProjection;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -51,7 +52,7 @@ public class ActivityService {
 
     // Read all activities for user
     @SuppressWarnings("unused")
-    public List<UserActivity> getAllActivitiesForUser(int userId) {
+    public List<UserActivityProjection> getAllActivitiesForUser(int userId) {
         UserEntity user = userRepo.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
         return userActivityRepo.findByUser_UserId(userId);

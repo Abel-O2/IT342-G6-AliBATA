@@ -55,7 +55,7 @@ public class UserService {
             user.setMiddleName(newUser.getMiddleName());
             user.setLastName(newUser.getLastName());
             user.setEmail(newUser.getEmail());
-            if (!passwordEncoder.matches(newUser.getPassword(), user.getPassword())) {
+            if (!passwordEncoder.matches(newUser.getPassword(), user.getPassword()) && !newUser.getPassword().startsWith("$2a$")) {
                 user.setPassword(passwordEncoder.encode(newUser.getPassword()));
             }
             user.setSubscriptionStatus(newUser.getSubscriptionStatus());

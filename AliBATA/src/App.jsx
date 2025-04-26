@@ -5,6 +5,9 @@ import Signup from "./Signup";
 import Payment from "./Payment";
 import Contact from  "./ContactUs";
 import Admin from "./AdminDashboard"
+import OnePicFourWords from "./Activities/OnePicFourWords";
+import PhraseTranslation from "./Activities/PhraseTranslation";
+import WordTranslation from "./Activities/WordTranslation";
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
         <Route path="/payment" element={<Payment/>}/>
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/admin" element={<Admin />} />
+        <Route path="/create-activity/OnePicFourWords" element={<OnePicFourWords />} /> 
+        <Route path="/create-activity/PhraseTranslation" element={<PhraseTranslation />} />
+        <Route path="/create-activity/WordTranslation" element={<WordTranslation />} />
       </Routes>
     </Router>
   );

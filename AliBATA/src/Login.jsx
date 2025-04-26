@@ -35,13 +35,16 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
+      navigate("/home"); // Redirect to homepage
+
       // Check user role or ID and redirect accordingly
+      /*
       const user = res.data.user;
-      if (user.userId === 1 || user.role === "ADMIN") {
+      if (user.user_id === 1 || user.role === "ADMIN") {
         navigate("/admin"); // Redirect to AdminDashboard
       } else {
         navigate("/home"); // Redirect to homepage
-      }
+      }*/
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
       setError("Invalid School ID or Password.");

@@ -1,8 +1,39 @@
+import { useEffect, useState } from "react";
 import { Box, Typography, Paper, List, ListItem, ListItemText } from "@mui/material";
 import SidebarLayout from "./SidebarLayout"; // Import the SidebarLayout component
 import diamondImage from "./assets/diamond.png";
+import axios from "axios";
 
 const HomePage = () => {
+  const [points, setPoints] = useState(0); // State to store points
+  const [error, setError] = useState(""); // State to handle errors
+
+  useEffect(() => {
+    const fetchPoints = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        console.log("User data:", user); // Log user data
+        if (!user || !user.userId) { // Use userId as per the decoded token
+          setError("User not found. Please log in again.");
+          return;
+        }
+
+        // Fetch total points for the user
+        const response = await axios.get(
+          `http://localhost:8080/api/alibata/scores/users/${user.userId}/total`
+        );
+        console.log("Backend response:", response);
+        const totalPoints=response.data ?? 0;
+        setPoints(totalPoints); 
+      } catch (err) {
+        console.error("Failed to fetch points:", err.response?.data || err.message);
+        setPoints(0);
+      }
+    };
+
+    fetchPoints();
+  }, []); // Run only once when the component mounts
+
   return (
     <SidebarLayout>
       <Typography variant="h4" fontWeight="bold" color="white" sx={{ mb: 3 }}>
@@ -12,8 +43,14 @@ const HomePage = () => {
       <Box sx={{ mt: 3, display: "flex", alignItems: "center", gap: 1 }}>
         <Typography variant="h5" color="white">Points: </Typography>
         <img src={diamondImage} alt="Diamond" width="50" />
-        <Typography variant="h5" color="white">240</Typography>
+        <Typography variant="h5" color="white">{points}</Typography> {/* Display points */}
       </Box>
+
+      {error && (
+        <Typography color="error" sx={{ mt: 2 }}>
+          {error}
+        </Typography>
+      )}
 
       <Paper
         sx={{

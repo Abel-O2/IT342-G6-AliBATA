@@ -19,6 +19,7 @@ public class StoryEntity {
     private int storyId;
 
     private String title;
+    @Column(name = "story_text", columnDefinition = "TEXT")
     private String storyText;
 
     private String youTubeVideoId;

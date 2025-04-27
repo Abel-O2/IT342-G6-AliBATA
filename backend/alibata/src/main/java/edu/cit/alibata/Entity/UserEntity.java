@@ -218,5 +218,13 @@ public class UserEntity implements UserDetails {
     public void setActivities(List<ActivityEntity> activities) {
         this.activities = activities;
     }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
     
 }

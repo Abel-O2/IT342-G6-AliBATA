@@ -1,9 +1,9 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography, List, ListItem, ListItemText, Paper } from "@mui/material";
 import axios from "axios";
 import {jwtDecode} from "jwt-decode"; // Import jwt-decode
 import SidebarLayout from "../SidebarLayout";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Story = () => {
   const [stories, setStories] = useState([]);
@@ -15,24 +15,40 @@ const Story = () => {
   const [storyId, setStoryId] = useState(null); // Add storyId state
   const navigate = useNavigate();
 
-  // Decode token and fetch stories
+  // Decode token, check role, and fetch stories
   useEffect(() => {
-    const fetchStories = async () => {
+    const fetchUserAndStories = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       try {
-        // Decode the token to get the userId
-        const token = localStorage.getItem("token");
-        if (token) {
-          const decodedToken = jwtDecode(token);
-          setUserId(decodedToken.userId); // Extract userId from the token
-        } else {
-          setMessage("No token found. Please log in.");
+        // Decode the token to get user details
+        const decodedToken = jwtDecode(token);
+        setUserId(decodedToken.userId); // Extract userId from the token
+
+        // Fetch user details using the token
+        const userResponse = await axios.get(`http://localhost:8080/api/alibata/users/${decodedToken.userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const userDetails = userResponse.data;
+        console.log("Fetched user details:", userDetails);
+
+        // Redirect non-admin users
+        if (userDetails.role !== "ADMIN") {
+          navigate("/home");
           return;
         }
 
         // Fetch stories
         const storiesResponse = await axios.get("http://localhost:8080/api/alibata/stories", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         console.log("API Response:", storiesResponse.data);
@@ -43,13 +59,13 @@ const Story = () => {
           setStoryId(storiesResponse.data[0].storyId); // Set the first story's ID
         }
       } catch (err) {
-        console.error("Failed to fetch stories:", err.response?.data || err.message);
-        setMessage("Failed to fetch stories. Please try again.");
+        console.error("Failed to fetch user or stories:", err.response?.data || err.message);
+        setMessage("Failed to fetch user or stories. Please try again.");
       }
     };
 
-    fetchStories();
-  }, []);
+    fetchUserAndStories();
+  }, [navigate]);
 
   // Handle story creation
   const handleCreateStory = async () => {
@@ -61,11 +77,7 @@ const Story = () => {
     try {
       const response = await axios.post(
         "http://localhost:8080/api/alibata/stories",
-        { 
-          title, 
-          storyText, 
-          youtubeVideoId, 
-          completed: false },
+        { title, storyText, youtubeVideoId, completed: false },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -136,17 +148,17 @@ const Story = () => {
   return (
     <SidebarLayout>
       <Box sx={{ p: 4 }}>
-         <Typography
-                  onClick={() => navigate("/activity")}
-                  sx={{
-                    color: "white",
-                    cursor: "pointer",
-                    textDecoration: "underline",
-                    mb: 2,
-                  }}
-                >
-                  Back
-                </Typography>
+        <Typography
+          onClick={() => navigate("/admin")}
+          sx={{
+            color: "white",
+            cursor: "pointer",
+            textDecoration: "underline",
+            mb: 2,
+          }}
+        >
+          Back
+        </Typography>
         <Typography variant="h4" mb={3}>
           Stories
         </Typography>

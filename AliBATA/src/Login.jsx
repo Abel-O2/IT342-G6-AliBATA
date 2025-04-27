@@ -33,19 +33,25 @@ export default function Login() {
       const res = await API.post('/login', { email: schoolId, password });
       console.log("Login successful:", res.data);
 
-      // Save token and user data to localStorage
+      // Save token to localStorage
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      //navigate("/home"); // Redirect to homepage
-
+      // Decode the token to get user details
       const decodedToken = jwtDecode(res.data.token);
       console.log("Decoded token:", decodedToken);
 
-      //const user = JSON.parse(localStorage.getItem("user"));
-      //console.log("Stored user:", user);
+      // Fetch user details using the token
+      const userResponse = await API.get(`http://localhost:8080/api/alibata/users/${decodedToken.userId}`, {
+        headers: {
+          Authorization: `Bearer ${res.data.token}`,
+        },
+      });
 
-      if (decodedToken.userId === 1) {
+      const userDetails = userResponse.data; // Assuming the API returns user details
+      console.log("Fetched user details:", userDetails);
+
+      // Redirect based on user role
+      if (userDetails.role === "ADMIN") {
         navigate("/admin");
       } else {
         navigate("/home");

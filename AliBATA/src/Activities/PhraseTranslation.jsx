@@ -22,10 +22,10 @@ function PhraseTranslation() {
       try {
         const response = await axios.get(`http://localhost:8080/api/alibata/questions/activities/${activityId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+            Authorization: `Bearer ${localStorage.getItem("token")}`, 
           },
         });
-        setQuestions(response.data); // Store the questions in state
+        setQuestions(response.data); 
       } catch (err) {
         console.error("Failed to fetch questions:", err.response?.data || err.message);
         setMessage("Failed to fetch questions. Please try again.");
@@ -36,23 +36,33 @@ function PhraseTranslation() {
   }, [activityId]);
 
   const submitPhrase = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setMessage("You are not logged in. Please log in again.");
+      navigate("/login");
+      return;
+    }
+
     if (!phrase) {
       setMessage("Please enter a phrase to post.");
       return;
     }
 
     try {
+      // Create a FormData object to send as multipart/form-data
+      const formData = new FormData();
+      formData.append("questionDescription", phrase); // Add the phrase as questionDescription
+      formData.append("questionText", null); // Explicitly set to null
+      formData.append("image", null); // Add null for the image (or attach a file if needed)
+
       // Post the phrase to the backend
       const response = await axios.post(
         `http://localhost:8080/api/alibata/questions/activities/${activityId}`,
-        {
-          questionDescription: phrase, // Set the phrase as questionDescription
-          questionText: null, // Explicitly set to null
-          questionImage: null, // Explicitly set to null
-        },
+        formData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+            Authorization: `Bearer ${token}`, // Include token
+            "Content-Type": "multipart/form-data", // Set the correct Content-Type
           },
         }
       );
@@ -313,14 +323,18 @@ function PhraseTranslation() {
           </Typography>
           <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
             <List>
-              {questions.map((question, index) => (
-                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                  <ListItemText
-                    primary={`Phrase: ${question.questionDescription}`}
-                    secondary={`Correct Answer: ${question.correctTranslation || "N/A"}`}
-                  />
-                </ListItem> 
-              ))}
+              {questions.length > 0 ? (
+                questions.map((question, index) => (
+                  <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                    <ListItemText
+                      primary={`Phrase: ${question.questionDescription || "N/A"}`}
+                      /*secondary={`Correct Answer: ${question.correctTranslation || "N/A"}`}*/
+                    />
+                  </ListItem>
+                ))
+              ) : (
+                <Typography color="white">No questions available.</Typography>
+              )}
             </List>
           </Paper>
         </Box>

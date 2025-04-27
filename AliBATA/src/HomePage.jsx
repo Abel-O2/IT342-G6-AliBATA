@@ -5,33 +5,51 @@ import diamondImage from "./assets/diamond.png";
 import axios from "axios";
 
 const HomePage = () => {
-  const [points, setPoints] = useState(0); // State to store points
+  const [activities, setActivities] = useState([]); // State to store activities
+  const [stories, setStories] = useState([]); // State to store stories
   const [error, setError] = useState(""); // State to handle errors
 
   useEffect(() => {
-    const fetchPoints = async () => {
+    const fetchActivities = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        console.log("User data:", user); 
-        if (!user || !user.userId) { 
-          setError("User not found. Please log in again.");
-          return;
+        const response = await axios.get("http://localhost:8080/api/alibata/activities", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("Activities response:", response.data);
+        if (!response || !Array.isArray(response.data)) {
+          throw new Error("Invalid activities response from the server.");
         }
-
-        // Fetch total points for the user
-        const response = await axios.get(
-          `http://localhost:8080/api/alibata/scores/users/${user.userId}/total`
-        );
-        console.log("Backend response:", response);
-        const totalPoints=response.data ?? 0;
-        setPoints(totalPoints); 
+        setActivities(response.data); // Store activities in state
       } catch (err) {
-        console.error("Failed to fetch points:", err.response?.data || err.message);
-        setPoints(0);
+        console.error("Failed to fetch activities:", err.message || err.response?.data);
+        setError("Failed to fetch activities. Please try again.");
       }
     };
 
-    fetchPoints();
+    const fetchStories = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/alibata/stories", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("Stories response:", response.data);
+        if (!response || !Array.isArray(response.data)) {
+          throw new Error("Invalid stories response from the server.");
+        }
+        // Filter completed stories
+        const completedStories = response.data.filter((story) => story.completed);
+        setStories(completedStories); // Store completed stories in state
+      } catch (err) {
+        console.error("Failed to fetch stories:", err.message || err.response?.data);
+        setError("Failed to fetch stories. Please try again.");
+      }
+    };
+
+    fetchActivities();
+    fetchStories();
   }, []);
 
   return (
@@ -40,11 +58,6 @@ const HomePage = () => {
         Progress Dashboard
       </Typography>
       <hr />
-      <Box sx={{ mt: 3, display: "flex", alignItems: "center", gap: 1 }}>
-        <Typography variant="h5" color="white">Points: </Typography>
-        <img src={diamondImage} alt="Diamond" width="50" />
-        <Typography variant="h5" color="white">{points}</Typography> {/* Display points */}
-      </Box>
 
       {error && (
         <Typography color="error" sx={{ mt: 2 }}>
@@ -62,8 +75,22 @@ const HomePage = () => {
           width: "97.5%",
         }}
       >
-        <Typography variant="h6">Activities Completed</Typography>
-        <Typography variant="h3" fontWeight="bold">25</Typography>
+        <Typography variant="h6">Activities</Typography>
+        <List>
+          {activities.length > 0 ? (
+            activities.map((activity) => (
+              <ListItem key={activity.activityId} sx={{ borderBottom: "1px solid #444" }}>
+                <ListItemText
+                  primary={`Activity: ${activity.gameType}`}
+                  secondary={`Activity Name: ${activity.activityName}`}
+                  //secondary={`Completed: ${activity.isCompleted ? "Yes" : "No"}`}
+                />
+              </ListItem>
+            ))
+          ) : (
+            <Typography color="white">No activities available.</Typography>
+          )}
+        </List>
       </Paper>
 
       <Paper
@@ -77,23 +104,26 @@ const HomePage = () => {
           boxShadow: "0px 4px 10px rgba(255,255,255,0.5)",
         }}
       >
-       <Typography variant="h5">Subscription: Basic Tier</Typography>
+        <Typography variant="h5">Subscription: Basic Tier</Typography>
       </Paper>
 
       <Paper sx={{ p: 3, mt: 4, bgcolor: "#222", color: "white", width: "97.5%" }}>
-        <Typography variant="h6" fontWeight="bold">Stories Your Child Finished Reading</Typography>
+        <Typography variant="h6" fontWeight="bold">
+          Stories Available ({stories.length})
+        </Typography>
         <List>
-          {[
-            "📖 Ang Kataposang Sugilanon ni Borges",
-            "📖 Ang Kalibotan Gawas sa Kalibotan",
-            "📖 Ang Batang Unggoy",
-            "📖 Lumba sa Balyena",
-            "📖 Ang Mapahitas-on nga Mariposa",
-          ].map((story, index) => (
-            <ListItem key={index}>
-              <ListItemText primary={story} />
-            </ListItem>
-          ))}
+          {stories.length > 0 ? (
+            stories.map((story) => (
+              <ListItem key={story.storyId} sx={{ borderBottom: "1px solid #444" }}>
+                <ListItemText
+                  primary={`📖 ${story.title}`}
+                  secondary={story.storyText}
+                />
+              </ListItem>
+            ))
+          ) : (
+            <Typography color="white">No completed stories available.</Typography>
+          )}
         </List>
       </Paper>
     </SidebarLayout>

@@ -20,7 +20,7 @@ const SignUp = () => {
   const [isChecked, setIsChecked] = useState(false); // State for the checkbox
 
   const API = axios.create({
-    baseURL: "http://localhost:8080/api/alibata/auth",
+    baseURL: "https://alibata.duckdns.org/api/alibata/auth",
     timeout: 100000,
     headers: {
       "Content-Type": "application/json",

@@ -24,7 +24,7 @@ const AdminDashboard = () => {
         console.log("Decoded token:", decodedToken);
 
         // Fetch user details using the token
-        const userResponse = await axios.get(`http://localhost:8080/api/alibata/users/${decodedToken.userId}`, {
+        const userResponse = await axios.get(`https://alibata.duckdns.org/api/alibata/users/${decodedToken.userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -40,7 +40,7 @@ const AdminDashboard = () => {
         }
 
         // Fetch the list of users (only for admins)
-        const usersResponse = await axios.get("http://localhost:8080/api/alibata/users", {
+        const usersResponse = await axios.get("https://alibata.duckdns.org/api/alibata/users", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

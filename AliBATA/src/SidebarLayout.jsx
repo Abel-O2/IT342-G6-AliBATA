@@ -29,7 +29,7 @@ const SidebarLayout = ({ children }) => {
         // Fetch user details from the backend
         const fetchUser = async () => {
           try {
-            const response = await axios.get(`http://localhost:8080/api/alibata/users/${decoded.userId}`, {
+            const response = await axios.get(`https://alibata.duckdns.org/api/alibata/users/${decoded.userId}`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },

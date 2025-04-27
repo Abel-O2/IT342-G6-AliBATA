@@ -12,7 +12,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/alibata/activities", {
+        const response = await axios.get("https://alibata.duckdns.org/api/alibata/activities", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -30,7 +30,7 @@ const HomePage = () => {
 
     const fetchStories = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/alibata/stories", {
+        const response = await axios.get("https://alibata.duckdns.org/api/alibata/stories", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

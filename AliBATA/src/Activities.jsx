@@ -12,7 +12,7 @@ const Activities = () => {
     try {
       // Create the activity with the required fields
       const response = await axios.post(
-        "http://localhost:8080/api/alibata/activities",
+        "https://alibata.duckdns.org/api/alibata/activities",
         {
           activityName, // Name of the activity
           gameType, // Type of the game

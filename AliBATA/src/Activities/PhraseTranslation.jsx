@@ -20,7 +20,7 @@ function PhraseTranslation() {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/alibata/questions/activities/${activityId}`, {
+        const response = await axios.get(`https://alibata.duckdns.org/api/alibata/questions/activities/${activityId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, 
           },
@@ -57,7 +57,7 @@ function PhraseTranslation() {
 
       // Post the phrase to the backend
       const response = await axios.post(
-        `http://localhost:8080/api/alibata/questions/activities/${activityId}`,
+        `https://alibata.duckdns.org/api/alibata/questions/activities/${activityId}`,
         formData,
         {
           headers: {
@@ -136,7 +136,7 @@ function PhraseTranslation() {
 
         // Add the choice to the backend
         await axios.post(
-          `http://localhost:8080/api/alibata/choices/questions/${questionId}`,
+          `https://alibata.duckdns.org/api/alibata/choices/questions/${questionId}`,
           {
             choiceText: choice,
             choiceOrder: isGeneratedChoice ? i + 1 : null, // Add choiceOrder for generated choices, null for manual choices
@@ -157,7 +157,7 @@ function PhraseTranslation() {
 
       // Set the score for the question
       await axios.post(
-        `http://localhost:8080/api/alibata/scores/questions/${questionId}`,
+        `https://alibata.duckdns.org/api/alibata/scores/questions/${questionId}`,
         null,
         {
           params: { scoreValue: score },

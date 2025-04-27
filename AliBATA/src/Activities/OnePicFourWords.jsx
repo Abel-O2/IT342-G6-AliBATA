@@ -19,6 +19,10 @@ function OnePicFourWords() {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      setMessage("File size exceeds the 10MB limit. Please upload a smaller file.");
+      return;
+    }
     setImage(file);
     setImagePreview(URL.createObjectURL(file));
   };
@@ -48,35 +52,36 @@ function OnePicFourWords() {
       return;
     }
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setMessage("You are not logged in. Please log in again.");
+      navigate("/login");
+      return;
+    }
+
     try {
-      // Convert the image file to a base64 string
-      const toBase64 = (file) =>
-        new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result.split(",")[1]); // Extract base64 string
-          reader.onerror = (error) => reject(error);
-        });
+      // Log the token for debugging
+      console.log("Token:", token);
 
-      const base64Image = await toBase64(image);
+      // Create a FormData object to send as multipart/form-data
+      const formData = new FormData();
+      formData.append("questionText", "Sample Question Text"); 
+      formData.append("questionDescription", "Sample Question Description"); 
+      formData.append("questionImage", image); 
 
-      // Construct the JSON payload
-      const payload = {
-        questionText: null, // Explicitly set to null
-        questionDescription: null, // Explicitly set to null
-        questionImage: base64Image, // Send the image as a base64 string
-      };
+      // Log the FormData object for debugging
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
 
-      console.log("Submitting image with token:", localStorage.getItem("token")); // Debugging
-
-      // Send the JSON payload to the backend
+      // Post the image to the backend
       const response = await axios.post(
         `http://localhost:8080/api/alibata/questions/activities/${activityId}`,
-        payload,
+        formData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
-            "Content-Type": "application/json", // Set the content type for JSON
+            Authorization: `Bearer ${token}`, // Include token
+            "Content-Type": "multipart/form-data", // Set the correct Content-Type
           },
         }
       );
@@ -311,18 +316,22 @@ function OnePicFourWords() {
           </Typography>
           <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
             <List>
-              {questions.map((question, index) => (
-                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                  <ListItemText
-                    primary={`Question: ${question.questionText || "N/A"}`}
-                    secondary={
-                      question.choices && question.choices.length > 0
-                        ? `Choices: ${question.choices.map((choice) => choice.choiceText).join(", ")}`
-                        : "No choices available"
-                    }
-                  />
-                </ListItem>
-              ))}
+              {questions.length > 0 ? (
+                questions.map((question, index) => (
+                  <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                    <ListItemText
+                      primary={`Question: ${question.questionText || "N/A"}`}
+                      /*secondary={
+                        question.choices && question.choices.length > 0
+                          ? `Choices: ${question.choices.map((choice) => choice.choiceText).join(", ")}`
+                          : "No choices available"
+                      }*/
+                    />
+                  </ListItem>
+                ))
+              ) : (
+                <Typography color="white">No questions available.</Typography>
+              )}
             </List>
           </Paper>
         </Box>

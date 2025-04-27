@@ -41,18 +41,28 @@ function WordTranslation() {
       return;
     }
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setMessage("You are not logged in. Please log in again.");
+      navigate("/login");
+      return;
+    }
+
     try {
+      // Create a FormData object to send as multipart/form-data
+      const formData = new FormData();
+      formData.append("questionText", word); // Add the word as questionText
+      formData.append("questionDescription", ""); // Add an empty description (or set a value if needed)
+      formData.append("image", null); // Add null for the image (or attach a file if needed)
+
       // Post the word to the backend
       const response = await axios.post(
         `http://localhost:8080/api/alibata/questions/activities/${activityId}`,
-        {
-          questionText: word,
-          questionDescription: null, // Explicitly set to null
-          questionImage: null, // Explicitly set to null
-        },
+        formData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+            Authorization: `Bearer ${token}`, // Include token
+            "Content-Type": "multipart/form-data", // Set the correct Content-Type
           },
         }
       );
@@ -286,18 +296,22 @@ function WordTranslation() {
           </Typography>
           <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
             <List>
-              {questions.map((question, index) => (
-                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                  <ListItemText
-                    primary={`Question: ${question.questionText}`}
-                    secondary={
-                      question.choices && question.choices.length > 0
-                        ? `Choices: ${question.choices.map((choice) => choice.choiceText).join(", ")}`
-                        : "No choices available"
-                    }
-                  />
-                </ListItem>
-              ))}
+              {questions.length > 0 ? (
+                questions.map((question, index) => (
+                  <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                    <ListItemText
+                      primary={`Word: ${question.questionText || "N/A"}`}
+                      /* secondary={
+                        question.choices && question.choices.length > 0
+                          ? `Choices: ${question.choices.map((choice) => choice.choiceText).join(", ")}`
+                          : "No choices available"
+                      }*/
+                    />
+                  </ListItem>
+                ))
+              ) : (
+                <Typography color="white">No questions available.</Typography>
+              )}
             </List>
           </Paper>
         </Box>

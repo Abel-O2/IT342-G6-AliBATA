@@ -2,7 +2,6 @@ import { Grid, Box, Typography, Button, List, ListItem, ListItemText, Modal, Tex
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
 import EditUserModal from "./EditDetails";
 
 const drawerWidth = 240;
@@ -10,7 +9,6 @@ const drawerWidth = 240;
 const SidebarLayout = ({ children }) => {
   const navigate = useNavigate();
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
   const [userData, setUserData] = useState({
     userId: "",
     firstName: "",
@@ -23,7 +21,7 @@ const SidebarLayout = ({ children }) => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const decoded = jwtDecode(token);
+        const decoded = JSON.parse(atob(token.split(".")[1])); // Decode JWT token
         console.log("Decoded token:", decoded);
 
         // Fetch user details from the backend
@@ -37,7 +35,7 @@ const SidebarLayout = ({ children }) => {
             const user = response.data;
             console.log("Fetched user:", user);
 
-            // Set the username to the user's firstName
+            // Set the username and user data
             setUsername(user.firstName);
             setUserData({
               userId: user.userId,
@@ -66,22 +64,32 @@ const SidebarLayout = ({ children }) => {
     navigate("/login");
   };
 
-  const handleSave = (updatedUserData) => {
-    setUserData(updatedUserData);
-    setUsername(updatedUserData.firstName);
-    localStorage.setItem("username", updatedUserData.firstName);
-  };
+  const handleSave = async (updatedUserData) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `http://localhost:8080/api/alibata/users/${userData.userId}`,
+        {
+          firstName: updatedUserData.firstName,
+          middleName: updatedUserData.middleName,
+          lastName: updatedUserData.lastName,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Updated user response:", response.data);
 
-  const handleNameSubmit = () => {
-    if (userData.firstName.trim()) {
-      setIsNamePopupOpen(false);
-      setUsername(userData.firstName);
-      localStorage.setItem("username", userData.firstName);
+      // Update the local state with the new user data
+      setUserData(updatedUserData);
+      setUsername(updatedUserData.firstName);
+      localStorage.setItem("username", updatedUserData.firstName);
+      setIsEditOpen(false); // Close the modal
+    } catch (err) {
+      console.error("Failed to update user details:", err.message || err.response?.data);
     }
-  };
-
-  const handleNameChange = (e) => {
-    setUserData({ ...userData, firstName: e.target.value });
   };
 
   return (
@@ -128,8 +136,8 @@ const SidebarLayout = ({ children }) => {
           <List sx={{ mt: 4 }}>
             {[
               {
-                text: userData.userId === 1 || userData.role === "ADMIN" ? "🛠 Admin Dashboard" : "🏠 Home", 
-                action: userData.userId === 1 || userData.userRole === "ADMIN" ? () => navigate("/admin") : () => navigate("/home"), 
+                text: "🏠 Home",
+                action: () => navigate("/home"),
               },
               { text: "💳 Subscriptions", action: () => navigate("/payment") },
               { text: "📞 Contact Us", action: () => navigate("/contact") },
@@ -157,49 +165,6 @@ const SidebarLayout = ({ children }) => {
       >
         {children}
       </Box>
-      {/*<Modal open={isNamePopupOpen} onClose={() => setIsNamePopupOpen(false)}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "#2E2E2E",
-            borderRadius: 3,
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <Typography variant="h6" color="white" sx={{ mb: 2 }}>
-            Welcome! Please enter a username:
-          </Typography>
-          <TextField
-            label="Username"
-            variant="filled"
-            fullWidth
-            value={userData.firstName}
-            onChange={handleNameChange}
-            sx={{
-              mb: 2,
-              bgcolor: "#424242",
-              input: { color: "white" },
-              label: { color: "#BDBDBD" },
-            }}
-          />
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{
-              bgcolor: "#10B981",
-              ":hover": { bgcolor: "#059669" },
-            }}
-            onClick={handleNameSubmit}
-          >
-            Save
-          </Button>
-        </Box>
-      </Modal>*/}
 
       <EditUserModal
         open={isEditOpen}

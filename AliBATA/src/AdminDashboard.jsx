@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Paper, Button, List, ListItem, ListItemText } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SidebarLayout from "./SidebarLayout";
+import {jwtDecode} from "jwt-decode"; // Import jwt-decode
 import axios from "axios";
 
 const AdminDashboard = () => {
@@ -10,7 +11,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchUserAndUsers = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
         navigate("/login");
@@ -18,18 +19,40 @@ const AdminDashboard = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:8080/api/alibata/users", {
+        // Decode the token to get user details
+        const decodedToken = jwtDecode(token);
+        console.log("Decoded token:", decodedToken);
+
+        // Fetch user details using the token
+        const userResponse = await axios.get(`http://localhost:8080/api/alibata/users/${decodedToken.userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setUsers(response.data);
+
+        const userDetails = userResponse.data;
+        console.log("Fetched user details:", userDetails);
+
+        // Redirect non-admin users
+        if (userDetails.role !== "ADMIN") {
+          navigate("/home");
+          return;
+        }
+
+        // Fetch the list of users (only for admins)
+        const usersResponse = await axios.get("http://localhost:8080/api/alibata/users", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUsers(usersResponse.data);
       } catch (err) {
+        console.error("Failed to fetch users or user details:", err.response?.data || err.message);
         setError("Failed to fetch users. Please try again later.");
       }
     };
 
-    fetchUsers();
+    fetchUserAndUsers();
   }, [navigate]);
 
   return (
@@ -52,7 +75,7 @@ const AdminDashboard = () => {
           <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
             <List>
               {users.map((user, index) => (
-                 <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
                   <ListItemText
                     primary={`User #${index + 1}: ${user.firstName}`}
                     secondary={`Role: ${user.role}`}
@@ -74,8 +97,8 @@ const AdminDashboard = () => {
           </Button>
         </Box>
 
-         {/* Create Story Button */}
-         <Box mt={4}>
+        {/* Create Story Button */}
+        <Box mt={4}>
           <Button
             variant="contained"
             sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#059669" } }}

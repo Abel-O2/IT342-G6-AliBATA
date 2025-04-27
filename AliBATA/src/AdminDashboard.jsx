@@ -52,7 +52,7 @@ const AdminDashboard = () => {
           <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
             <List>
               {users.map((user, index) => (
-                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                 <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
                   <ListItemText
                     primary={`User #${index + 1}: ${user.firstName}`}
                     secondary={`Role: ${user.role}`}
@@ -71,6 +71,17 @@ const AdminDashboard = () => {
             onClick={() => navigate("/activity")}
           >
             Create an Activity
+          </Button>
+        </Box>
+
+         {/* Create Story Button */}
+         <Box mt={4}>
+          <Button
+            variant="contained"
+            sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#059669" } }}
+            onClick={() => navigate("/story")}
+          >
+            Create a Story
           </Button>
         </Box>
       </Box>

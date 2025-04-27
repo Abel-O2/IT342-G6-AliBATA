@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, TextField, Button, Paper, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Typography, Button, Paper, List, ListItem, ListItemText, TextField } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import SidebarLayout from "../SidebarLayout";
 import axios from "axios";
@@ -16,16 +16,6 @@ function OnePicFourWords() {
   const { activityId } = useParams(); // Get activityId from the route
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(null);
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file.size > 10 * 1024 * 1024) { // 10MB limit
-      setMessage("File size exceeds the 10MB limit. Please upload a smaller file.");
-      return;
-    }
-    setImage(file);
-    setImagePreview(URL.createObjectURL(file));
-  };
 
   // Fetch questions for the activity
   useEffect(() => {
@@ -46,6 +36,16 @@ function OnePicFourWords() {
     fetchQuestions();
   }, [activityId]);
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      setMessage("File size exceeds the 10MB limit. Please upload a smaller file.");
+      return;
+    }
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
   const submitImage = async () => {
     if (!image) {
       setMessage("Please upload an image.");
@@ -60,19 +60,11 @@ function OnePicFourWords() {
     }
 
     try {
-      // Log the token for debugging
-      console.log("Token:", token);
-
       // Create a FormData object to send as multipart/form-data
       const formData = new FormData();
-      formData.append("questionText", "Sample Question Text"); 
-      formData.append("questionDescription", "Sample Question Description"); 
-      formData.append("questionImage", image); 
-
-      // Log the FormData object for debugging
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
+      formData.append("questionDescription", "null"); // Set questionDescription to null
+      formData.append("questionText", "null"); // Set questionText to null
+      formData.append("image", image); // Add the image file
 
       // Post the image to the backend
       const response = await axios.post(
@@ -183,158 +175,169 @@ function OnePicFourWords() {
 
   return (
     <SidebarLayout>
-        <Typography
-          onClick={() => navigate("/activity")}
+      <Typography
+        onClick={() => navigate("/activity")}
+        sx={{
+          color: "white",
+          cursor: "pointer",
+          textDecoration: "underline",
+          mb: 2,
+        }}
+      >
+        Back
+      </Typography>
+      <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
+        1 Picture 4 Words Activity
+      </Typography>
+
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
+        {/* Image Upload */}
+        <Typography color="white">Upload Image:</Typography>
+        <Button variant="contained" component="label" sx={{ bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}>
+          Upload Image
+          <input type="file" hidden onChange={handleImageUpload} />
+        </Button>
+        {image && <Typography color="white">Selected File: {image.name}</Typography>}
+        {imagePreview && (
+          <Box mt={2}>
+            <Typography color="white">Image Preview:</Typography>
+            <img
+              src={imagePreview}
+              alt="Preview"
+              style={{ width: "100%", maxHeight: "300px", objectFit: "contain", marginTop: "10px" }}
+            />
+          </Box>
+        )}
+        <Button
+          variant="contained"
+          onClick={submitImage}
           sx={{
-            color: "white",
-            cursor: "pointer",
-            textDecoration: "underline",
-            mb: 2,
+            bgcolor: "#10B981",
+            ":hover": { bgcolor: "#059669" },
           }}
         >
-          Back
-        </Typography>
-        <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
-          1 Picture 4 Words Activity
-        </Typography>
+          Submit Image
+        </Button>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
-          {/* Image Upload */}
-          <Typography color="white">Upload Image:</Typography>
-          <Button variant="contained" component="label" sx={{ bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}>
-            Upload Image
-            <input type="file" hidden onChange={handleImageUpload} />
-          </Button>
-          {image && <Typography color="white">Selected File: {image.name}</Typography>}
-          {imagePreview && (
-            <Box mt={2}>
-              <Typography color="white">Image Preview:</Typography>
-              <img
-                src={imagePreview}
-                alt="Preview"
-                style={{ width: "100%", maxHeight: "300px", objectFit: "contain", marginTop: "10px" }}
-              />
-            </Box>
-          )}
-          <Button
-            variant="contained"
-            onClick={submitImage}
-            sx={{
-              bgcolor: "#10B981",
-              ":hover": { bgcolor: "#059669" },
-            }}
-          >
-            Submit Image
-          </Button>
+        {/* Correct Answer Input */}
+        <TextField
+          label="Correct Answer"
+          variant="outlined"
+          value={correctAnswer}
+          onChange={(e) => setCorrectAnswer(e.target.value)}
+          fullWidth
+          sx={{
+            bgcolor: "#424242",
+            input: { color: "white" },
+            label: { color: "#BDBDBD" },
+          }}
+        />
 
-          {/* Correct Answer Input */}
-          <TextField
-            label="Correct Answer"
-            variant="outlined"
-            value={correctAnswer}
-            onChange={(e) => setCorrectAnswer(e.target.value)}
-            fullWidth
-            sx={{
-              bgcolor: "#424242",
-              input: { color: "white" },
-              label: { color: "#BDBDBD" },
-            }}
-          />
+        {/* Add Choice Input */}
+        <TextField
+          label="Add Choice"
+          variant="outlined"
+          value={inputChoice}
+          onChange={(e) => setInputChoice(e.target.value)}
+          fullWidth
+          sx={{
+            bgcolor: "#424242",
+            input: { color: "white" },
+            label: { color: "#BDBDBD" },
+          }}
+        />
+        <Button
+          variant="contained"
+          onClick={addChoice}
+          disabled={!isImageSubmitted} // Disable if the image is not submitted
+          sx={{
+            bgcolor: isImageSubmitted ? "#10B981" : "#9CA3AF", // Change color if disabled
+            ":hover": isImageSubmitted ? { bgcolor: "#059669" } : {},
+          }}
+        >
+          Add Choice
+        </Button>
 
-          {/* Add Choice Input */}
-          <TextField
-            label="Add Choice"
-            variant="outlined"
-            value={inputChoice}
-            onChange={(e) => setInputChoice(e.target.value)}
-            fullWidth
-            sx={{
-              bgcolor: "#424242",
-              input: { color: "white" },
-              label: { color: "#BDBDBD" },
-            }}
-          />
-          <Button
-            variant="contained"
-            onClick={addChoice}
-            disabled={!isImageSubmitted} // Disable if the image is not submitted
-            sx={{
-              bgcolor: isImageSubmitted ? "#10B981" : "#9CA3AF", // Change color if disabled
-              ":hover": isImageSubmitted ? { bgcolor: "#059669" } : {},
-            }}
-          >
-            Add Choice
-          </Button>
-
-          {/* Choices List */}
-          <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
-            <Typography variant="h6" color="white" mb={2}>
-              Choices
-            </Typography>
-            <List>
-              {choices.map((choice, index) => (
-                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                  <ListItemText primary={choice} />
-                  <Button
-                    variant="text"
-                    color="error"
-                    onClick={() => removeChoice(choice)}
-                  >
-                    Remove
-                  </Button>
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
-        </Box>
-
-        {/* Submit Button */}
-        <Box mt={4}>
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            sx={{
-              bgcolor: "#3B82F6",
-              ":hover": { bgcolor: "#2563EB" },
-            }}
-          >
-            Save Choices
-          </Button>
-        </Box>
-
-        {/* Message */}
-        {message && (
-          <Typography color="white" sx={{ mt: 2 }}>
-            {message}
-          </Typography>
-        )}
-
-        {/* List of Questions */}
-        <Box mt={4}>
+        {/* Choices List */}
+        <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
           <Typography variant="h6" color="white" mb={2}>
-            List of Questions
+            Choices
           </Typography>
-          <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
-            <List>
-              {questions.length > 0 ? (
-                questions.map((question, index) => (
-                  <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                    <ListItemText
-                      primary={`Question: ${question.questionText || "N/A"}`}
-                      /*secondary={
-                        question.choices && question.choices.length > 0
-                          ? `Choices: ${question.choices.map((choice) => choice.choiceText).join(", ")}`
-                          : "No choices available"
-                      }*/
-                    />
-                  </ListItem>
-                ))
-              ) : (
-                <Typography color="white">No questions available.</Typography>
-              )}
-            </List>
-          </Paper>
-        </Box>
+          <List>
+            {choices.map((choice, index) => (
+              <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                <ListItemText primary={choice} />
+                <Button
+                  variant="text"
+                  color="error"
+                  onClick={() => removeChoice(choice)}
+                >
+                  Remove
+                </Button>
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      </Box>
+
+      {/* Submit Button */}
+      <Box mt={4}>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          sx={{
+            bgcolor: "#3B82F6",
+            ":hover": { bgcolor: "#2563EB" },
+          }}
+        >
+          Save Choices
+        </Button>
+      </Box>
+
+      {/* Message */}
+      {message && (
+        <Typography color="white" sx={{ mt: 2 }}>
+          {message}
+        </Typography>
+      )}
+
+      {/* List of Questions */}
+      <Box mt={4}>
+        <Typography variant="h6" color="white" mb={2}>
+          List of Questions
+        </Typography>
+        <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
+          <List>
+            {questions.length > 0 ? (
+              questions.map((question, index) => (
+                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    {/* Display the question image */}
+                    {question.questionImage && (
+                      <img
+                        src={imagePreview}
+                        alt={`Question ${index + 1}`}
+                        style={{
+                          width: "100%",
+                          maxHeight: "200px",
+                          objectFit: "contain",
+                          marginBottom: "10px",
+                        }}
+                      />
+                    )}
+                    {/* Display the correct answer */}
+                    {/*<Typography color="white" variant="body1">
+                      <strong>Correct Answer:</strong> {question.setCorrectAnswer}
+                    </Typography>*/}
+                  </Box>
+                </ListItem>
+              ))
+            ) : (
+              <Typography color="white">No questions available.</Typography>
+            )}
+          </List>
+        </Paper>
+      </Box>
     </SidebarLayout>
   );
 }

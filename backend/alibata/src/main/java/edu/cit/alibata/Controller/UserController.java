@@ -49,6 +49,8 @@ public class UserController {
             )
         }
     )
+    // access
+    @PreAuthorize("hasAuthority('admin:create')")
     public UserEntity postUserEntity(@RequestBody UserEntity user){
         return userServ.postUserEntity(user);
     }

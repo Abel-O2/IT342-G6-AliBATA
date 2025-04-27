@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,6 +91,7 @@ public class StoryController {
             )
         }
     )
+    @PreAuthorize("#userId == principal.userId or hasAuthority('admin:read')")
     public ResponseEntity<List<UserStoryProjection>> getAllStoriesForUser(@PathVariable int userId) {
         List<UserStoryProjection> userStories = storyService.getAllStoriesForUser(userId);
         return ResponseEntity.ok().body(userStories);
@@ -137,6 +139,7 @@ public class StoryController {
             )
         }
     )
+    @PreAuthorize("hasAuthority('admin:update')")
     public ResponseEntity<StoryEntity> putStoryEntity(@PathVariable int id, @RequestBody StoryEntity newStory) {
         StoryEntity putStory = storyService.putStoryEntity(id, newStory);
         return ResponseEntity.ok().body(putStory);
@@ -177,6 +180,7 @@ public class StoryController {
             )
         }
     )
+    @PreAuthorize("#userId == principal.userId or hasAuthority('admin:update')")
     public ResponseEntity<Void> markStoryAsCompleted(@PathVariable int id, @PathVariable int userId) {
         storyService.markStoryAsCompleted(userId, id);
         return ResponseEntity.ok().build();

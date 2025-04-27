@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -107,6 +108,7 @@ public class ActivityController {
             )
         }
     )
+    @PreAuthorize("#userId == principal.userId or hasAuthority('admin:read')")
     public ResponseEntity<List<UserActivityProjection>> getAllActivitiesForUser(@PathVariable int userId) {
         List<UserActivityProjection> userActivities = activityServ.getAllActivitiesForUser(userId);
         return ResponseEntity.ok().body(userActivities);
@@ -134,6 +136,7 @@ public class ActivityController {
             )
         }
     )
+    @PreAuthorize("hasAuthority('admin:update')")
     public ResponseEntity<ActivityEntity> putActivityEntity(@PathVariable int id, @RequestBody ActivityEntity newActivity) {
         ActivityEntity putActivity = activityServ.putActivityEntity(id, newActivity);
         return ResponseEntity.ok().body(putActivity);
@@ -174,6 +177,7 @@ public class ActivityController {
             )
         }
     )
+    @PreAuthorize("#userId == principal.userId or hasAuthority('admin:update')")
     public ResponseEntity<Void> markActivityAsCompleted(@PathVariable int id, @PathVariable int userId) {
         activityServ.markActivityAsCompleted(userId, id);
         return ResponseEntity.ok().build();

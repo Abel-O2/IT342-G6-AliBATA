@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +51,7 @@ public class ScoreController {
             )
         }
     )
+    @PreAuthorize("hasAuthority('admin:create')")
     public ResponseEntity<ScoreEntity> setScoreForQuestion(@PathVariable int questionId, @RequestParam int scoreValue) {
         ScoreEntity postScore = scoreService.setScoreForQuestion(questionId, scoreValue);
         return ResponseEntity.status(201).body(postScore);
@@ -154,6 +156,7 @@ public class ScoreController {
             )
         }
     )
+    @PreAuthorize("#userId == principal.userId or hasAuthority('admin:create')")
     public ResponseEntity<Void> awardScoreToUser(@PathVariable int questionId, @PathVariable int userId, @RequestParam int selectedChoiceId) {
         scoreService.awardScoreToUser(questionId, userId, selectedChoiceId);
         return ResponseEntity.ok().build();
@@ -174,6 +177,7 @@ public class ScoreController {
             )
         }
     )
+    @PreAuthorize("#userId == principal.userId or hasAuthority('admin:read')")
     public ResponseEntity<Integer> getTotalScoreForUser(@PathVariable int userId) {
         int totalScore = scoreService.getTotalScoreForUser(userId);
         return ResponseEntity.ok().body(totalScore);
@@ -201,6 +205,7 @@ public class ScoreController {
             )
         }
     )
+    @PreAuthorize("#userId == principal.userId or hasAuthority('admin:create')")
     public ResponseEntity<Void> awardScoreForTranslationGame(@PathVariable int questionId, @PathVariable int userId, @RequestBody List<Integer> userSelectedChoiceIds) {
         scoreService.awardScoreToUserForTranslationGame(questionId, userId, userSelectedChoiceIds);
         return ResponseEntity.ok().build();

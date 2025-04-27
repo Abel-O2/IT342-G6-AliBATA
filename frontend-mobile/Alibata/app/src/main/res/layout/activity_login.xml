@@ -7,8 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="@color/pastel_mint_light"
     tools:context=".Login">
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -84,7 +84,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            style="@style/PastelButton"
+            style="@style/ChildButton"
             android:id="@+id/btnLoginEnter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

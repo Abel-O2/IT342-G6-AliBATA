@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#121212</color>
-    <color name="light_green">#D6EFE4</color>
-    <color name="green">#28A745</color>
-    <color name="white">#FFFFFF</color>
-    <color name="teal_50">#E0F2F1</color>
-    <color name="gray">#BDBDBD</color>
+    <color name="pastel_peach_light">#FFE5D4</color>
+    <color name="pastel_mint_light">#DFF7E4</color>
+    <color name="pastel_lavender_light">#F3E8FF</color>
+    <color name="pastel_blue_light">#DDEFFE</color>
+    <color name="pastel_yellow">#FFF9C4</color> <!-- Light pastel yellow -->
+    <color name="pastel_yellow_light">#FFFDE7</color> <!-- Even lighter yellow -->
+    <color name="pastel_green">#C8E6C9</color>
 
-    <color name="pastel_blue">#AEDFF7</color>
-    <color name="pastel_pink">#F7CFE0</color>
-    <color name="pastel_green">#C2F7D4</color>
-    <color name="pastel_yellow">#FCF6BD</color>
-    <color name="background_light">#FDFDFD</color>
-    <color name="text_primary">#3E3E40</color>
+    <!-- Darker text for readability -->
+    <color name="text_primary_dark">#2E2E34</color>
+
+    <!-- Accent shapes -->
+    <color name="accent_playful">#F7CFE0</color>
 
 </resources>

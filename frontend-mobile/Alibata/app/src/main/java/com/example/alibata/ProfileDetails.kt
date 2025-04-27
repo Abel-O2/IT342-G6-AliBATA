@@ -77,7 +77,7 @@ class ProfileDetails : AppCompatActivity() {    private lateinit var binding: Ac
         val subscribed = user.subscriptionStatus
         Log.d("SubscriptionCheck", "Subscription status: $subscribed")
 
-        val colorRes = if (subscribed) R.color.green else android.R.color.darker_gray
+        val colorRes = if (subscribed) R.color.pastel_green else android.R.color.darker_gray
         val color = ContextCompat.getColor(this, colorRes)
         binding.viewSubscriptionStatus.setBackgroundColor(color)
 

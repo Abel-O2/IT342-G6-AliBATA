@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="ChildFriendlyTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/pastel_blue</item>
-        <item name="colorPrimaryVariant">@color/pastel_green</item>
-        <item name="colorOnPrimary">@color/text_primary</item>
-        <item name="android:fontFamily">sans-serif</item>
+    <style name="ChildButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:radius">16dp</item>
+        <item name="android:backgroundTint">@color/pastel_lavender_light</item>
+        <item name="android:textColor">@color/text_primary_dark</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
     </style>
 
-    <style name="PastelButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:backgroundTint">@color/pastel_pink</item>
-        <item name="cornerRadius">16dp</item>
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="android:fontFamily">sans-serif</item>
+    <style name="ChildTextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/accent_playful</item>
+        <item name="boxCornerRadiusTopStart">8dp</item>
+        <item name="boxCornerRadiusTopEnd">8dp</item>
+        <item name="boxCornerRadiusBottomStart">8dp</item>
+        <item name="boxCornerRadiusBottomEnd">8dp</item>
+        <item name="hintTextColor">@color/accent_playful</item>
     </style>
 
     <style name="PastelInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeColor">@color/pastel_blue</item>
-        <item name="hintTextColor">@color/pastel_green</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="boxBackgroundColor">@color/pastel_peach_light</item>
+        <item name="hintTextColor">@color/text_primary_dark</item>
+        <item name="android:textColor">@color/text_primary_dark</item>
     </style>
 </resources>

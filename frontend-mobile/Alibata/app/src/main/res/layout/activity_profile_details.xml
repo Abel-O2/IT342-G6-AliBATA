@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFCBE1"
+    android:background="@color/pastel_lavender_light"
     android:padding="16dp">
 
     <LinearLayout
@@ -18,25 +18,27 @@
             android:text="Profile Information"
             android:textSize="24sp"
             android:textStyle="bold"
+            android:textColor="@color/text_primary_dark"
             android:layout_marginBottom="24dp"/>
 
         <!-- First Name -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilFirstName"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/ChildTextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="First Name">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etFirstName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary_dark"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Middle Name -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilMiddleName"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/ChildTextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Middle Name"
@@ -44,13 +46,14 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etMiddleName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary_dark"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Last Name -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilLastName"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/ChildTextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Last Name"
@@ -58,13 +61,14 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etLastName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary_dark"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Email -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilEmail"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/ChildTextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
@@ -73,7 +77,8 @@
                 android:id="@+id/etEmail"
                 android:inputType="textEmailAddress"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary_dark"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Subscription Status -->
@@ -89,7 +94,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Subscribed:"
-                android:textSize="16sp"/>
+                android:textSize="16sp"
+                android:textColor="@color/text_primary_dark"/>
 
             <!-- Colored status bar -->
             <View
@@ -99,7 +105,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_gravity="center_vertical"
-                android:background="@color/gray"
+                android:background="@drawable/status_indicator_round"
                 android:contentDescription="Subscription status indicator" />
         </LinearLayout>
 
@@ -113,12 +119,14 @@
 
             <Button
                 android:id="@+id/btnEdit"
+                style="@style/ChildButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Edit"/>
 
             <Button
                 android:id="@+id/btnSave"
+                style="@style/ChildButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Save"

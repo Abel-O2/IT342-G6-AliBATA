@@ -12,8 +12,8 @@ const HomePage = () => {
     const fetchPoints = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log("User data:", user); // Log user data
-        if (!user || !user.userId) { // Use userId as per the decoded token
+        console.log("User data:", user); 
+        if (!user || !user.userId) { 
           setError("User not found. Please log in again.");
           return;
         }

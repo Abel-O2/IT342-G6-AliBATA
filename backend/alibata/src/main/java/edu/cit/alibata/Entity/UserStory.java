@@ -1,5 +1,6 @@
 package edu.cit.alibata.Entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class UserStory {
     @JoinColumn(name = "story_id", nullable = false)
     private StoryEntity story;
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean completed = false;
 
     public UserStory() {

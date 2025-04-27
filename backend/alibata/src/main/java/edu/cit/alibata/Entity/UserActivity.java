@@ -1,5 +1,6 @@
 package edu.cit.alibata.Entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +28,7 @@ public class UserActivity {
     @JoinColumn(name = "activity_id", nullable = false)
     private ActivityEntity activity;
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean completed = false; // default to false
 
     public UserActivity() {

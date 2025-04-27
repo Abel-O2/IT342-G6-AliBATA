@@ -1,10 +1,12 @@
 package edu.cit.alibata.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import edu.cit.alibata.Entity.QuestionEntity;
 import edu.cit.alibata.Repository.ActivityRepository;
@@ -26,10 +28,20 @@ public class QuestionService {
     }*/
 
     // Create and Add Question to Activity
-    public QuestionEntity postQuestionForActivity(int activityId, QuestionEntity question) {
+    public QuestionEntity postQuestionForActivity(int activityId, String questionDescription, String questionText, MultipartFile image) {
         var activity = activityRepo.findById(activityId)
             .orElseThrow(() -> new EntityNotFoundException("Activity not found with ID: " + activityId));
+        QuestionEntity question = new QuestionEntity();
         question.setActivity(activity);
+        question.setQuestionDescription(questionDescription);
+        question.setQuestionText(questionText);
+        if (image != null && !image.isEmpty()) {
+            try {
+                question.setQuestionImage(image.getBytes());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload image", e);
+            }
+        }
         return questionRepo.save(question);
     }
 

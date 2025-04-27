@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import edu.cit.alibata.Entity.QuestionEntity;
 import edu.cit.alibata.Service.QuestionService;
@@ -31,14 +33,14 @@ public class QuestionController {
     private QuestionService questionServ;
 
     // Create question for activity
-    @PostMapping("/activities/{activityId}")
+    @PostMapping(value = "/activities/{activityId}", consumes = "multipart/form-data")
     @Operation(
-        summary = "Create a question for a specific activity",
-        description = "Creates a new question and associates it with a specific activity",
-        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        summary = "Create a question for a specific activity with an image",
+    description = "Creates a new question and associates it with a specific activity, optionally uploading an image",
+        /*requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Question data to create (without ID)",
             content = @Content(schema = @Schema(implementation = QuestionEntity.class))
-        ),
+        ),*/
         responses = {
             @ApiResponse(responseCode = "201", description = "Question created and added to activity successfully"),
             @ApiResponse(responseCode = "404", description = "Activity not found",
@@ -49,8 +51,8 @@ public class QuestionController {
             )
         }
     )
-    public ResponseEntity<QuestionEntity> postQuestionForActivity(@PathVariable int activityId, @RequestBody QuestionEntity question) {
-        QuestionEntity postQuestion = questionServ.postQuestionForActivity(activityId, question);
+    public ResponseEntity<QuestionEntity> postQuestionForActivity(@PathVariable int activityId, @RequestParam String questionDescription, @RequestParam String questionText, @RequestParam(value = "image", required = false) MultipartFile image) {
+        QuestionEntity postQuestion = questionServ.postQuestionForActivity(activityId, questionDescription, questionText, image);
         return ResponseEntity.status(201).body(postQuestion);
     }
 

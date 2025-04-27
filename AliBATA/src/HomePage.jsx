@@ -81,8 +81,8 @@ const HomePage = () => {
             activities.map((activity) => (
               <ListItem key={activity.activityId} sx={{ borderBottom: "1px solid #444" }}>
                 <ListItemText
-                  primary={`Activity: ${activity.gameType}`}
-                  secondary={`Activity Name: ${activity.activityName}`}
+                  primary={`Activity Name: ${activity.activityName}`}
+                  secondary={`Activity: ${activity.gameType}`}
                   //secondary={`Completed: ${activity.isCompleted ? "Yes" : "No"}`}
                 />
               </ListItem>

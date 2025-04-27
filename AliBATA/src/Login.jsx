@@ -13,7 +13,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   const API = axios.create({
-    baseURL: 'http://localhost:8080/api/alibata/auth',
+    baseURL: 'https://alibata.duckdns.org/api/alibata/auth',
     timeout: 1000,
     headers: {
       "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export default function Login() {
       console.log("Decoded token:", decodedToken);
 
       // Fetch user details using the token
-      const userResponse = await API.get(`http://localhost:8080/api/alibata/users/${decodedToken.userId}`, {
+      const userResponse = await API.get(`https://alibata.duckdns.org/api/alibata/users/${decodedToken.userId}`, {
         headers: {
           Authorization: `Bearer ${res.data.token}`,
         },

@@ -3,6 +3,8 @@ import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import "./App.css";
+import {jwtDecode} from "jwt-decode";
+
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -35,16 +37,19 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      navigate("/home"); // Redirect to homepage
+      //navigate("/home"); // Redirect to homepage
 
-      // Check user role or ID and redirect accordingly
-      /*
-      const user = res.data.user;
-      if (user.user_id === 1 || user.role === "ADMIN") {
-        navigate("/admin"); // Redirect to AdminDashboard
+      const decodedToken = jwtDecode(res.data.token);
+      console.log("Decoded token:", decodedToken);
+
+      //const user = JSON.parse(localStorage.getItem("user"));
+      //console.log("Stored user:", user);
+
+      if (decodedToken.userId === 1) {
+        navigate("/admin");
       } else {
-        navigate("/home"); // Redirect to homepage
-      }*/
+        navigate("/home");
+      }
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
       setError("Invalid School ID or Password.");

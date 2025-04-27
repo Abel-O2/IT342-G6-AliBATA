@@ -3,39 +3,59 @@ import { Box, Typography, Grid, Paper, Button, List, ListItem, ListItemText } fr
 import { useNavigate } from "react-router-dom";
 import SidebarLayout from "./SidebarLayout";
 import axios from "axios";
+import {jwtDecode} from "jwt-decode";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]); // State to store the list of users
   const [error, setError] = useState(""); // State to handle errors
   const navigate = useNavigate();
 
-  // Fetch users from the backend
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const token = localStorage.getItem("token"); // Get the token from localStorage
-        const response = await axios.get("http://localhost:8080/api/alibata/users", {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-          },
-        });
-        setUsers(response.data); // Update the users state with the fetched data
-      } catch (err) {
-        if (err.response?.status === 403) {
-          setError("You do not have permission to view this data.");
-        } else {
-          setError("Failed to fetch users. Please try again later.");
-        }
-        console.error("Failed to fetch users:", err.response?.data || err.message);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login"); // Redirect to login if no token is found
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(token);
+      console.log("Decoded token:", decoded);
+
+      // Check if the user is an admin or has userId === 1
+      if (decoded.userId !== 1 && decoded.role !== "ADMIN") {
+        navigate("/home"); // Redirect to home if the user is not an admin
+        return;
       }
-    };
 
-    fetchUsers();
-  }, []);
+      // Fetch users from the backend
+      const fetchUsers = async () => {
+        try {
+          const response = await axios.get("http://localhost:8080/api/alibata/users", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          console.log("API Response:", response.data);
+          setUsers(response.data);
+        } catch (err) {
+          if (err.response?.status === 403) {
+            setError("You do not have permission to view this data.");
+          } else {
+            setError("Failed to fetch users. Please try again later.");
+          }
+          console.error("Failed to fetch users:", err.response?.data || err.message);
+        }
+      };
 
-  // Handle activity creation
+      fetchUsers();
+    } catch (err) {
+      console.error("Failed to decode token:", err);
+      navigate("/login"); // Redirect to login if token decoding fails
+    }
+  }, [navigate]);
+
   const handleCreateActivity = (activityType) => {
-    navigate(`/create-activity/${activityType}`); // Navigate to the activity creation page
+    navigate(`/create-activity/${activityType}`);
   };
 
   return (
@@ -60,8 +80,8 @@ const AdminDashboard = () => {
               {users.map((user, index) => (
                 <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
                   <ListItemText
-                    primary={`Name: ${user.name}`}
-                    secondary={`Role: ${user.role}`}
+                    primary={`User #${index + 1}: ${user.firstName}`}
+                    secondary={`Role: ${user.userId === 1 ? "ADMIN" : "USER"}`}
                   />
                 </ListItem>
               ))}

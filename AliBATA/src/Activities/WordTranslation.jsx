@@ -15,7 +15,7 @@ function WordTranslation() {
   useEffect(() => {
     const fetchWords = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/alibata/words"); 
+        const response = await axios.get("http://localhost:8080/api/alibata/questions"); 
       } catch (err) {
         console.error("Failed to fetch words:", err.response?.data || err.message);
       }
@@ -32,7 +32,7 @@ function WordTranslation() {
 
     try {
       // Post the new word to the backend
-      const response = await axios.post("http://localhost:8080/api/alibata/words", {
+      const response = await axios.post("http://localhost:8080/api/alibata/questions", {
         word,
         correctAnswer,
       });

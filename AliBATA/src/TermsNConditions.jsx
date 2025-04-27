@@ -4,7 +4,7 @@ const TermsNConditions = () => {
   return (
     <Box
       sx={{
-        maxHeight: "525px", 
+        maxHeight: "600px", 
         overflowY: "auto",
         bgcolor: "#1A1A1A",
         padding: 2,

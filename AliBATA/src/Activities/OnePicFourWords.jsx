@@ -32,7 +32,7 @@ function OnePicFourWords() {
   };
 
   const handleSubmit = async () => {
-    if (!image || !correctAnswer || !gameType || choices.length < 2) {
+    if (!image || !correctAnswer || choices.length < 2) {
       setMessage("Please complete all fields and add at least 2 choices.");
       return;
     }
@@ -75,7 +75,6 @@ function OnePicFourWords() {
   return (
     <SidebarLayout>
       <Box sx={{ p: 4 }}>
-        {/* Back Link */}
         <Typography
           onClick={() => navigate("/admin")}
           sx={{
@@ -89,7 +88,7 @@ function OnePicFourWords() {
         </Typography>
 
         <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
-          Create New Game Question
+          1 Picture 4 Words Activity
         </Typography>
 
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 600 }}>

@@ -140,9 +140,12 @@ public class ScoreController {
     @PostMapping("/award/questions/{questionId}/users/{userId}")
     @Operation(
         summary = "Award a score to a user for a question",
-        description = "Awards the score for a specific question to a user",
+        description = "Validates the user's selected choice and awards the score if correct",
         responses = {
             @ApiResponse(responseCode = "200", description = "Score awarded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid choice",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
             @ApiResponse(responseCode = "404", description = "Question or user not found",
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
@@ -151,8 +154,8 @@ public class ScoreController {
             )
         }
     )
-    public ResponseEntity<Void> awardScoreToUser(@PathVariable int questionId, @PathVariable int userId) {
-        scoreService.awardScoreToUser(questionId, userId);
+    public ResponseEntity<Void> awardScoreToUser(@PathVariable int questionId, @PathVariable int userId, @RequestParam int selectedChoiceId) {
+        scoreService.awardScoreToUser(questionId, userId, selectedChoiceId);
         return ResponseEntity.ok().build();
     }
 
@@ -174,5 +177,32 @@ public class ScoreController {
     public ResponseEntity<Integer> getTotalScoreForUser(@PathVariable int userId) {
         int totalScore = scoreService.getTotalScoreForUser(userId);
         return ResponseEntity.ok().body(totalScore);
+    }
+
+    // Give Score to User for Translation Game
+    @PostMapping("/award/translation/questions/{questionId}/users/{userId}")
+    @Operation(
+        summary = "Award a score for the translation game",
+        description = "Validates the user's selected choices and awards the score if the order is correct",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "List of choice IDs selected by the user",
+            content = @Content(schema = @Schema(implementation = List.class))
+        ),
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Score awarded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid choice order",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "404", description = "Question or user not found",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+        }
+    )
+    public ResponseEntity<Void> awardScoreForTranslationGame(@PathVariable int questionId, @PathVariable int userId, @RequestBody List<Integer> userSelectedChoiceIds) {
+        scoreService.awardScoreToUserForTranslationGame(questionId, userId, userSelectedChoiceIds);
+        return ResponseEntity.ok().build();
     }
 }

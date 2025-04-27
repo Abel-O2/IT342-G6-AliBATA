@@ -19,6 +19,7 @@ public class ChoiceEntity {
 
     private String choiceText;
     private boolean isCorrect;
+    private Integer choiceOrder;
 
     @ManyToOne
     @JoinColumn(name = "question_id")
@@ -52,6 +53,14 @@ public class ChoiceEntity {
 
     public void setCorrect(boolean isCorrect) {
         this.isCorrect = isCorrect;
+    }
+
+    public Integer getChoiceOrder() {
+        return choiceOrder;
+    }
+
+    public void setChoiceOrder(Integer choiceOrder) {
+        this.choiceOrder = choiceOrder;
     }
 
     public QuestionEntity getQuestion() {

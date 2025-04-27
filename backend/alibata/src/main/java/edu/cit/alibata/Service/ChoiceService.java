@@ -1,5 +1,6 @@
 package edu.cit.alibata.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.cit.alibata.Entity.ChoiceEntity;
+import edu.cit.alibata.Entity.QuestionEntity;
 import edu.cit.alibata.Repository.ChoiceRepository;
 import edu.cit.alibata.Repository.QuestionRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -73,6 +75,26 @@ public class ChoiceService {
         } else {
             return "Choice " + choiceId + " not found!";
         }
+    }
+
+    // Validate the choices for a question in the translation game
+    public boolean validateTranslationGame(int questionId, List<Integer> choiceIds) {
+        QuestionEntity question = questionRepo.findById(questionId)
+            .orElseThrow(() -> new EntityNotFoundException("Question not found with ID: " + questionId));
+        List<ChoiceEntity> choices = question.getChoices();
+        List<ChoiceEntity> orderedChoices = choices.stream()
+            .filter(choice -> choice.getChoiceOrder() != null)
+            .sorted(Comparator.comparing(ChoiceEntity::getChoiceOrder))
+            .toList();
+        if (choiceIds.size() != orderedChoices.size()) {
+            return false;
+        }
+        for (int i = 0; i < choiceIds.size(); i++) {
+            if (!choiceIds.get(i).equals(orderedChoices.get(i).getChoiceId())) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 

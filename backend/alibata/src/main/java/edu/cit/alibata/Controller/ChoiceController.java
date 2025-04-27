@@ -157,5 +157,29 @@ public class ChoiceController {
         String result = choiceServ.deleteChoiceEntity(id);
         return ResponseEntity.ok().body(result);
     }
+
+    // Validate user's choices for translation game
+    @PostMapping("/questions/{questionId}/validate-translation")
+    @Operation(
+        summary = "Validate user's choices for translation game",
+        description = "Validates if the user's selected choices are in the correct order for the translation game",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "List of choice IDs selected by the user",
+            content = @Content(schema = @Schema(implementation = List.class))
+        ),
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Validation result"),
+            @ApiResponse(responseCode = "404", description = "Question not found",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+        }
+    )
+    public ResponseEntity<Boolean> validateTranslationGame(@PathVariable int questionId, @RequestBody List<Integer> userSelectedChoiceIds) {
+        boolean isCorrect = choiceServ.validateTranslationGame(questionId, userSelectedChoiceIds);
+        return ResponseEntity.ok().body(isCorrect);
+    }
 }
 

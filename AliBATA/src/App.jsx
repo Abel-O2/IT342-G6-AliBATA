@@ -9,6 +9,7 @@ import OnePicFourWords from "./Activities/OnePicFourWords";
 import PhraseTranslation from "./Activities/PhraseTranslation";
 import WordTranslation from "./Activities/WordTranslation";
 import Activity from "./Activities";
+import Story from "./Story/Story";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/create-activity/OnePicFourWords/:activityId" element={<OnePicFourWords />} /> 
         <Route path="/create-activity/PhraseTranslation/:activityId" element={<PhraseTranslation />} />
         <Route path="/create-activity/WordTranslation/:activityId" element={<WordTranslation />} />
+        <Route path="/story" element={<Story />} />
       </Routes>
     </Router>
   );

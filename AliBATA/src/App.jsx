@@ -8,6 +8,7 @@ import Admin from "./AdminDashboard"
 import OnePicFourWords from "./Activities/OnePicFourWords";
 import PhraseTranslation from "./Activities/PhraseTranslation";
 import WordTranslation from "./Activities/WordTranslation";
+import Activity from "./Activities";
 
 function App() {
   return (
@@ -20,9 +21,10 @@ function App() {
         <Route path="/payment" element={<Payment/>}/>
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/admin" element={<Admin />} />
-        <Route path="/create-activity/OnePicFourWords" element={<OnePicFourWords />} /> 
-        <Route path="/create-activity/PhraseTranslation" element={<PhraseTranslation />} />
-        <Route path="/create-activity/WordTranslation" element={<WordTranslation />} />
+        <Route path="/activity" element={<Activity/>}/>
+        <Route path="/create-activity/OnePicFourWords/:activityId" element={<OnePicFourWords />} /> 
+        <Route path="/create-activity/PhraseTranslation/:activityId" element={<PhraseTranslation />} />
+        <Route path="/create-activity/WordTranslation/:activityId" element={<WordTranslation />} />
       </Routes>
     </Router>
   );

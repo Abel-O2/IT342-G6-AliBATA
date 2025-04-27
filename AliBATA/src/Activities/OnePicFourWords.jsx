@@ -1,83 +1,185 @@
-import React, { useState } from "react";
-import { Box, Typography, TextField, Button, Paper, List, ListItem, ListItemText, IconButton, Select, MenuItem } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, TextField, Button, Paper, List, ListItem, ListItemText } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import SidebarLayout from "../SidebarLayout";
 import axios from "axios";
 
 function OnePicFourWords() {
-  const [image, setImage] = useState(null);
-  const [choices, setChoices] = useState([]);
-  const [inputChoice, setInputChoice] = useState("");
-  const [correctAnswer, setCorrectAnswer] = useState("");
-  const [questionText, setQuestionText] = useState("");
-  const [message, setMessage] = useState("");
+  const [image, setImage] = useState(null); // State for the uploaded image
+  const [choices, setChoices] = useState([]); // State for the list of choices
+  const [inputChoice, setInputChoice] = useState(""); // State for the current choice input
+  const [correctAnswer, setCorrectAnswer] = useState(""); // State for the correct answer
+  const [questions, setQuestions] = useState([]); // State for the list of questions
+  const [message, setMessage] = useState(""); // State for success or error messages
+  const [isImageSubmitted, setIsImageSubmitted] = useState(false); // Track if the image is submitted
+  const [questionId, setQuestionId] = useState(null); // State for the current questionId
+  const { activityId } = useParams(); // Get activityId from the route
   const navigate = useNavigate();
+  const [imagePreview, setImagePreview] = useState(null);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  // Fetch questions for the activity
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/alibata/questions/activities/${activityId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+          },
+        });
+        setQuestions(response.data); // Store the questions in state
+      } catch (err) {
+        console.error("Failed to fetch questions:", err.response?.data || err.message);
+        setMessage("Failed to fetch questions. Please try again.");
+      }
+    };
+
+    fetchQuestions();
+  }, [activityId]);
+
+  const submitImage = async () => {
+    if (!image) {
+      setMessage("Please upload an image.");
+      return;
+    }
+
+    try {
+      // Convert the image file to a base64 string
+      const toBase64 = (file) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result.split(",")[1]); // Extract base64 string
+          reader.onerror = (error) => reject(error);
+        });
+
+      const base64Image = await toBase64(image);
+
+      // Construct the JSON payload
+      const payload = {
+        questionText: null, // Explicitly set to null
+        questionDescription: null, // Explicitly set to null
+        questionImage: base64Image, // Send the image as a base64 string
+      };
+
+      console.log("Submitting image with token:", localStorage.getItem("token")); // Debugging
+
+      // Send the JSON payload to the backend
+      const response = await axios.post(
+        `http://localhost:8080/api/alibata/questions/activities/${activityId}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+            "Content-Type": "application/json", // Set the content type for JSON
+          },
+        }
+      );
+
+      setMessage("Image successfully submitted!");
+      setIsImageSubmitted(true);
+      setQuestions((prevQuestions) => [...prevQuestions, response.data]); // Add the new question to the list
+      setQuestionId(response.data.questionId); // Set the questionId from the backend response
+    } catch (err) {
+      console.error("Failed to submit image:", err.response?.data || err.message);
+      setMessage(`Failed to submit image: ${err.response?.data?.message || err.message}`);
+    }
   };
 
   const addChoice = () => {
-    if (inputChoice && !choices.includes(inputChoice)) {
-      setChoices([...choices, inputChoice]);
-      setInputChoice("");
-    } else {
-      setMessage("Choice is either empty or already added.");
+    if (!inputChoice) {
+      setMessage("Choice cannot be empty.");
+      return;
     }
+
+    setChoices([...choices, inputChoice]); // Add the choice to the local state
+    setInputChoice("");
+    setMessage("Choice added successfully.");
   };
 
   const removeChoice = (choice) => {
     setChoices(choices.filter((c) => c !== choice));
+    setMessage("Choice removed successfully.");
   };
 
   const handleSubmit = async () => {
-    if (!image || !correctAnswer || !gameType || choices.length < 2) {
-      setMessage("Please complete all fields and add at least 2 choices.");
+    if (!correctAnswer || choices.length < 3) {
+      setMessage("Please fill in all fields and add at least 3 choices.");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", image);
-
-    let imageUrl;
-    try {
-      const res = await axios.post("/api/upload", formData); // Replace with your backend endpoint
-      imageUrl = res.data.url;
-    } catch (err) {
-      console.error("Image upload failed:", err);
-      setMessage("Failed to upload image. Please try again.");
+    if (!choices.includes(correctAnswer)) {
+      setMessage("The correct answer must be one of the choices.");
       return;
     }
 
-    const questionPayload = {
-      image: imageUrl,
-      correctAnswer,
-      choices,
-      gameType,
-      questionText,
-    };
-
     try {
-      await axios.post("/api/games/1/questions", questionPayload); // Replace `1` with dynamic game ID
-      setMessage("Question saved successfully!");
-      setImage(null);
-      setChoices([]);
+      if (!questionId) {
+        setMessage("No question ID found. Please submit an image first.");
+        return;
+      }
+
+      let score = 0;
+
+      for (const choice of choices) {
+        const isCorrect = choice === correctAnswer;
+
+        // Add the choice to the backend
+        await axios.post(
+          `http://localhost:8080/api/alibata/choices/questions/${questionId}`,
+          {
+            choiceText: choice,
+            correct: isCorrect, // true for the correct answer, false for others
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+            },
+          }
+        );
+
+        // Increment score if the choice is correct
+        if (isCorrect) {
+          score++;
+        }
+      }
+
+      // Set the score for the question
+      await axios.post(
+        `http://localhost:8080/api/alibata/scores/questions/${questionId}`,
+        null,
+        {
+          params: { scoreValue: score },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+          },
+        }
+      );
+
+      setMessage("Choices and score successfully added to the question!");
+
+      // Reset the form fields
       setCorrectAnswer("");
-      setGameType("");
-      setQuestionText("");
+      setChoices([]);
+      setImage(null);
+      setImagePreview(null);
+      setIsImageSubmitted(false);
+      setQuestionId(null); // Reset questionId for the next entry
     } catch (err) {
-      console.error("Error saving question:", err);
-      setMessage("Failed to save question. Please try again.");
+      console.error("Failed to add choices or score:", err.response?.data || err.message);
+      setMessage("Failed to add choices or score. Please try again.");
     }
   };
 
   return (
     <SidebarLayout>
-      <Box sx={{ p: 4 }}>
-        {/* Back Link */}
         <Typography
-          onClick={() => navigate("/admin")}
+          onClick={() => navigate("/activity")}
           sx={{
             color: "white",
             cursor: "pointer",
@@ -87,21 +189,40 @@ function OnePicFourWords() {
         >
           Back
         </Typography>
-
         <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
-          Create New Game Question
+          1 Picture 4 Words Activity
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 600 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
           {/* Image Upload */}
-          <Typography color="white">Select Image:</Typography>
+          <Typography color="white">Upload Image:</Typography>
           <Button variant="contained" component="label" sx={{ bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}>
             Upload Image
             <input type="file" hidden onChange={handleImageUpload} />
           </Button>
           {image && <Typography color="white">Selected File: {image.name}</Typography>}
+          {imagePreview && (
+            <Box mt={2}>
+              <Typography color="white">Image Preview:</Typography>
+              <img
+                src={imagePreview}
+                alt="Preview"
+                style={{ width: "100%", maxHeight: "300px", objectFit: "contain", marginTop: "10px" }}
+              />
+            </Box>
+          )}
+          <Button
+            variant="contained"
+            onClick={submitImage}
+            sx={{
+              bgcolor: "#10B981",
+              ":hover": { bgcolor: "#059669" },
+            }}
+          >
+            Submit Image
+          </Button>
 
-          {/* Correct Answer */}
+          {/* Correct Answer Input */}
           <TextField
             label="Correct Answer"
             variant="outlined"
@@ -115,7 +236,7 @@ function OnePicFourWords() {
             }}
           />
 
-          {/* Add Choices */}
+          {/* Add Choice Input */}
           <TextField
             label="Add Choice"
             variant="outlined"
@@ -131,9 +252,10 @@ function OnePicFourWords() {
           <Button
             variant="contained"
             onClick={addChoice}
+            disabled={!isImageSubmitted} // Disable if the image is not submitted
             sx={{
-              bgcolor: "#10B981",
-              ":hover": { bgcolor: "#059669" },
+              bgcolor: isImageSubmitted ? "#10B981" : "#9CA3AF", // Change color if disabled
+              ":hover": isImageSubmitted ? { bgcolor: "#059669" } : {},
             }}
           >
             Add Choice
@@ -159,8 +281,10 @@ function OnePicFourWords() {
               ))}
             </List>
           </Paper>
+        </Box>
 
-          {/* Submit Button */}
+        {/* Submit Button */}
+        <Box mt={4}>
           <Button
             variant="contained"
             onClick={handleSubmit}
@@ -169,17 +293,39 @@ function OnePicFourWords() {
               ":hover": { bgcolor: "#2563EB" },
             }}
           >
-            Save Question
+            Save Choices
           </Button>
-
-          {/* Message */}
-          {message && (
-            <Typography color="white" sx={{ mt: 2 }}>
-              {message}
-            </Typography>
-          )}
         </Box>
-      </Box>
+
+        {/* Message */}
+        {message && (
+          <Typography color="white" sx={{ mt: 2 }}>
+            {message}
+          </Typography>
+        )}
+
+        {/* List of Questions */}
+        <Box mt={4}>
+          <Typography variant="h6" color="white" mb={2}>
+            List of Questions
+          </Typography>
+          <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
+            <List>
+              {questions.map((question, index) => (
+                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                  <ListItemText
+                    primary={`Question: ${question.questionText || "N/A"}`}
+                    secondary={
+                      question.choices && question.choices.length > 0
+                        ? `Choices: ${question.choices.map((choice) => choice.choiceText).join(", ")}`
+                        : "No choices available"
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        </Box>
     </SidebarLayout>
   );
 }

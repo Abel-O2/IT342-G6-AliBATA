@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Grid, Paper, Button, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Typography, Paper, Button, List, ListItem, ListItemText } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SidebarLayout from "./SidebarLayout";
 import axios from "axios";
@@ -9,34 +9,28 @@ const AdminDashboard = () => {
   const [error, setError] = useState(""); // State to handle errors
   const navigate = useNavigate();
 
-  // Fetch users from the backend
   useEffect(() => {
     const fetchUsers = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       try {
-        const token = localStorage.getItem("token"); // Get the token from localStorage
         const response = await axios.get("http://localhost:8080/api/alibata/users", {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         });
-        setUsers(response.data); // Update the users state with the fetched data
+        setUsers(response.data);
       } catch (err) {
-        if (err.response?.status === 403) {
-          setError("You do not have permission to view this data.");
-        } else {
-          setError("Failed to fetch users. Please try again later.");
-        }
-        console.error("Failed to fetch users:", err.response?.data || err.message);
+        setError("Failed to fetch users. Please try again later.");
       }
     };
 
     fetchUsers();
-  }, []);
-
-  // Handle activity creation
-  const handleCreateActivity = (activityType) => {
-    navigate(`/create-activity/${activityType}`); // Navigate to the activity creation page
-  };
+  }, [navigate]);
 
   return (
     <SidebarLayout>
@@ -60,7 +54,7 @@ const AdminDashboard = () => {
               {users.map((user, index) => (
                 <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
                   <ListItemText
-                    primary={`Name: ${user.name}`}
+                    primary={`User #${index + 1}: ${user.firstName}`}
                     secondary={`Role: ${user.role}`}
                   />
                 </ListItem>
@@ -69,43 +63,15 @@ const AdminDashboard = () => {
           </Paper>
         </Box>
 
-        {/* Create Activity Section */}
+        {/* Create Activity Button */}
         <Box mt={4}>
-          <Typography variant="h6" color="white" mb={2}>
-            Create Activity
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#059669" } }}
-                onClick={() => handleCreateActivity("OnePicFourWords")}
-              >
-                1 Pic 4 Words
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}
-                onClick={() => handleCreateActivity("WordTranslation")}
-              >
-                Word Translation
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{ bgcolor: "#F59E0B", ":hover": { bgcolor: "#D97706" } }}
-                onClick={() => handleCreateActivity("PhraseTranslation")}
-              >
-                Phrase Translation
-              </Button>
-            </Grid>
-          </Grid>
+          <Button
+            variant="contained"
+            sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#059669" } }}
+            onClick={() => navigate("/activity")}
+          >
+            Create an Activity
+          </Button>
         </Box>
       </Box>
     </SidebarLayout>

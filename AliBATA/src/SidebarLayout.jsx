@@ -1,22 +1,23 @@
-import { Grid, Toolbar, Box, Typography, Button, Paper, List, ListItem, ListItemText, Modal, TextField } from "@mui/material";
+import { Grid, Box, Typography, Button, List, ListItem, ListItemText, Modal, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {jwtDecode} from "jwt-decode";
-import EditUserModal from "./EditDetails"; 
+import EditUserModal from "./EditDetails";
 
 const drawerWidth = 240;
 
 const SidebarLayout = ({ children }) => {
   const navigate = useNavigate();
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isNamePopupOpen, setIsNamePopupOpen] = useState(!localStorage.getItem("username"));
+  const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
   const [userData, setUserData] = useState({
+    userId: "",
     firstName: "",
     middleName: "",
     lastName: "",
   });
-  const [username, setUsername] = useState(localStorage.getItem("username") || ""); 
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,21 +26,34 @@ const SidebarLayout = ({ children }) => {
         const decoded = jwtDecode(token);
         console.log("Decoded token:", decoded);
 
-        const user = decoded?.user || {};
-        if (!localStorage.getItem("username")) {
-          const firstName = user.firstName || "Enter your name";
-          setUsername(firstName);
-          localStorage.setItem("username", firstName);
-        } else {
-          
-          setUsername(localStorage.getItem("username"));
-        }
+        // Fetch user details from the backend
+        const fetchUser = async () => {
+          try {
+            const response = await axios.get(`http://localhost:8080/api/alibata/users/${decoded.userId}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const user = response.data;
+            console.log("Fetched user:", user);
 
-        setUserData({
-          firstName: user.firstName || "",
-          middleName: user.middleName || "",
-          lastName: user.lastName || "",
-        });
+            // Set the username to the user's firstName
+            setUsername(user.firstName);
+            setUserData({
+              userId: user.userId,
+              firstName: user.firstName,
+              middleName: user.middleName || "",
+              lastName: user.lastName || "",
+            });
+
+            // Save the username in localStorage
+            localStorage.setItem("username", user.firstName);
+          } catch (err) {
+            console.error("Failed to fetch user:", err);
+          }
+        };
+
+        fetchUser();
       } catch (err) {
         console.error("Failed to decode token:", err);
       }
@@ -55,14 +69,14 @@ const SidebarLayout = ({ children }) => {
   const handleSave = (updatedUserData) => {
     setUserData(updatedUserData);
     setUsername(updatedUserData.firstName);
-    localStorage.setItem("username", updatedUserData.firstName); 
+    localStorage.setItem("username", updatedUserData.firstName);
   };
 
   const handleNameSubmit = () => {
     if (userData.firstName.trim()) {
       setIsNamePopupOpen(false);
       setUsername(userData.firstName);
-      localStorage.setItem("username", userData.firstName); 
+      localStorage.setItem("username", userData.firstName);
     }
   };
 
@@ -74,17 +88,16 @@ const SidebarLayout = ({ children }) => {
     <Box
       sx={{
         display: "flex",
-        width: "98vw",
-        height: "94vh",
+        maxWidth: "193.7vh",
+        minWidth: "100vh",
+        height: "100vh",
         bgcolor: "#121212",
-        marginLeft: "-44vh",
         overflow: "hidden",
-        overflowX: "Auto",
       }}
     >
       <Box
         sx={{
-          width: "15vw",
+          width: `${drawerWidth}px`,
           bgcolor: "#1E1E1E",
           color: "white",
           p: 3,
@@ -114,7 +127,10 @@ const SidebarLayout = ({ children }) => {
 
           <List sx={{ mt: 4 }}>
             {[
-              { text: "🏠 Home", action: () => navigate("/home") },
+              {
+                text: userData.userId === 1 || userData.role === "ADMIN" ? "🛠 Admin Dashboard" : "🏠 Home", 
+                action: userData.userId === 1 || userData.userRole === "ADMIN" ? () => navigate("/admin") : () => navigate("/home"), 
+              },
               { text: "💳 Subscriptions", action: () => navigate("/payment") },
               { text: "📞 Contact Us", action: () => navigate("/contact") },
               { text: "🚪 Log Out", action: handleLogout },
@@ -131,10 +147,17 @@ const SidebarLayout = ({ children }) => {
           </List>
         </Box>
       </Box>
-      <Grid item sx={{ flex: 1, ml: `${drawerWidth}px`, p: 2 }}>
+      <Box
+        sx={{
+          flex: 1,
+          p: 4,
+          overflowY: "auto", // Allow scrolling for content
+          bgcolor: "#121212",
+        }}
+      >
         {children}
-      </Grid>
-      <Modal open={isNamePopupOpen} onClose={() => setIsNamePopupOpen(false)}>
+      </Box>
+      {/*<Modal open={isNamePopupOpen} onClose={() => setIsNamePopupOpen(false)}>
         <Box
           sx={{
             position: "absolute",
@@ -176,7 +199,7 @@ const SidebarLayout = ({ children }) => {
             Save
           </Button>
         </Box>
-      </Modal>
+      </Modal>*/}
 
       <EditUserModal
         open={isEditOpen}

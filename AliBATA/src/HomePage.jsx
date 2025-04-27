@@ -12,8 +12,8 @@ const HomePage = () => {
     const fetchPoints = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log("User data:", user); // Log user data
-        if (!user || !user.userId) { // Use userId as per the decoded token
+        console.log("User data:", user); 
+        if (!user || !user.userId) { 
           setError("User not found. Please log in again.");
           return;
         }
@@ -32,7 +32,7 @@ const HomePage = () => {
     };
 
     fetchPoints();
-  }, []); // Run only once when the component mounts
+  }, []);
 
   return (
     <SidebarLayout>
@@ -77,7 +77,7 @@ const HomePage = () => {
           boxShadow: "0px 4px 10px rgba(255,255,255,0.5)",
         }}
       >
-        <Typography variant="h5">Rank Silver</Typography>
+       <Typography variant="h5">Subscription: Basic Tier</Typography>
       </Paper>
 
       <Paper sx={{ p: 3, mt: 4, bgcolor: "#222", color: "white", width: "97.5%" }}>

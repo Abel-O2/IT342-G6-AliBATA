@@ -88,17 +88,16 @@ const SidebarLayout = ({ children }) => {
     <Box
       sx={{
         display: "flex",
-        width: "98vw",
-        height: "94vh",
+        maxWidth: "193.7vh",
+        minWidth: "100vh",
+        height: "100vh",
         bgcolor: "#121212",
-        marginLeft: "-44vh",
         overflow: "hidden",
-        overflowX: "Auto",
       }}
     >
       <Box
         sx={{
-          width: "15vw",
+          width: `${drawerWidth}px`,
           bgcolor: "#1E1E1E",
           color: "white",
           p: 3,
@@ -110,7 +109,7 @@ const SidebarLayout = ({ children }) => {
       >
         <Box>
           <Typography variant="h5" fontWeight="bold" mt={2}>
-            {username || "Loading..."}
+            {username}
           </Typography>
           <hr />
           <Button
@@ -129,8 +128,8 @@ const SidebarLayout = ({ children }) => {
           <List sx={{ mt: 4 }}>
             {[
               {
-                text: userData.userId === 1 ? "🛠 Admin Dashboard" : "🏠 Home", 
-                action: userData.userId === 1 ? () => navigate("/admin") : () => navigate("/home"), 
+                text: userData.userId === 1 || userData.role === "ADMIN" ? "🛠 Admin Dashboard" : "🏠 Home", 
+                action: userData.userId === 1 || userData.userRole === "ADMIN" ? () => navigate("/admin") : () => navigate("/home"), 
               },
               { text: "💳 Subscriptions", action: () => navigate("/payment") },
               { text: "📞 Contact Us", action: () => navigate("/contact") },
@@ -148,9 +147,16 @@ const SidebarLayout = ({ children }) => {
           </List>
         </Box>
       </Box>
-      <Grid item sx={{ flex: 1, ml: `${drawerWidth}px`, p: 2 }}>
+      <Box
+        sx={{
+          flex: 1,
+          p: 4,
+          overflowY: "auto", // Allow scrolling for content
+          bgcolor: "#121212",
+        }}
+      >
         {children}
-      </Grid>
+      </Box>
       {/*<Modal open={isNamePopupOpen} onClose={() => setIsNamePopupOpen(false)}>
         <Box
           sx={{

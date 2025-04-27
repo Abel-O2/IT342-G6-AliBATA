@@ -59,13 +59,13 @@ export default function Login() {
   return (
     <Box
       sx={{
-        minHeight: "85vh",
+        height: "96.8vh",
         minWidth: "50vh",
         bgcolor: "#1E1E1E",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 5,
+        padding: 2,
       }}
     >
       <Paper

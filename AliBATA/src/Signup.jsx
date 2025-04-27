@@ -68,7 +68,7 @@ const SignUp = () => {
   return (
     <Box
       sx={{
-        minHeight: "85vh",
+        height: "91.7vh",
         bgcolor: "#1E1E1E",
         display: "flex",
         alignItems: "center",

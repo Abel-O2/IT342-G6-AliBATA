@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import "./App.css";
 import {jwtDecode} from "jwt-decode";
-
+import alibataLogo from "./assets/alibata.jpg";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -59,6 +59,10 @@ export default function Login() {
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
       setError("Invalid School ID or Password.");
+
+      setTimeout(() => {
+        setError("");
+      }, 1000);
     }
   };
 
@@ -67,7 +71,7 @@ export default function Login() {
       sx={{
         height: "96.8vh",
         minWidth: "50vh",
-        bgcolor: "#1E1E1E",
+        bgcolor: "#FFE5B4",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -80,7 +84,7 @@ export default function Login() {
           width: 400,
           padding: 4,
           borderRadius: 3,
-          bgcolor: "#2E2E2E",
+          bgcolor: "#A6D6D6",
           textAlign: "center",
         }}
       >
@@ -93,7 +97,7 @@ export default function Login() {
             justifyContent: "center",
           }}
         >
-          <Typography sx={{ fontSize: "50px" }}>👋🏾</Typography>
+          <img src={alibataLogo} alt="AliBATA Logo" style={{ height: "50px" }} />
         </Box>
 
         <Typography variant="h5" color="white" sx={{ mt: 2, fontWeight: "bold" }}>
@@ -114,9 +118,9 @@ export default function Login() {
             value={schoolId}
             onChange={(e) => setSchoolId(e.target.value)}
             sx={{
-              bgcolor: "#424242",
+              bgcolor: "#c8e3e3",
               borderRadius: 1,
-              input: { color: "white" },
+              input: { color: "black" },
               label: { color: "#BDBDBD" },
               mb: 2,
             }}
@@ -129,9 +133,9 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             sx={{
-              bgcolor: "#424242",
+              bgcolor: "#c8e3e3",
               borderRadius: 1,
-              input: { color: "white" },
+              input: { color: "black" },
               label: { color: "#BDBDBD" },
               mb: 2,
             }}
@@ -144,8 +148,8 @@ export default function Login() {
             sx={{
               mt: 3,
               py: 1.5,
-              bgcolor: "#10B981",
-              ":hover": { bgcolor: "#059669" },
+              bgcolor: "#c1f7eb",
+              ":hover": { bgcolor: "#F4F8D3" },
             }}
           >
             Log In

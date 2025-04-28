@@ -89,9 +89,9 @@ const SidebarLayout = ({ children }) => {
     <Box
       sx={{
         display: "flex",
-        maxWidth: "193.7vh",
+        maxWidth: "100%",
         minWidth: "100vh",
-        height: "100vh",
+        height: "100%",
         bgcolor: "#121212",
         overflow: "hidden",
       }}

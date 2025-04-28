@@ -73,16 +73,23 @@ const AdminDashboard = () => {
             </Typography>
           )}
           <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
-            <List>
-              {users.map((user, index) => (
-                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                  <ListItemText
-                    primary={`User #${index + 1}: ${user.firstName}`}
-                    secondary={`Role: ${user.role}`}
-                  />
-                </ListItem>
-              ))}
-            </List>
+            <Box
+              sx={{
+                maxHeight: "300px", // Set a fixed height for the list
+                overflowY: "auto", // Enable vertical scrolling
+              }}
+            >
+              <List>
+                {users.map((user, index) => (
+                  <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                    <ListItemText
+                      primary={`User #${index + 1}: ${user.firstName}`}
+                      secondary={`Role: ${user.role}`}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
           </Paper>
         </Box>
 

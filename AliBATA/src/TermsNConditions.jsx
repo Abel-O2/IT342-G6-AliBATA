@@ -6,16 +6,16 @@ const TermsNConditions = () => {
       sx={{
         maxHeight: "600px", 
         overflowY: "auto",
-        bgcolor: "#1A1A1A",
+        bgcolor: "#FFE5B4",
         padding: 2,
         borderRadius: 2,
         fontSize: "14px",
-        color: "#BDBDBD",
+        color: "black",
         textAlign: "left",
         border: "1px solid #333",
       }}
     >
-      <Typography variant="h6" sx={{ color: "white", mb: 1 }}>
+      <Typography variant="h6" sx={{ color: "black", mb: 1 }}>
         Terms & Conditions
       </Typography>
       <Typography variant="body2">

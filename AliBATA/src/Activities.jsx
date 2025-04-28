@@ -97,6 +97,7 @@ const Activities = () => {
             {error}
           </Typography>
         )}
+        {/*
         <Paper sx={{ bgcolor: "#2B2B2B", p: 2, color: "white" }}>
           <Box  
           sx={{
@@ -122,7 +123,7 @@ const Activities = () => {
             ))}
           </List>
           </Box>
-        </Paper>
+        </Paper>*/}
         <Box mt={4}>
           <Typography variant="h6" color="white" mb={2}>
             Create a New Activity

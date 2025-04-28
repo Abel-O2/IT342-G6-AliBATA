@@ -13,6 +13,8 @@ function PhraseTranslation() {
   const [message, setMessage] = useState(""); // State for success or error messages
   const [isPhraseSubmitted, setIsPhraseSubmitted] = useState(false); // Track if the phrase is submitted
   const [questionId, setQuestionId] = useState(null); // State for the current questionId
+  const [editingQuestionId, setEditingQuestionId] = useState(null); // Track the question being edited
+  const [editedPhrase, setEditedPhrase] = useState(""); // Track the edited phrase
   const { activityId } = useParams(); // Get activityId from the route
   const navigate = useNavigate();
 
@@ -181,6 +183,80 @@ function PhraseTranslation() {
     }
   };
 
+  const editQuestion = async (id, updatedData) => {
+    try {
+      await axios.put(`https://alibata.duckdns.org/api/alibata/questions/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Phrase updated successfully!");
+      setQuestions((prevQuestions) =>
+        prevQuestions.map((q) => (q.questionId === id ? { ...q, ...updatedData } : q))
+      );
+      setEditingQuestionId(null); // Exit editing mode
+    } catch (err) {
+      console.error("Failed to update phrase:", err.response?.data || err.message);
+      setMessage("Failed to update phrase. Please try again.");
+    }
+  };
+
+  const deleteQuestion = async (id) => {
+    try {
+      await axios.delete(`https://alibata.duckdns.org/api/alibata/questions/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Phrase deleted successfully!");
+      setQuestions(questions.filter((q) => q.questionId !== id)); // Remove from local state
+    } catch (err) {
+      console.error("Failed to delete phrase:", err.response?.data || err.message);
+      setMessage("Failed to delete phrase. Please try again.");
+    }
+  };
+
+  const editChoice = async (id, updatedData) => {
+    try {
+      await axios.put(`https://alibata.duckdns.org/api/alibata/choices/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Choice updated successfully!");
+      setChoices((prevChoices) =>
+        prevChoices.map((c) => (c.id === id ? { ...c, ...updatedData } : c))
+      );
+    } catch (err) {
+      console.error("Failed to update choice:", err.response?.data || err.message);
+      setMessage("Failed to update choice. Please try again.");
+    }
+  };
+
+  const deleteChoice = async (id) => {
+    try {
+      await axios.delete(`https://alibata.duckdns.org/api/alibata/choices/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Choice deleted successfully!");
+      setChoices(choices.filter((c) => c.id !== id)); // Remove from local state
+    } catch (err) {
+      console.error("Failed to delete choice:", err.response?.data || err.message);
+      setMessage("Failed to delete choice. Please try again.");
+    }
+  };
+
+  const startEditing = (id, currentPhrase) => {
+    setEditingQuestionId(id);
+    setEditedPhrase(currentPhrase);
+  };
+
+  const saveEditedPhrase = async (id) => {
+    await editQuestion(id, { questionDescription: editedPhrase });
+  };
+
   return (
     <SidebarLayout>
         <Typography
@@ -281,14 +357,23 @@ function PhraseTranslation() {
             <List>
               {choices.map((choice, index) => (
                 <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                  <ListItemText primary={choice} />
-                  <Button
-                    variant="text"
-                    color="error"
-                    onClick={() => removeChoice(choice)}
-                  >
-                    Remove
-                  </Button>
+                  <ListItemText primary={choice.choiceText || choice} />
+                  <Box sx={{ display: "flex", gap: 2 }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => editChoice(choice.id, { choiceText: "Updated Choice" })}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => deleteChoice(choice.id)}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
                 </ListItem>
               ))}
             </List>
@@ -326,10 +411,64 @@ function PhraseTranslation() {
               {questions.length > 0 ? (
                 questions.map((question, index) => (
                   <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                    <ListItemText
-                      primary={`Phrase: ${question.questionDescription || "N/A"}`}
-                      /*secondary={`Correct Answer: ${question.correctTranslation || "N/A"}`}*/
-                    />
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                      {editingQuestionId === question.questionId ? (
+                        <TextField
+                          variant="outlined"
+                          value={editedPhrase}
+                          onChange={(e) => setEditedPhrase(e.target.value)}
+                          fullWidth
+                          sx={{
+                            bgcolor: "#424242",
+                            input: { color: "white" },
+                            label: { color: "#BDBDBD" },
+                          }}
+                        />
+                      ) : (
+                        <Typography color="white" variant="body1">
+                          <strong>Phrase:</strong> {question.questionDescription || "N/A"}
+                        </Typography>
+                      )}
+                      <Box sx={{ display: "flex", gap: 2 }}>
+                        {editingQuestionId === question.questionId ? (
+                          <>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => saveEditedPhrase(question.questionId)}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              onClick={() => setEditingQuestionId(null)}
+                            >
+                              Cancel
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() =>
+                                startEditing(question.questionId, question.questionDescription)
+                              }
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              onClick={() => deleteQuestion(question.questionId)}
+                            >
+                              Delete
+                            </Button>
+                          </>
+                        )}
+                      </Box>
+                    </Box>
                   </ListItem>
                 ))
               ) : (

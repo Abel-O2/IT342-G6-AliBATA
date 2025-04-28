@@ -69,7 +69,7 @@ const SignUp = () => {
     <Box
       sx={{
         height: "91.7vh",
-        bgcolor: "#1E1E1E",
+        bgcolor: "#FFE5B4",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -85,7 +85,7 @@ const SignUp = () => {
           overflow: "hidden",
         }}
       >
-        <Box sx={{ width: "50%", padding: 4, bgcolor: "#2E2E2E" }}>
+        <Box sx={{ width: "50%", padding: 4, bgcolor: "#A6D6D6" }}>
           <Typography variant="h5" color="white" sx={{ fontWeight: "bold" }}>
             Sign Up
           </Typography>
@@ -99,7 +99,7 @@ const SignUp = () => {
               required
               value={user.firstName}
               onChange={handleChange}
-              sx={{ mb: 2, bgcolor: "#16c95b", input: { color: "white" } }}
+              sx={{ mb: 2, bgcolor: "#c8e3e3", input: { color: "black" } }}
             />
             <TextField
               label="Middle Name"
@@ -109,7 +109,7 @@ const SignUp = () => {
               required
               value={user.middleName}
               onChange={handleChange}
-              sx={{ mb: 2, bgcolor: "#16c95b", input: { color: "white" } }}
+              sx={{ mb: 2, bgcolor: "#c8e3e3", input: { color: "black" } }}
             />
             <TextField
               label="Last Name"
@@ -119,7 +119,7 @@ const SignUp = () => {
               required
               value={user.lastName}
               onChange={handleChange}
-              sx={{ mb: 2, bgcolor: "#16c95b", input: { color: "white" } }}
+              sx={{ mb: 2, bgcolor: "#c8e3e3", input: { color: "black" } }}
             />
             <TextField
               label="Email"
@@ -130,7 +130,7 @@ const SignUp = () => {
               required
               value={user.email}
               onChange={handleChange}
-              sx={{ mb: 2, bgcolor: "#16c95b", input: { color: "white" } }}
+              sx={{ mb: 2, bgcolor: "#c8e3e3", input: { color: "black" } }}
             />
             <TextField
               label="Password"
@@ -141,7 +141,7 @@ const SignUp = () => {
               required
               value={user.password}
               onChange={handleChange}
-              sx={{ mb: 2, bgcolor: "#16c95b", input: { color: "white" } }}
+              sx={{ mb: 2, bgcolor: "#c8e3e3", input: { color: "black" } }}
             />
             <TextField
               label="Confirm Password"
@@ -152,7 +152,7 @@ const SignUp = () => {
               required
               value={user.confirmPassword}
               onChange={handleChange}
-              sx={{ mb: 2, bgcolor: "#16c95b", input: { color: "white" } }}
+              sx={{ mb: 2, bgcolor: "#c8e3e3", input: { color: "black" } }}
             />
 
             {error && (
@@ -167,7 +167,7 @@ const SignUp = () => {
                 <Checkbox
                   checked={isChecked}
                   onChange={handleCheckboxChange}
-                  sx={{ color: "white", "&.Mui-checked": { color: "#10B981" } }}
+                  sx={{ color: "white", "&.Mui-checked": { color: "#F4F8D3" } }}
                 />
               }
               label="I agree to the Terms & Conditions"
@@ -179,7 +179,7 @@ const SignUp = () => {
               fullWidth
               variant="contained"
               disabled={!isChecked} // Disable button if checkbox is not checked
-              sx={{ bgcolor: isChecked ? "green" : "gray", color: "white", mb: 2, ":hover": { bgcolor: isChecked ? "darkgreen" : "gray" } }}
+              sx={{ bgcolor: isChecked ? "#c1f7eb" : "gray", color: "white", mb: 2, ":hover": { bgcolor: isChecked ? "#F4F8D3" : "gray" } }}
             >
               Sign Up
             </Button>
@@ -194,7 +194,7 @@ const SignUp = () => {
             </Button>
           </Box>
         </Box>
-        <Box sx={{ width: "50%", padding: 4, bgcolor: "#1A1A1A", overflowY: "auto", maxHeight: "900px" }}>
+        <Box sx={{ width: "50%", padding: 4, bgcolor: "#A6D6D6", overflowY: "auto", maxHeight: "900px" }}>
           <TermsNConditions />
         </Box>
       </Paper>

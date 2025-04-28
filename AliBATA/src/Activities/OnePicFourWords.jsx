@@ -46,6 +46,97 @@ function OnePicFourWords() {
     setImagePreview(URL.createObjectURL(file));
   };
 
+  const editQuestion = async (id, updatedData) => {
+    try {
+      await axios.put(`https://alibata.duckdns.org/api/alibata/questions/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Question updated successfully!");
+      // Optionally refetch questions
+    } catch (err) {
+      console.error("Failed to update question:", err.response?.data || err.message);
+      setMessage("Failed to update question. Please try again.");
+    }
+  };
+
+  const editQuestionImage = async (id, newImage) => {
+    if (!newImage) {
+      setMessage("Please select a new image to upload.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("image", newImage); // Add the new image file
+
+      await axios.put(`https://alibata.duckdns.org/api/alibata/questions/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data", // Ensure correct content type
+        },
+      });
+
+      setMessage("Image updated successfully!");
+      // Optionally refetch questions to reflect the updated image
+      setQuestions((prevQuestions) =>
+        prevQuestions.map((q) =>
+          q.questionId === id ? { ...q, questionImage: URL.createObjectURL(newImage) } : q
+        )
+      );
+    } catch (err) {
+      console.error("Failed to update image:", err.response?.data || err.message);
+      setMessage("Failed to update image. Please try again.");
+    }
+  };
+
+  const deleteQuestion = async (id) => {
+    try {
+      await axios.delete(`https://alibata.duckdns.org/api/alibata/questions/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Question deleted successfully!");
+      setQuestions(questions.filter((q) => q.questionId !== id)); // Remove from local state
+    } catch (err) {
+      console.error("Failed to delete question:", err.response?.data || err.message);
+      setMessage("Failed to delete question. Please try again.");
+    }
+  };
+
+
+  const editChoice = async (id, updatedData) => {
+    try {
+      await axios.put(`https://alibata.duckdns.org/api/alibata/choices/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Choice updated successfully!");
+      // Optionally refetch choices
+    } catch (err) {
+      console.error("Failed to update choice:", err.response?.data || err.message);
+      setMessage("Failed to update choice. Please try again.");
+    }
+  };
+
+  const deleteChoice = async (id) => {
+    try {
+      await axios.delete(`https://alibata.duckdns.org/api/alibata/choices/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Choice deleted successfully!");
+      setChoices(choices.filter((c) => c.id !== id)); // Remove from local state
+    } catch (err) {
+      console.error("Failed to delete choice:", err.response?.data || err.message);
+      setMessage("Failed to delete choice. Please try again.");
+    }
+  };
+
   const submitImage = async () => {
     if (!image) {
       setMessage("Please upload an image.");
@@ -315,7 +406,7 @@ function OnePicFourWords() {
                     {/* Display the question image */}
                     {question.questionImage && (
                       <img
-                        src={imagePreview}
+                        src={question.questionImage}
                         alt={`Question ${index + 1}`}
                         style={{
                           width: "100%",
@@ -329,6 +420,25 @@ function OnePicFourWords() {
                     {/*<Typography color="white" variant="body1">
                       <strong>Correct Answer:</strong> {question.setCorrectAnswer}
                     </Typography>*/}
+                    <Typography color="white" variant="body1">
+                      <strong>Question ID:</strong> {question.questionId}
+                    </Typography>
+                    <Box sx={{ display: "flex", gap: 2 }}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => editQuestion(question.questionId, { questionText: "Updated Text" })}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => deleteQuestion(question.questionId)}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
                   </Box>
                 </ListItem>
               ))

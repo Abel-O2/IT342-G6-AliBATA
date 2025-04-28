@@ -15,6 +15,8 @@ function WordTranslation() {
   const { activityId } = useParams(); // Get activityId from the route
   const navigate = useNavigate();
   const [questionId, setQuestionId] = useState(null);
+  const [editingQuestionId, setEditingQuestionId] = useState(null); // Track the question being edited
+  const [editedQuestionText, setEditedQuestionText] = useState(""); // Track the edited text
 
   // Fetch questions for the activity
   useEffect(() => {
@@ -165,6 +167,99 @@ function WordTranslation() {
     }
   };
 
+  const editQuestion = async (id, updatedData) => {
+    try {
+      await axios.put(`https://alibata.duckdns.org/api/alibata/questions/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Question updated successfully!");
+      setQuestions((prevQuestions) =>
+        prevQuestions.map((q) => (q.questionId === id ? { ...q, ...updatedData } : q))
+      );
+    } catch (err) {
+      console.error("Failed to update question:", err.response?.data || err.message);
+      setMessage("Failed to update question. Please try again.");
+    }
+  };
+
+  const deleteQuestion = async (id) => {
+    try {
+      await axios.delete(`https://alibata.duckdns.org/api/alibata/questions/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Question deleted successfully!");
+      setQuestions(questions.filter((q) => q.questionId !== id)); // Remove from local state
+    } catch (err) {
+      console.error("Failed to delete question:", err.response?.data || err.message);
+      setMessage("Failed to delete question. Please try again.");
+    }
+  };
+
+  const editChoice = async (id, updatedData) => {
+    try {
+      await axios.put(`https://alibata.duckdns.org/api/alibata/choices/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Choice updated successfully!");
+      setChoices((prevChoices) =>
+        prevChoices.map((c) => (c.id === id ? { ...c, ...updatedData } : c))
+      );
+    } catch (err) {
+      console.error("Failed to update choice:", err.response?.data || err.message);
+      setMessage("Failed to update choice. Please try again.");
+    }
+  };
+
+  const deleteChoice = async (id) => {
+    try {
+      await axios.delete(`https://alibata.duckdns.org/api/alibata/choices/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Choice deleted successfully!");
+      setChoices(choices.filter((c) => c.id !== id)); // Remove from local state
+    } catch (err) {
+      console.error("Failed to delete choice:", err.response?.data || err.message);
+      setMessage("Failed to delete choice. Please try again.");
+    }
+  };
+
+  const startEditing = (id, currentText) => {
+    setEditingQuestionId(id);
+    setEditedQuestionText(currentText);
+  };
+
+  const saveEditedQuestion = async (id) => {
+    try {
+      await axios.put(
+        `https://alibata.duckdns.org/api/alibata/questions/${id}`,
+        { questionText: editedQuestionText },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setMessage("Question updated successfully!");
+      setQuestions((prevQuestions) =>
+        prevQuestions.map((q) =>
+          q.questionId === id ? { ...q, questionText: editedQuestionText } : q
+        )
+      );
+      setEditingQuestionId(null); // Exit editing mode
+    } catch (err) {
+      console.error("Failed to update question:", err.response?.data || err.message);
+      setMessage("Failed to update question. Please try again.");
+    }
+  };
+
   return (
     <SidebarLayout>
         <Typography
@@ -254,14 +349,23 @@ function WordTranslation() {
             <List>
               {choices.map((choice, index) => (
                 <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                  <ListItemText primary={choice} />
-                  <Button
-                    variant="text"
-                    color="error"
-                    onClick={() => removeChoice(choice)}
-                  >
-                    Remove
-                  </Button>
+                  <ListItemText primary={choice.choiceText || choice} />
+                  <Box sx={{ display: "flex", gap: 2 }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => editChoice(choice.id, { choiceText: "Updated Choice" })}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => deleteChoice(choice.id)}
+                    >
+                      Delete
+                    </Button>
+                  </Box>
                 </ListItem>
               ))}
             </List>
@@ -299,14 +403,50 @@ function WordTranslation() {
               {questions.length > 0 ? (
                 questions.map((question, index) => (
                   <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                    <ListItemText
-                      primary={`Word: ${question.questionText || "N/A"}`}
-                      /* secondary={
-                        question.choices && question.choices.length > 0
-                          ? `Choices: ${question.choices.map((choice) => choice.choiceText).join(", ")}`
-                          : "No choices available"
-                      }*/
-                    />
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                      {editingQuestionId === question.questionId ? (
+                        <TextField
+                          value={editedQuestionText}
+                          onChange={(e) => setEditedQuestionText(e.target.value)}
+                          fullWidth
+                          sx={{
+                            bgcolor: "#424242",
+                            input: { color: "white" },
+                            label: { color: "#BDBDBD" },
+                          }}
+                        />
+                      ) : (
+                        <Typography color="white" variant="body1">
+                          <strong>Word:</strong> {question.questionText}
+                        </Typography>
+                      )}
+                      <Box sx={{ display: "flex", gap: 2 }}>
+                        {editingQuestionId === question.questionId ? (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => saveEditedQuestion(question.questionId)}
+                          >
+                            Save
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => startEditing(question.questionId, question.questionText)}
+                          >
+                            Edit
+                          </Button>
+                        )}
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => deleteQuestion(question.questionId)}
+                        >
+                          Delete
+                        </Button>
+                      </Box>
+                    </Box>
                   </ListItem>
                 ))
               ) : (

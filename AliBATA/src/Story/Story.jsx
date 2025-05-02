@@ -54,9 +54,8 @@ const Story = () => {
         console.log("API Response:", storiesResponse.data);
         setStories(storiesResponse.data);
 
-        // Set the first storyId (or handle dynamically later)
         if (storiesResponse.data.length > 0) {
-          setStoryId(storiesResponse.data[0].storyId); // Set the first story's ID
+          setStoryId(storiesResponse.data[0].storyId); 
         }
       } catch (err) {
         console.error("Failed to fetch user or stories:", err.response?.data || err.message);
@@ -132,7 +131,6 @@ const Story = () => {
         }
       );
 
-      // Update only the targeted story in the state
       setStories((prevStories) =>
         prevStories.map((s) =>
           s.storyId === id ? { ...s, completed: true } : s
@@ -151,7 +149,7 @@ const Story = () => {
         <Typography
           onClick={() => navigate("/admin")}
           sx={{
-            color: "white",
+            color: "black",
             cursor: "pointer",
             textDecoration: "underline",
             mb: 2,
@@ -159,12 +157,12 @@ const Story = () => {
         >
           Back
         </Typography>
-        <Typography variant="h4" mb={3}>
+        <Typography variant="h4" mb={3} color="black" fontWeight="bold">
           Stories
         </Typography>
 
         {/* Create Story */}
-        <Paper sx={{ p: 3, mb: 4, bgcolor: "#67AE6E", input: { color: "white" } }}>
+        <Paper sx={{ p: 3, mb: 4, bgcolor: "#F4F8D3", input: { color: "white" } }}>
           <Typography variant="h6" mb={2}>
             Create a New Story
           </Typography>
@@ -174,7 +172,7 @@ const Story = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             fullWidth
-            sx={{ mb: 2 }}
+            sx={{ mb: 2 , input: { color: "black" }}}
           />
           <TextField
             label="Story Text"
@@ -184,7 +182,7 @@ const Story = () => {
             fullWidth
             multiline
             rows={4}
-            sx={{ mb: 2 }}
+            sx={{ mb: 2, input: { color: "black" } }}
           />
           <TextField
             label="YouTube Video ID"
@@ -192,28 +190,37 @@ const Story = () => {
             value={youtubeVideoId}
             onChange={(e) => setYoutubeVideoId(e.target.value)}
             fullWidth
-            sx={{ mb: 2 }}
+            sx={{ mb: 2, input: { color: "black" } }}
           />
           <Button
             variant="contained"
             onClick={handleCreateStory}
-            sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#059669" } }}
+            color="black"
+            sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#20DFA6" } }}
           >
             Save Story
           </Button>
         </Paper>
 
         {/* List Stories */}
-        <Typography variant="h6" mb={2}>
+        <Paper sx={{ p: 3, mt: 4, bgcolor: "#F4F8D3", color: "black", width: "97.5%" }}>
+        <Typography variant="h6" mb={2} color="black" fontWeight="bold">
           All Stories
         </Typography>
-        <List>
+        <List 
+           sx={{
+            maxHeight: 190,
+            overflowY: "auto",
+            bgcolor: "#F4F8D3",
+          }}
+          >
           {stories.map((story, index) => (
             <ListItem
-              key={story.storyId || index} // Use story.id if available, otherwise fallback to index
+              key={story.storyId || index} 
               sx={{
                 borderBottom: "1px solid #ddd",
                 mb: 2,
+                color:"black",
                 bgcolor: story.completed ? "#d1e7dd" : "#f8d7da",
               }}
             >
@@ -239,7 +246,9 @@ const Story = () => {
             {message}
           </Typography>
         )}
+        </Paper>
       </Box>
+
     </SidebarLayout>
   );
 };

@@ -54,10 +54,27 @@ const Activities = () => {
     }
   };
 
-  /*
-  const handleEdit = (activityId) => {
-    navigate(`/edit-activity/${activityId}`);
-  };*/
+  
+  const handleEdit = (activityId, gameType) => {
+    let path = "";
+
+    switch (gameType) {
+      case "GAME1":
+        path = "/create-activity/OnePicFourWords";
+        break;
+      case "GAME2":
+        path = "/create-activity/PhraseTranslation";
+        break;
+      case "GAME3":
+        path = "/create-activity/WordTranslation";
+        break;
+      default:
+        alert("Unknown game type");
+        return;
+    }
+
+    navigate(`${path}/${activityId}`);
+  };
 
   const handleDelete = async (activityId) => {
     const token = localStorage.getItem("token");
@@ -77,11 +94,11 @@ const Activities = () => {
 
   return (
     <SidebarLayout>
-      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#1E1E1E", p: 4 }}>
+      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
         <Typography
           onClick={() => navigate("/admin")}
           sx={{
-            color: "white",
+            color: "black",
             cursor: "pointer",
             textDecoration: "underline",
             mb: 2,
@@ -89,7 +106,7 @@ const Activities = () => {
         >
           Back
         </Typography>
-        <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
+        <Typography variant="h5" fontWeight="bold" color="black" mb={3}>
           Activities
         </Typography>
         {error && (
@@ -97,12 +114,12 @@ const Activities = () => {
             {error}
           </Typography>
         )}
-        {/*
-        <Paper sx={{ bgcolor: "#2B2B2B", p: 2, color: "white" }}>
+        
+        <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
           <Box  
           sx={{
-                maxHeight: "300px", // Set a fixed height for the list
-                overflowY: "auto", // Enable vertical scrolling
+                maxHeight: "300px", 
+                overflowY: "auto", 
               }}>
           <List>
             {activities.map((activity) => (
@@ -112,20 +129,21 @@ const Activities = () => {
                   secondary={`Game Type: ${activity.gameType}`}
                 />
                 <ListItemSecondaryAction>
-                  <IconButton edge="end" color="primary" onClick={() => handleEdit(activity.activityId)}>
+                  <IconButton edge="end" color="primary" onClick={() => handleEdit(activity.activityId, activity.gameType)}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton edge="end" color="error" onClick={() => handleDelete(activity.activityId)}>
+                  {/*<IconButton edge="end" color="error" onClick={() => handleDelete(activity.activityId)}>
                     <DeleteIcon />
-                  </IconButton>
+                  </IconButton>*/}
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
           </List>
           </Box>
-        </Paper>*/}
+        </Paper>
+
         <Box mt={4}>
-          <Typography variant="h6" color="white" mb={2}>
+          <Typography variant="h6" color="black" mb={2}>
             Create a New Activity
           </Typography>
           <Grid container spacing={3} sx={{ display: "flex" }}>
@@ -133,7 +151,7 @@ const Activities = () => {
               <Button
                 fullWidth
                 variant="contained"
-                sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#059669" } }}
+                sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#059669" }, color: "black" }}
                 onClick={() =>
                   createActivity("One Pic Four Words", "GAME1", "/create-activity/OnePicFourWords")
                 }
@@ -145,7 +163,7 @@ const Activities = () => {
               <Button
                 fullWidth
                 variant="contained"
-                sx={{ bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}
+                sx={{ bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB"  }, color: "black" }}
                 onClick={() =>
                   createActivity("Phrase Translation", "GAME2", "/create-activity/PhraseTranslation")
                 }
@@ -157,7 +175,7 @@ const Activities = () => {
               <Button
                 fullWidth
                 variant="contained"
-                sx={{ bgcolor: "#F59E0B", ":hover": { bgcolor: "#D97706" } }}
+                sx={{ bgcolor: "#F59E0B", ":hover": { bgcolor: "#D97706" }, color: "black"  }}
                 onClick={() =>
                   createActivity("Word Translation", "GAME3", "/create-activity/WordTranslation")
                 }

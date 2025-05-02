@@ -6,7 +6,7 @@ const TermsNConditions = () => {
       sx={{
         maxHeight: "600px", 
         overflowY: "auto",
-        bgcolor: "#FFE5B4",
+        bgcolor: "#F4F8D3",
         padding: 2,
         borderRadius: 2,
         fontSize: "14px",

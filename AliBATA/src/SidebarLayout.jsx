@@ -46,14 +46,16 @@ const SidebarLayout = ({ children }) => {
               lastName: user.lastName || "",
               role: user.role, // Include the role property
             });
-
-            // Save the username in localStorage
-            localStorage.setItem("username", user.firstName);
+            
+            if (!username) {
+              setUsername(user.firstName);
+              localStorage.setItem("username", user.firstName);
+            }
           } catch (err) {
             console.error("Failed to fetch user:", err);
           }
         };
-
+        
         fetchUser();
       } catch (err) {
         console.error("Failed to decode token:", err);
@@ -92,14 +94,14 @@ const SidebarLayout = ({ children }) => {
         maxWidth: "100%",
         minWidth: "100vh",
         height: "100%",
-        bgcolor: "#121212",
+        bgcolor: "#2DC7D2",
         overflow: "hidden",
       }}
     >
       <Box
         sx={{
           width: `${drawerWidth}px`,
-          bgcolor: "#1E1E1E",
+          bgcolor: "#A6D6D6",
           color: "white",
           p: 3,
           display: "flex",
@@ -109,7 +111,7 @@ const SidebarLayout = ({ children }) => {
         }}
       >
         <Box>
-          <Typography variant="h5" fontWeight="bold" mt={2}>
+          <Typography variant="h5" fontWeight="bold" mt={2} color="black">
             {username}
           </Typography>
           <hr />
@@ -119,14 +121,15 @@ const SidebarLayout = ({ children }) => {
             sx={{
               mt: 2,
               bgcolor: "#10B981",
-              ":hover": { bgcolor: "#059669" },
+              ":hover": { bgcolor: "#20DFA6" },
+              color: "black",
             }}
             onClick={() => setIsEditOpen(true)}
           >
             Edit Details
           </Button>
 
-          <List sx={{ mt: 4 }}>
+          <List sx={{ mt: 4, color: "black" }}>
             {[
               {
                 text: userData.role === "ADMIN" ? "🛠 Admin Dashboard" : "🏠 Home",
@@ -140,7 +143,7 @@ const SidebarLayout = ({ children }) => {
                 button
                 key={index}
                 onClick={item.action}
-                sx={{ "&:hover": { bgcolor: "#2A2A2A" } }}
+                sx={{ "&:hover": { bgcolor: "#20DFA6" } }}
               >
                 <ListItemText primary={item.text} />
               </ListItem>
@@ -153,7 +156,7 @@ const SidebarLayout = ({ children }) => {
           flex: 1,
           p: 4,
           overflowY: "auto", // Allow scrolling for content
-          bgcolor: "#121212",
+          bgcolor: "#2DC7D2",
         }}
       >
         {children}

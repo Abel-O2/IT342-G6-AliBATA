@@ -7,34 +7,34 @@ const Payment = () => {
 
   return (
     <SidebarLayout>
+      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
       <Box sx={{ flex: 1, padding: 3 }}>
-        {/* Subscriptions Header */}
-        <Paper sx={{ bgcolor: "#222", p: 3, mb: 4, color: "white", textAlign: "center" }}>
+        <Paper sx={{ bgcolor: "#F4F8D3", p: 3, mb: 4, color: "black", textAlign: "center" }}>
           <Typography variant="h5" fontWeight="bold">Subscriptions</Typography>
           <Typography variant="h6" sx={{ mt: 1 }}>
             Current Tier: <strong>{currentPlan}</strong>
           </Typography>
         </Paper>
 
-        {/* Subscription Plans */}
+        
         <Grid container spacing={4} justifyContent="center">
-          {/* Basic Tier */}
+         
           <Grid item>
             <Paper
               sx={{
                 width: "280px",
                 p: 4,
-                bgcolor: "#1E1E1E",
+                bgcolor: "#F4F8D3",
                 textAlign: "center",
                 color: "white",
                 borderRadius: "10px",
               }}
             >
-              <Typography variant="h6" fontWeight="bold">Basic Tier</Typography>
-              <Typography sx={{ mt: 2, fontSize: "14px", color: "#bbb" }}>
+              <Typography variant="h6" fontWeight="bold" color="black">Basic Tier</Typography>
+              <Typography sx={{ mt: 2, fontSize: "14px", color: "black" }}>
                 Access to basic features
               </Typography>
-              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold" }}>Free</Typography>
+              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold", color:"black" }}>Free</Typography>
               <Button
                 variant="contained"
                 fullWidth
@@ -50,32 +50,32 @@ const Payment = () => {
             </Paper>
           </Grid>
 
-          {/* Premium Tier */}
+          
           <Grid item>
             <Paper
               sx={{
                 width: "280px",
                 p: 4,
-                bgcolor: "#10B981",
+                bgcolor: "#F4F8D3",
                 textAlign: "center",
                 color: "white",
                 borderRadius: "10px",
                 boxShadow: "0px 4px 10px rgba(255,255,255,0.5)",
               }}
             >
-              <Typography variant="h6" fontWeight="bold">Premium Tier</Typography>
-              <Typography sx={{ mt: 2, fontSize: "14px" }}>
+              <Typography variant="h6" fontWeight="bold" color="black">Premium Tier</Typography>
+              <Typography sx={{ mt: 2, fontSize: "14px", color: "black" }}>
                 Full access with exclusive benefits
               </Typography>
-              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold" }}>₱599.99 / month</Typography>
+              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold", color:"black" }}>₱599.99 / month</Typography>
               <Button
                 variant="contained"
                 fullWidth
                 sx={{
                   mt: 3,
-                  bgcolor: "white",
-                  color: "#10B981",
-                  ":hover": { bgcolor: "#f1f1f1" },
+                  color: "black",
+                  bgcolor: "#10B981",
+                  ":hover": { bgcolor: "#20DFA6" },
                 }}
                 onClick={() => setCurrentPlan("Premium")}
               >
@@ -84,6 +84,7 @@ const Payment = () => {
             </Paper>
           </Grid>
         </Grid>
+      </Box>
       </Box>
     </SidebarLayout>
   );

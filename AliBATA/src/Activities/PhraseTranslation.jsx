@@ -259,10 +259,11 @@ function PhraseTranslation() {
 
   return (
     <SidebarLayout>
+      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
         <Typography
           onClick={() => navigate("/activity")}
           sx={{
-            color: "white",
+            color: "black",
             cursor: "pointer",
             textDecoration: "underline",
             mb: 2,
@@ -270,12 +271,11 @@ function PhraseTranslation() {
         >
           Back
         </Typography>
-        <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
+        <Typography variant="h5" fontWeight="bold" color="black" mb={3}>
           Phrase Translation Activity
         </Typography>
 
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
-          {/* Phrase Input */}
           <TextField
             label="Phrase to Post"
             variant="outlined"
@@ -283,8 +283,8 @@ function PhraseTranslation() {
             onChange={(e) => setPhrase(e.target.value)}
             fullWidth
             sx={{
-              bgcolor: "#424242",
-              input: { color: "white" },
+              bgcolor: "#c8e3e3",
+              input: { color: "black" },
               label: { color: "#BDBDBD" },
             }}
           />
@@ -292,8 +292,9 @@ function PhraseTranslation() {
             variant="contained"
             onClick={submitPhrase}
             sx={{
+              color: "black",
               bgcolor: "#10B981",
-              ":hover": { bgcolor: "#059669" },
+              ":hover": { bgcolor: "#20DFA6" },
             }}
           >
             Submit Phrase
@@ -307,8 +308,8 @@ function PhraseTranslation() {
             onChange={(e) => setCorrectTranslation(e.target.value)}
             fullWidth
             sx={{
-              bgcolor: "#424242",
-              input: { color: "white" },
+              bgcolor: "#c8e3e3",
+              input: { color: "black" },
               label: { color: "#BDBDBD" },
             }}
           />
@@ -317,14 +318,13 @@ function PhraseTranslation() {
             onClick={generateChoicesFromPhrase}
             disabled={!isPhraseSubmitted} // Disable if the phrase is not submitted
             sx={{
-              bgcolor: isPhraseSubmitted ? "#10B981" : "#9CA3AF", // Change color if disabled
-              ":hover": isPhraseSubmitted ? { bgcolor: "#059669" } : {},
+              bgcolor: isPhraseSubmitted ? "#10B981" : "#9CA3AF",
+              ":hover": isPhraseSubmitted ? { bgcolor: "#20DFA6" } : {},
             }}
           >
             Generate Choices
           </Button>
 
-          {/* Manual Choice Input */}
           <TextField
             label="Add Manual Choice"
             variant="outlined"
@@ -332,8 +332,8 @@ function PhraseTranslation() {
             onChange={(e) => setInputChoice(e.target.value)}
             fullWidth
             sx={{
-              bgcolor: "#424242",
-              input: { color: "white" },
+              bgcolor: "#c8e3e3",
+              input: { color: "black" },
               label: { color: "#BDBDBD" },
             }}
           />
@@ -342,16 +342,17 @@ function PhraseTranslation() {
             onClick={addManualChoice}
             disabled={!isPhraseSubmitted} // Disable if the phrase is not submitted
             sx={{
+              color: "black",
               bgcolor: isPhraseSubmitted ? "#10B981" : "#9CA3AF", // Change color if disabled
-              ":hover": isPhraseSubmitted ? { bgcolor: "#059669" } : {},
+              ":hover": isPhraseSubmitted ? { bgcolor: "#20DFA6" } : {},
             }}
           >
             Add Manual Choice
           </Button>
 
           {/* Choices List */}
-          <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
-            <Typography variant="h6" color="white" mb={2}>
+          <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
+            <Typography variant="h6" color="black" mb={2}>
               Choices
             </Typography>
             <List>
@@ -380,33 +381,30 @@ function PhraseTranslation() {
           </Paper>
         </Box>
 
-        {/* Submit Button */}
         <Box mt={4}>
           <Button
             variant="contained"
             onClick={handleSubmit}
             sx={{
-              bgcolor: "#3B82F6",
-              ":hover": { bgcolor: "#2563EB" },
+              bgcolor: "#10B981",
+              ":hover": { bgcolor: "#20DFA6" },
             }}
           >
             Save Choices
           </Button>
         </Box>
 
-        {/* Message */}
         {message && (
-          <Typography color="white" sx={{ mt: 2 }}>
+          <Typography color="black" sx={{ mt: 2 }}>
             {message}
           </Typography>
         )}
 
-        {/* List of Questions */}
         <Box mt={4}>
-          <Typography variant="h6" color="white" mb={2}>
+          <Typography variant="h6" color="black" mb={2}>
             List of Questions
           </Typography>
-          <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
+          <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
             <List>
               {questions.length > 0 ? (
                 questions.map((question, index) => (
@@ -472,11 +470,12 @@ function PhraseTranslation() {
                   </ListItem>
                 ))
               ) : (
-                <Typography color="white">No questions available.</Typography>
+                <Typography color="black">No questions available.</Typography>
               )}
             </List>
           </Paper>
         </Box>
+      </Box>
     </SidebarLayout>
   );
 }

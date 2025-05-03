@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Paper, Button, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Typography, Paper, Button, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SidebarLayout from "./SidebarLayout";
 import {jwtDecode} from "jwt-decode"; // Import jwt-decode
 import axios from "axios";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]); // State to store the list of users
@@ -19,11 +20,10 @@ const AdminDashboard = () => {
       }
 
       try {
-        // Decode the token to get user details
+      
         const decodedToken = jwtDecode(token);
         console.log("Decoded token:", decodedToken);
 
-        // Fetch user details using the token
         const userResponse = await axios.get(`https://alibata.duckdns.org/api/alibata/users/${decodedToken.userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -39,7 +39,6 @@ const AdminDashboard = () => {
           return;
         }
 
-        // Fetch the list of users (only for admins)
         const usersResponse = await axios.get("https://alibata.duckdns.org/api/alibata/users", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,16 +54,31 @@ const AdminDashboard = () => {
     fetchUserAndUsers();
   }, [navigate]);
 
+  const handleDelete = async (userId) => {
+    const token = localStorage.getItem("token");
+    try {
+      const decodedToken = jwtDecode(token);
+      await axios.delete(`https://alibata.duckdns.org/api/alibata/users/${decodedToken.userId}`, { // Changed Id to userId
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUsers(users.filter(user => user.id !== userId)); // Update the state to remove the deleted user
+    } catch (err) {
+      console.error("Error deleting user:", err.response?.data || err.message);
+      alert("Failed to delete user. Please try again.");
+    }
+  }
+
   return (
     <SidebarLayout>
-      <Box sx={{ flexGrow: 1, bgcolor: "#2B2B2B", p: 4 }}>
-        <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
+      <Box sx={{ flexGrow: 1, bgcolor: "#A6D6D6", p: 4 }}>
+        <Typography variant="h5" fontWeight="bold" color="black" mb={3}>
           Admin Dashboard
         </Typography>
 
-        {/* List of Users */}
         <Box>
-          <Typography variant="h6" color="white" mb={2}>
+          <Typography variant="h6" color="black" mb={2}>
             List of Users
           </Typography>
           {error && (
@@ -72,43 +86,50 @@ const AdminDashboard = () => {
               {error}
             </Typography>
           )}
-          <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
+          <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black"}}>
             <Box
               sx={{
-                maxHeight: "300px", // Set a fixed height for the list
-                overflowY: "auto", // Enable vertical scrolling
+                maxHeight: "300px", 
+                overflowY: "auto", 
               }}
             >
               <List>
                 {users.map((user, index) => (
-                  <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                  <ListItem key={index} sx={{ borderBottom: "1px solid #444",  }}>
                     <ListItemText
                       primary={`User #${index + 1}: ${user.firstName}`}
                       secondary={`Role: ${user.role}`}
                     />
+                    <ListItemSecondaryAction>
+                    <IconButton edge="end" color="error" onClick={() => handleDelete(user.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                    {/*<IconButton edge="end" color="error" onClick={() => handleDelete(activity.activityId)}>
+                      <DeleteIcon />
+                    </IconButton>*/}
+                  </ListItemSecondaryAction>
                   </ListItem>
+                  
                 ))}
               </List>
             </Box>
           </Paper>
         </Box>
 
-        {/* Create Activity Button */}
         <Box mt={4}>
           <Button
             variant="contained"
-            sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#059669" } }}
+            sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#20DFA6" } }}
             onClick={() => navigate("/activity")}
           >
             Create an Activity
           </Button>
         </Box>
 
-        {/* Create Story Button */}
         <Box mt={4}>
           <Button
             variant="contained"
-            sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#059669" } }}
+            sx={{ bgcolor: "#10B981", ":hover": { bgcolor: "#20DFA6" } }}
             onClick={() => navigate("/story")}
           >
             Create a Story

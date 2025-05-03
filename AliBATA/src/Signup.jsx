@@ -69,7 +69,7 @@ const SignUp = () => {
     <Box
       sx={{
         height: "91.7vh",
-        bgcolor: "#FFE5B4",
+        bgcolor: "#2DC7D2",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -86,7 +86,7 @@ const SignUp = () => {
         }}
       >
         <Box sx={{ width: "50%", padding: 4, bgcolor: "#A6D6D6" }}>
-          <Typography variant="h5" color="white" sx={{ fontWeight: "bold" }}>
+          <Typography variant="h5" color="black" sx={{ fontWeight: "bold" }}>
             Sign Up
           </Typography>
 
@@ -167,11 +167,11 @@ const SignUp = () => {
                 <Checkbox
                   checked={isChecked}
                   onChange={handleCheckboxChange}
-                  sx={{ color: "white", "&.Mui-checked": { color: "#F4F8D3" } }}
+                  sx={{ color: "black", "&.Mui-checked": { color: "#F4F8D3" } }}
                 />
               }
               label="I agree to the Terms & Conditions"
-              sx={{ color: "white", mb: 2 }}
+              sx={{ color: "black", mb: 2 }}
             />
 
             <Button
@@ -179,7 +179,7 @@ const SignUp = () => {
               fullWidth
               variant="contained"
               disabled={!isChecked} // Disable button if checkbox is not checked
-              sx={{ bgcolor: isChecked ? "#c1f7eb" : "gray", color: "white", mb: 2, ":hover": { bgcolor: isChecked ? "#F4F8D3" : "gray" } }}
+              sx={{ bgcolor: isChecked ? "#10B981" : "gray", color: "black", mb: 2, ":hover": { bgcolor: isChecked ? "#20DFA6" : "gray" } }}
             >
               Sign Up
             </Button>
@@ -187,7 +187,7 @@ const SignUp = () => {
             <Button
               fullWidth
               variant="outlined"
-              sx={{ color: "white", borderColor: "white", ":hover": { bgcolor: "#424242" } }}
+              sx={{ color: "black", borderColor: "black", ":hover": { bgcolor: "#20DFA6" } }}
               onClick={() => navigate("/")}
             >
               Back to Login

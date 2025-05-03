@@ -266,10 +266,11 @@ function OnePicFourWords() {
 
   return (
     <SidebarLayout>
+      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
       <Typography
         onClick={() => navigate("/activity")}
         sx={{
-          color: "white",
+          color: "black",
           cursor: "pointer",
           textDecoration: "underline",
           mb: 2,
@@ -277,21 +278,20 @@ function OnePicFourWords() {
       >
         Back
       </Typography>
-      <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
+      <Typography variant="h5" fontWeight="bold" color="black" mb={3}>
         1 Picture 4 Words Activity
       </Typography>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
-        {/* Image Upload */}
-        <Typography color="white">Upload Image:</Typography>
-        <Button variant="contained" component="label" sx={{ bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}>
+        <Typography color="black" fontWeight="bold">Upload Image:</Typography>
+        <Button variant="contained" component="label" sx={{ color:"black", bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}>
           Upload Image
           <input type="file" hidden onChange={handleImageUpload} />
         </Button>
-        {image && <Typography color="white">Selected File: {image.name}</Typography>}
+        {image && <Typography color="black">Selected File: {image.name}</Typography>}
         {imagePreview && (
           <Box mt={2}>
-            <Typography color="white">Image Preview:</Typography>
+            <Typography color="black">Image Preview:</Typography>
             <img
               src={imagePreview}
               alt="Preview"
@@ -303,14 +303,14 @@ function OnePicFourWords() {
           variant="contained"
           onClick={submitImage}
           sx={{
+            color: "black",
             bgcolor: "#10B981",
-            ":hover": { bgcolor: "#059669" },
+            ":hover": {  bgcolor: "#20DFA6" },
           }}
         >
           Submit Image
         </Button>
 
-        {/* Correct Answer Input */}
         <TextField
           label="Correct Answer"
           variant="outlined"
@@ -318,8 +318,8 @@ function OnePicFourWords() {
           onChange={(e) => setCorrectAnswer(e.target.value)}
           fullWidth
           sx={{
-            bgcolor: "#424242",
-            input: { color: "white" },
+            bgcolor: "#c8e3e3",
+            input: { color: "black" },
             label: { color: "#BDBDBD" },
           }}
         />
@@ -332,8 +332,8 @@ function OnePicFourWords() {
           onChange={(e) => setInputChoice(e.target.value)}
           fullWidth
           sx={{
-            bgcolor: "#424242",
-            input: { color: "white" },
+            bgcolor: "#c8e3e3",
+            input: { color: "black" },
             label: { color: "#BDBDBD" },
           }}
         />
@@ -342,16 +342,16 @@ function OnePicFourWords() {
           onClick={addChoice}
           disabled={!isImageSubmitted} // Disable if the image is not submitted
           sx={{
+            color: "black",
             bgcolor: isImageSubmitted ? "#10B981" : "#9CA3AF", // Change color if disabled
-            ":hover": isImageSubmitted ? { bgcolor: "#059669" } : {},
+            ":hover": isImageSubmitted ? { bgcolor: "#20DFA6" } : {},
           }}
         >
           Add Choice
         </Button>
 
-        {/* Choices List */}
-        <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
-          <Typography variant="h6" color="white" mb={2}>
+        <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
+          <Typography variant="h6" color="black" mb={2}>
             Choices
           </Typography>
           <List>
@@ -371,39 +371,38 @@ function OnePicFourWords() {
         </Paper>
       </Box>
 
-      {/* Submit Button */}
       <Box mt={4}>
         <Button
           variant="contained"
           onClick={handleSubmit}
           sx={{
-            bgcolor: "#3B82F6",
-            ":hover": { bgcolor: "#2563EB" },
+            color: "black",
+            bgcolor: "#10B981",
+            ":hover": { bgcolor: "#20DFA6" },
           }}
         >
           Save Choices
         </Button>
       </Box>
 
-      {/* Message */}
+      
       {message && (
-        <Typography color="white" sx={{ mt: 2 }}>
+        <Typography color="black" sx={{ mt: 2 }}>
           {message}
         </Typography>
       )}
 
       {/* List of Questions */}
       <Box mt={4}>
-        <Typography variant="h6" color="white" mb={2}>
+        <Typography variant="h6" color="black" mb={2}>
           List of Questions
         </Typography>
-        <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
+        <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
           <List>
             {questions.length > 0 ? (
               questions.map((question, index) => (
                 <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
                   <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    {/* Display the question image */}
                     {question.questionImage && (
                       <img
                         src={question.questionImage}
@@ -420,7 +419,7 @@ function OnePicFourWords() {
                     {/*<Typography color="white" variant="body1">
                       <strong>Correct Answer:</strong> {question.setCorrectAnswer}
                     </Typography>*/}
-                    <Typography color="white" variant="body1">
+                    <Typography color="black" variant="body1">
                       <strong>Question ID:</strong> {question.questionId}
                     </Typography>
                     <Box sx={{ display: "flex", gap: 2 }}>
@@ -443,10 +442,11 @@ function OnePicFourWords() {
                 </ListItem>
               ))
             ) : (
-              <Typography color="white">No questions available.</Typography>
+              <Typography color="black">No questions available.</Typography>
             )}
           </List>
         </Paper>
+      </Box>
       </Box>
     </SidebarLayout>
   );

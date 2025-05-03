@@ -17,6 +17,8 @@ function WordTranslation() {
   const [questionId, setQuestionId] = useState(null);
   const [editingQuestionId, setEditingQuestionId] = useState(null); // Track the question being edited
   const [editedQuestionText, setEditedQuestionText] = useState(""); // Track the edited text
+  const [editingChoiceId, setEditingChoiceId] = useState(null); // Track the choice being edited
+  const [editedChoiceText, setEditedChoiceText] = useState(""); // Track the edited choice text
 
   // Fetch questions for the activity
   useEffect(() => {
@@ -216,6 +218,29 @@ function WordTranslation() {
     }
   };
 
+  const saveEditedChoice = async (id) => {
+    try {
+      await axios.put(
+        `https://alibata.duckdns.org/api/alibata/choices/${id}`,
+        { choiceText: editedChoiceText },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setMessage("Choice updated successfully!");
+      setChoices((prevChoices) =>
+        prevChoices.map((c) => (c.id === id ? { ...c, choiceText: editedChoiceText } : c))
+      );
+      setEditingChoiceId(null); // Exit editing mode
+    } catch (err) {
+      console.error("Failed to update choice:", err.response?.data || err.message);
+      setMessage("Failed to update choice. Please try again.");
+    }
+  };
+  
+  
   const deleteChoice = async (id) => {
     try {
       await axios.delete(`https://alibata.duckdns.org/api/alibata/choices/${id}`, {
@@ -262,10 +287,11 @@ function WordTranslation() {
 
   return (
     <SidebarLayout>
+      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
         <Typography
           onClick={() => navigate("/activity")}
           sx={{
-            color: "white",
+            color: "black",
             cursor: "pointer",
             textDecoration: "underline",
             mb: 2,
@@ -273,7 +299,7 @@ function WordTranslation() {
         >
           Back
         </Typography>
-        <Typography variant="h5" fontWeight="bold" color="white" mb={3}>
+        <Typography variant="h5" fontWeight="bold" color="black" mb={3}>
           Word Translation Activity
         </Typography>
 
@@ -286,8 +312,8 @@ function WordTranslation() {
             onChange={(e) => setWord(e.target.value)}
             fullWidth
             sx={{
-              bgcolor: "#424242",
-              input: { color: "white" },
+              bgcolor: "#c8e3e3",
+              input: { color: "black" },
               label: { color: "#BDBDBD" },
             }}
           />
@@ -295,8 +321,9 @@ function WordTranslation() {
             variant="contained"
             onClick={submitWord}
             sx={{
+              color: "black",
               bgcolor: "#10B981",
-              ":hover": { bgcolor: "#059669" },
+              ":hover": { bgcolor: "#20DFA6" },
             }}
           >
             Submit Word
@@ -310,8 +337,8 @@ function WordTranslation() {
             onChange={(e) => setCorrectTranslation(e.target.value)}
             fullWidth
             sx={{
-              bgcolor: "#424242",
-              input: { color: "white" },
+              bgcolor: "#c8e3e3",
+              input: { color: "black" },
               label: { color: "#BDBDBD" },
             }}
           />
@@ -324,8 +351,8 @@ function WordTranslation() {
             onChange={(e) => setInputChoice(e.target.value)}
             fullWidth
             sx={{
-              bgcolor: "#424242",
-              input: { color: "white" },
+              bgcolor: "#c8e3e3",
+              input: { color: "black" },
               label: { color: "#BDBDBD" },
             }}
           />
@@ -334,37 +361,80 @@ function WordTranslation() {
             onClick={addChoice}
             disabled={!isWordSubmitted} // Disable if the word is not submitted
             sx={{
+              color:"black",
               bgcolor: isWordSubmitted ? "#10B981" : "#9CA3AF", // Change color if disabled
-              ":hover": isWordSubmitted ? { bgcolor: "#059669" } : {},
+              ":hover": isWordSubmitted ? { bgcolor: "#20DFA6" } : {},
             }}
           >
             Add Choice
           </Button>
 
           {/* Choices List */}
-          <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
-            <Typography variant="h6" color="white" mb={2}>
+          <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
+            <Typography variant="h6" color="black" mb={2}>
               Choices
             </Typography>
             <List>
               {choices.map((choice, index) => (
                 <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                  <ListItemText primary={choice.choiceText || choice} />
+                  {editingChoiceId === choice.id ? (
+                    <TextField
+                      variant="outlined"
+                      value={editedChoiceText}
+                      onChange={(e) => setEditedChoiceText(e.target.value)}
+                      fullWidth
+                      sx={{
+                        bgcolor: "#c8e3e3",
+                        input: { color: "white" },
+                        label: { color: "#BDBDBD" },
+                      }}
+                    />
+                  ) : (
+                    <ListItemText primary={choice.choiceText || choice} />
+                  )}
                   <Box sx={{ display: "flex", gap: 2 }}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => editChoice(choice.id, { choiceText: "Updated Choice" })}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => deleteChoice(choice.id)}
-                    >
-                      Delete
-                    </Button>
+                    {editingChoiceId === choice.id ? (
+                      <>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => saveEditedChoice(choice.id)}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => setEditingChoiceId(null)}
+                        >
+                          Cancel
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            color: "black",
+                            bgcolor: "#10B981",
+                            ":hover": { bgcolor: "#20DFA6" },
+                          }}
+                          onClick={() => {
+                            setEditingChoiceId(choice.id);
+                            setEditedChoiceText(choice.choiceText || choice);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => deleteChoice(choice.id)}
+                        >
+                          Delete
+                        </Button>
+                      </>
+                    )}
                   </Box>
                 </ListItem>
               ))}
@@ -378,27 +448,27 @@ function WordTranslation() {
             variant="contained"
             onClick={handleSubmit}
             sx={{
-              bgcolor: "#3B82F6",
-              ":hover": { bgcolor: "#2563EB" },
+              color: "black",
+              bgcolor: "#10B981",
+              ":hover": { bgcolor: "#20DFA6" },
             }}
           >
             Save Choices
           </Button>
         </Box>
 
-        {/* Message */}
         {message && (
-          <Typography color="white" sx={{ mt: 2 }}>
+          <Typography color="black" sx={{ mt: 2 }}>
             {message}
           </Typography>
         )}
 
         {/* List of Questions */}
         <Box mt={4}>
-          <Typography variant="h6" color="white" mb={2}>
+          <Typography variant="h6" color="black" mb={2}>
             List of Questions
           </Typography>
-          <Paper sx={{ bgcolor: "#1F1F1F", p: 2, color: "white" }}>
+          <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
             <List>
               {questions.length > 0 ? (
                 questions.map((question, index) => (
@@ -410,13 +480,13 @@ function WordTranslation() {
                           onChange={(e) => setEditedQuestionText(e.target.value)}
                           fullWidth
                           sx={{
-                            bgcolor: "#424242",
-                            input: { color: "white" },
+                            bgcolor: "#c8e3e3",
+                            input: { color: "black" },
                             label: { color: "#BDBDBD" },
                           }}
                         />
                       ) : (
-                        <Typography color="white" variant="body1">
+                        <Typography color="black" variant="body1">
                           <strong>Word:</strong> {question.questionText}
                         </Typography>
                       )}
@@ -450,11 +520,12 @@ function WordTranslation() {
                   </ListItem>
                 ))
               ) : (
-                <Typography color="white">No questions available.</Typography>
+                <Typography color="black">No questions available.</Typography>
               )}
             </List>
           </Paper>
         </Box>
+      </Box>
     </SidebarLayout>
   );
 }

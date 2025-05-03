@@ -71,7 +71,7 @@ export default function Login() {
       sx={{
         height: "96.8vh",
         minWidth: "50vh",
-        bgcolor: "#FFE5B4",
+        bgcolor: "#2DC7D2",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -100,7 +100,7 @@ export default function Login() {
           <img src={alibataLogo} alt="AliBATA Logo" style={{ height: "50px" }} />
         </Box>
 
-        <Typography variant="h5" color="white" sx={{ mt: 2, fontWeight: "bold" }}>
+        <Typography variant="h5" color="black" sx={{ mt: 2, fontWeight: "bold" }}>
           Log In
         </Typography>
 
@@ -148,8 +148,9 @@ export default function Login() {
             sx={{
               mt: 3,
               py: 1.5,
-              bgcolor: "#c1f7eb",
-              ":hover": { bgcolor: "#F4F8D3" },
+              color: "black",
+              bgcolor: "#10B981",
+              ":hover": { bgcolor: "#20DFA6" },
             }}
           >
             Log In
@@ -159,7 +160,7 @@ export default function Login() {
         <Typography
           variant="body2"
           color="#BDBDBD"
-          sx={{ mt: 2, cursor: "pointer", ":hover": { color: "white" } }}
+          sx={{ mt: 2, cursor: "pointer", color: "black", ":hover": { color: "black", fontWeight: "bold" } }}
           onClick={() => navigate("/signup")}
         >
           Don't have an account? Sign up

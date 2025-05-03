@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import {jwtDecode} from "jwt-decode"; // Import jwt-decode
@@ -20,11 +20,11 @@ const EditUserModal = ({ open, onClose, onSave }) => {
       }
 
       try {
-        // Decode the token to get userId
+        
         const decodedToken = jwtDecode(token);
         console.log("Decoded token:", decodedToken);
 
-        // Fetch user details using the userId
+      
         const userResponse = await axios.get(
           `https://alibata.duckdns.org/api/alibata/users/${decodedToken.userId}`,
           {
@@ -37,7 +37,6 @@ const EditUserModal = ({ open, onClose, onSave }) => {
         const userDetails = userResponse.data;
         console.log("Fetched user details:", userDetails);
 
-        // Populate the form with user details
         setFormData({
           firstName: userDetails.firstName || "",
           middleName: userDetails.middleName || "",
@@ -62,9 +61,32 @@ const EditUserModal = ({ open, onClose, onSave }) => {
     }));
   };
 
-  const handleSave = () => {
-    onSave(formData);
-    onClose();
+  const handleSave = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.userId;
+
+      console.log("Saving user with data:", formData);
+
+      await axios.put(
+        `https://alibata.duckdns.org/api/alibata/users/${userId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      alert("User details updated successfully!");
+      onSave(formData);
+      onClose();
+    } catch (err) {
+      console.error("Failed to update user:", err.response?.data || err.message);
+      setError("Failed to update user. Please try again.");
+    }
   };
 
   return (

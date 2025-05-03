@@ -104,7 +104,7 @@ const HomePage = () => {
 
   return (
     <SidebarLayout>
-      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
+      <Box sx={{ maxHeight: "200vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
         <Typography variant="h4" fontWeight="bold" color="black" sx={{ mb: 3 }}>
           Progress Dashboard
         </Typography>
@@ -143,7 +143,7 @@ const HomePage = () => {
               activities.map((activity) => (
                 <ListItem key={activity.activityId} sx={{ borderBottom: "1px solid #444" }}>
                   <ListItemText
-                    primary={`Activity Name: ${activity.activityName}`}
+                    primary={`Activity Name: ${activity.activityName} (ID: ${activity.activityId})`}
                     secondary={`Activity: ${activity.gameType}`}
                   />
                 </ListItem>

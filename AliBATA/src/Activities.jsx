@@ -115,6 +115,7 @@ const Activities = () => {
           </Typography>
         )}
         
+        {/*Activity List*/}
         <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
           <Box  
           sx={{
@@ -125,7 +126,7 @@ const Activities = () => {
             {activities.map((activity) => (
               <ListItem key={activity.activityId} sx={{ borderBottom: "1px solid #444" }}>
                 <ListItemText
-                  primary={activity.activityName}
+                  primary={`${activity.activityName} (ID: ${activity.activityId})`}
                   secondary={`Game Type: ${activity.gameType}`}
                 />
                 <ListItemSecondaryAction>

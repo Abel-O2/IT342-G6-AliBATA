@@ -8,34 +8,6 @@ Alibata is an educational app that aims to promote and revitalize the Cebuano cu
 ## Features
 ###Gamification Features
 
-<ul>
-    <li>Gamification</li>
-
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-</ul>
-
-
-
 3.2 Mini-Games
 
 Use Case Diagram

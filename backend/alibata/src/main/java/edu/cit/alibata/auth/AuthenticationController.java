@@ -26,6 +26,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     @Operation(
+        summary = "Register a new user",
         description = "Creates a new user and returns a JWT token upon successful registration",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Registration request body",
@@ -35,9 +36,11 @@ public class AuthenticationController {
         responses = {
             @ApiResponse(responseCode = "200", description = "Successfully registered"),
             @ApiResponse(responseCode = "400", description = "Bad request",
-                content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
             @ApiResponse(responseCode = "500", description = "Internal server error",
-                content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
         }
     )
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
@@ -46,6 +49,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     @Operation(
+        summary = "Login a user",
         description = "Logs in a user and returns a JWT token upon successful authentication",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Authentication request body",
@@ -55,9 +59,11 @@ public class AuthenticationController {
         responses = {
             @ApiResponse(responseCode = "200", description = "Successfully authenticated"),
             @ApiResponse(responseCode = "401", description = "Unauthorized - invalid credentials",
-                content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
             @ApiResponse(responseCode = "500", description = "Internal server error",
-                content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
         }
     )
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {

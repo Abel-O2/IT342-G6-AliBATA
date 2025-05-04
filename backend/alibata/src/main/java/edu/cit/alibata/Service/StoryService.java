@@ -9,10 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.cit.alibata.Entity.StoryEntity;
+import edu.cit.alibata.Entity.UserEntity;
+import edu.cit.alibata.Entity.UserStory;
 import edu.cit.alibata.Repository.StoryRepository;
+import edu.cit.alibata.Repository.UserRepository;
+import edu.cit.alibata.Repository.UserStoryRepository;
 import edu.cit.alibata.config.YouTubeService;
 import edu.cit.alibata.dto.StoryDetailsDto;
 import edu.cit.alibata.dto.YouTubeVideoDto;
+import edu.cit.alibata.model.UserStoryProjection;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -24,22 +29,44 @@ public class StoryService {
     @Autowired
     private YouTubeService youTubeService;
 
-    // Create a new StoryEntity
+    @Autowired
+    private UserRepository userRepo;
+
+    @Autowired
+    private UserStoryRepository userStoryRepo;
+
+    // Create and assign new StoryEntity to users
     public StoryEntity postStoryEntity(StoryEntity story) {
-        return storyRepo.save(story);
+        StoryEntity postStory = storyRepo.save(story);
+        
+        List<UserEntity> allUsers = userRepo.findAll();
+        for (UserEntity user : allUsers) {
+            UserStory userStory = new UserStory(user, postStory);
+            userStoryRepo.save(userStory);        
+        }
+
+        return postStory;
     }
 
-    // Retrieve all StoryEntities
+    // Read all StoryEntities
     public List<StoryEntity> getAllStoryEntity() {
         return storyRepo.findAll();
     }
 
-    // Retrieve a single StoryEntity by id
-    public StoryEntity getStoryEntity(int storyId) {
+    // Read a single StoryEntity by id
+    /*public StoryEntity getStoryEntity(int storyId) {
         return storyRepo.findById(storyId).get();
+    }*/
+
+    // Read all stories for user
+    @SuppressWarnings("unused")
+    public List<UserStoryProjection> getAllStoriesForUser(int userId) {
+        UserEntity user = userRepo.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+        return userStoryRepo.findByUser_UserId(userId);
     }
 
-    // Retrieve a single StoryEntity by id with YouTube video details
+    // Read a single StoryEntity by id with YouTube video details
     public StoryDetailsDto getStoryDetails(int storyId) throws GeneralSecurityException, IOException {
         StoryEntity story = storyRepo.findById(storyId).get();
         if (story == null) {
@@ -70,14 +97,21 @@ public class StoryService {
     }
 
     // Delete a StoryEntity by id
-    @SuppressWarnings("unused")
     public String deleteStoryEntity(int storyId) {
-        if (storyRepo.findById(storyId) != null) {
+        if (storyRepo.existsById(storyId)) {
             storyRepo.deleteById(storyId);
             return "Story " + storyId + " deleted successfully!";
         } else {
             return "Story " + storyId + " not found!";
         }
+    }
+
+    // Mark a story as completed for a specific user
+    public void markStoryAsCompleted(int userId, int storyId) {
+        UserStory userStory = userStoryRepo.findByUser_UserIdAndStory_StoryId(userId, storyId)
+            .orElseThrow(() -> new EntityNotFoundException("Story is not assigned to the user"));
+        userStory.setCompleted(true);
+        userStoryRepo.save(userStory);
     }
 }
 

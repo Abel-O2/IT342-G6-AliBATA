@@ -23,6 +23,7 @@ import static edu.cit.alibata.Entity.Permission.ADMIN_CREATE;
 import static edu.cit.alibata.Entity.Permission.ADMIN_DELETE;
 import static edu.cit.alibata.Entity.Permission.ADMIN_READ;
 import static edu.cit.alibata.Entity.Permission.ADMIN_UPDATE;
+import static edu.cit.alibata.Entity.Permission.USER_CREATE;
 import static edu.cit.alibata.Entity.Permission.USER_DELETE;
 import static edu.cit.alibata.Entity.Permission.USER_READ;
 import static edu.cit.alibata.Entity.Permission.USER_UPDATE;
@@ -45,7 +46,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173")
+                .allowedOrigins("http://localhost:5173", "https://alibata.vercel.app")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
@@ -75,12 +76,11 @@ public class SecurityConfig implements WebMvcConfigurer {
                 //.requestMatchers("/api/alibata/activities/**").hasAnyRole(ADMIN.name())
                 .requestMatchers(GET, "/api/alibata/activities/**").hasAnyAuthority(ADMIN_READ.getPermission(), USER_READ.getPermission())
                 .requestMatchers(POST, "/api/alibata/activities/**").hasAnyAuthority(ADMIN_CREATE.getPermission())
-                .requestMatchers(PUT, "/api/alibata/activities/**").hasAnyAuthority(ADMIN_UPDATE.getPermission())
+                .requestMatchers(PUT, "/api/alibata/activities/**").hasAnyAuthority(ADMIN_UPDATE.getPermission(), USER_UPDATE.getPermission())
                 .requestMatchers(DELETE, "/api/alibata/activities/**").hasAnyAuthority(ADMIN_DELETE.getPermission())
-                //choices
                 //.requestMatchers("/api/alibata/choices/**").hasAnyRole(ADMIN.name())
                 .requestMatchers(GET, "/api/alibata/choices/**").hasAnyAuthority(ADMIN_READ.getPermission(), USER_READ.getPermission())
-                .requestMatchers(POST, "/api/alibata/choices/**").hasAnyAuthority(ADMIN_CREATE.getPermission())
+                .requestMatchers(POST, "/api/alibata/choices/**").hasAnyAuthority(ADMIN_CREATE.getPermission(), USER_CREATE.getPermission())
                 .requestMatchers(PUT, "/api/alibata/choices/**").hasAnyAuthority(ADMIN_UPDATE.getPermission())
                 .requestMatchers(DELETE, "/api/alibata/choices/**").hasAnyAuthority(ADMIN_DELETE.getPermission())
                 //questions
@@ -92,14 +92,14 @@ public class SecurityConfig implements WebMvcConfigurer {
                 //Scores
                 //.requestMatchers("/api/alibata/scores/**").hasAnyRole(ADMIN.name())
                 .requestMatchers(GET, "/api/alibata/scores/**").hasAnyAuthority(ADMIN_READ.getPermission(), USER_READ.getPermission())
-                .requestMatchers(POST, "/api/alibata/scores/**").hasAnyAuthority(ADMIN_CREATE.getPermission())
+                .requestMatchers(POST, "/api/alibata/scores/**").hasAnyAuthority(ADMIN_CREATE.getPermission(), USER_CREATE.getPermission())
                 .requestMatchers(PUT, "/api/alibata/scores/**").hasAnyAuthority(ADMIN_UPDATE.getPermission())
                 .requestMatchers(DELETE, "/api/alibata/scores/**").hasAnyAuthority(ADMIN_DELETE.getPermission())
                 //Stories
                 //.requestMatchers("/api/alibata/stories/**").hasAnyRole(ADMIN.name())
                 .requestMatchers(GET, "/api/alibata/stories/**").hasAnyAuthority(ADMIN_READ.getPermission(), USER_READ.getPermission())
                 .requestMatchers(POST, "/api/alibata/stories/**").hasAnyAuthority(ADMIN_CREATE.getPermission())
-                .requestMatchers(PUT, "/api/alibata/stories/**").hasAnyAuthority(ADMIN_UPDATE.getPermission())
+                .requestMatchers(PUT, "/api/alibata/stories/**").hasAnyAuthority(ADMIN_UPDATE.getPermission(), USER_UPDATE.getPermission())
                 .requestMatchers(DELETE, "/api/alibata/stories/**").hasAnyAuthority(ADMIN_DELETE.getPermission())
                 //Users
                 //.requestMatchers("/api/alibata/users/**").hasAnyRole(ADMIN.name())

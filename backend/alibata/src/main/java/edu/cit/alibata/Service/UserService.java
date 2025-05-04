@@ -15,7 +15,7 @@ import jakarta.transaction.Transactional;
 @Service
 public class UserService {
     @Autowired
-    UserRepository userRepo;
+    private UserRepository userRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -55,7 +55,7 @@ public class UserService {
             user.setMiddleName(newUser.getMiddleName());
             user.setLastName(newUser.getLastName());
             user.setEmail(newUser.getEmail());
-            if (!passwordEncoder.matches(newUser.getPassword(), user.getPassword())) {
+            if (!passwordEncoder.matches(newUser.getPassword(), user.getPassword()) && !newUser.getPassword().startsWith("$2a$")) {
                 user.setPassword(passwordEncoder.encode(newUser.getPassword()));
             }
             user.setSubscriptionStatus(newUser.getSubscriptionStatus());
@@ -66,9 +66,8 @@ public class UserService {
     }
 
     // Delete
-    @SuppressWarnings("unused")
     public String deleteUserEntity(int userId){
-        if (userRepo.findById(userId) != null){
+        if (userRepo.existsById(userId)){
             userRepo.deleteById(userId);
             return "User " +userId+ "Deleted Successfully!";
         } else {

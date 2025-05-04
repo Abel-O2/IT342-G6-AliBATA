@@ -3,6 +3,8 @@ package edu.cit.alibata.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import edu.cit.alibata.Entity.ActivityEntity;
 import edu.cit.alibata.Service.ActivityService;
 import edu.cit.alibata.model.ErrorResponse;
+import edu.cit.alibata.model.UserActivityProjection;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,19 +32,18 @@ public class ActivityController {
     @Autowired
     ActivityService activityServ;
 
-    // Create
+    // Create and assign to users
     @PostMapping("")
     @Operation(
-        description = "Create a new activity",
+        summary = "Create a new activity",
+        description = "Creates a new activity and assigns it to all users",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "Activity data to create (without ID)",
-            content = @io.swagger.v3.oas.annotations.media.Content(
-                schema = @Schema(implementation = ActivityEntity.class, hidden = true) // Hide ID in example
-            )
+            content = @Content(schema = @Schema(implementation = ActivityEntity.class))
         ),
         responses = {
-            @ApiResponse(responseCode = "200", description = "Activity created successfully"),
-            @ApiResponse(responseCode = "400", description = "Bad request",
+            @ApiResponse(responseCode = "201", description = "Activity created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input",
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(responseCode = "500", description = "Internal server error",
@@ -49,14 +51,16 @@ public class ActivityController {
             )
         }
     )
-    public ActivityEntity postActivityEntity(@RequestBody ActivityEntity activity) {
-        return activityServ.postActivityEntity(activity);
+    public ResponseEntity<ActivityEntity> postActivityEntity(@RequestBody ActivityEntity activity) {
+        ActivityEntity postActivity = activityServ.postActivityEntity(activity);
+        return ResponseEntity.status(201).body(postActivity);
     }
 
     // Read All Activities
     @GetMapping("")
     @Operation(
-        description = "Get all activities",
+        summary = "Get all activities",
+        description = "Retrieves a list of all activities",
         responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "500", description = "Internal server error",
@@ -64,14 +68,16 @@ public class ActivityController {
             )
         }
     )
-    public List<ActivityEntity> getAllActivityEntity() {
-        return activityServ.getAllActivityEntity();
+    public ResponseEntity<List<ActivityEntity>> getAllActivityEntity() {
+        List<ActivityEntity> activities = activityServ.getAllActivityEntity();
+        return ResponseEntity.ok().body(activities);
     }
 
     // Read Single Activity
     @GetMapping("/{id}")
     @Operation(
-        description = "Get an activity by ID",
+        summary = "Get an activity by ID",
+        description = "Retrieves a specific activity by its ID",
         responses = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Activity not found",
@@ -82,17 +88,44 @@ public class ActivityController {
             )
         }
     )
-    public ActivityEntity getActivityEntity(@PathVariable int id) {
-        return activityServ.getActivityEntity(id);
+    public ResponseEntity<ActivityEntity> getActivityEntity(@PathVariable int id) {
+        ActivityEntity activity = activityServ.getActivityEntity(id);
+        return ResponseEntity.ok().body(activity);
+    }
+
+    // Read all activities for user
+    @GetMapping("/users/{userId}")
+    @Operation(
+        summary = "Get all activities for a user",
+        description = "Retrieves all activities assigned to a specific user by their ID",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+        }
+    )
+    @PreAuthorize("#userId == principal.userId or hasAuthority('admin:read')")
+    public ResponseEntity<List<UserActivityProjection>> getAllActivitiesForUser(@PathVariable int userId) {
+        List<UserActivityProjection> userActivities = activityServ.getAllActivitiesForUser(userId);
+        return ResponseEntity.ok().body(userActivities);
     }
 
     // Update
     @PutMapping("/{id}")
     @Operation(
-        description = "Update an activity",
+        summary = "Update an activity",
+        description = "Updates an existing activity by its ID",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Updated activity data",
+            content = @Content(schema = @Schema(implementation = ActivityEntity.class))
+        ),
         responses = {
             @ApiResponse(responseCode = "200", description = "Activity updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Bad request",
+            @ApiResponse(responseCode = "400", description = "Invalid input",
                 content = @Content(schema = @Schema(implementation = ErrorResponse.class))
             ),
             @ApiResponse(responseCode = "404", description = "Activity not found",
@@ -103,14 +136,17 @@ public class ActivityController {
             )
         }
     )
-    public ActivityEntity putActivityEntity(@PathVariable int id, @RequestBody ActivityEntity newActivity) {
-        return activityServ.putActivityEntity(id, newActivity);
+    @PreAuthorize("hasAuthority('admin:update')")
+    public ResponseEntity<ActivityEntity> putActivityEntity(@PathVariable int id, @RequestBody ActivityEntity newActivity) {
+        ActivityEntity putActivity = activityServ.putActivityEntity(id, newActivity);
+        return ResponseEntity.ok().body(putActivity);
     }
 
     // Delete
     @DeleteMapping("/{id}")
     @Operation(
-        description = "Delete an activity by ID",
+        summary = "Delete an activity",
+        description = "Deletes an activity by its ID",
         responses = {
             @ApiResponse(responseCode = "200", description = "Activity deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Activity not found",
@@ -121,7 +157,29 @@ public class ActivityController {
             )
         }
     )
-    public String deleteActivityEntity(@PathVariable int id) {
-        return activityServ.deleteActivityEntity(id);
+    public ResponseEntity<String> deleteActivityEntity(@PathVariable int id) {
+        String result = activityServ.deleteActivityEntity(id);
+        return ResponseEntity.ok().body(result);
+    }
+
+    // Mark Activity as Completed
+    @PutMapping("/{id}/completed/{userId}")
+    @Operation(
+        summary = "Mark an activity as completed",
+        description = "Marks an activity as completed for a specific user",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Activity marked as completed"),
+            @ApiResponse(responseCode = "404", description = "Activity or user not found",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+        }
+    )
+    @PreAuthorize("#userId == principal.userId or hasAuthority('admin:update')")
+    public ResponseEntity<Void> markActivityAsCompleted(@PathVariable int id, @PathVariable int userId) {
+        activityServ.markActivityAsCompleted(userId, id);
+        return ResponseEntity.ok().build();
     }
 }

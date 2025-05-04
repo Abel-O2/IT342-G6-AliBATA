@@ -6,7 +6,11 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import edu.cit.alibata.token.Token;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,6 +45,7 @@ public class UserEntity implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference(value = "user-tokens")
     private List<Token> tokens;
 
     @Override
@@ -74,7 +79,8 @@ public class UserEntity implements UserDetails {
     }
 
     //Entity Relations
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "user-scores")
     private List<ScoreEntity> scores;
 
     @ManyToMany
@@ -83,6 +89,8 @@ public class UserEntity implements UserDetails {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "story_id")
     )
+    //@JsonManagedReference
+    @JsonIgnore
     private List<StoryEntity> stories;
 
     @ManyToMany
@@ -91,6 +99,8 @@ public class UserEntity implements UserDetails {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "activity_id")
     )
+    //@JsonManagedReference
+    @JsonIgnore
     private List<ActivityEntity> activities;
 
     public UserEntity(){
@@ -207,6 +217,14 @@ public class UserEntity implements UserDetails {
     
     public void setActivities(List<ActivityEntity> activities) {
         this.activities = activities;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
     
 }

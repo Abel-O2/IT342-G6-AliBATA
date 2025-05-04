@@ -1,0 +1,455 @@
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Button, Paper, List, ListItem, ListItemText, TextField } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import SidebarLayout from "../SidebarLayout";
+import axios from "axios";
+
+function OnePicFourWords() {
+  const [image, setImage] = useState(null); // State for the uploaded image
+  const [choices, setChoices] = useState([]); // State for the list of choices
+  const [inputChoice, setInputChoice] = useState(""); // State for the current choice input
+  const [correctAnswer, setCorrectAnswer] = useState(""); // State for the correct answer
+  const [questions, setQuestions] = useState([]); // State for the list of questions
+  const [message, setMessage] = useState(""); // State for success or error messages
+  const [isImageSubmitted, setIsImageSubmitted] = useState(false); // Track if the image is submitted
+  const [questionId, setQuestionId] = useState(null); // State for the current questionId
+  const { activityId } = useParams(); // Get activityId from the route
+  const navigate = useNavigate();
+  const [imagePreview, setImagePreview] = useState(null);
+
+  // Fetch questions for the activity
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.get(`https://alibata.duckdns.org/api/alibata/questions/activities/${activityId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+          },
+        });
+        setQuestions(response.data); // Store the questions in state
+      } catch (err) {
+        console.error("Failed to fetch questions:", err.response?.data || err.message);
+        setMessage("Failed to fetch questions. Please try again.");
+      }
+    };
+
+    fetchQuestions();
+  }, [activityId]);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      setMessage("File size exceeds the 10MB limit. Please upload a smaller file.");
+      return;
+    }
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const editQuestion = async (id, updatedData) => {
+    try {
+      await axios.put(`https://alibata.duckdns.org/api/alibata/questions/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Question updated successfully!");
+      // Optionally refetch questions
+    } catch (err) {
+      console.error("Failed to update question:", err.response?.data || err.message);
+      setMessage("Failed to update question. Please try again.");
+    }
+  };
+
+  const editQuestionImage = async (id, newImage) => {
+    if (!newImage) {
+      setMessage("Please select a new image to upload.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("image", newImage); // Add the new image file
+
+      await axios.put(`https://alibata.duckdns.org/api/alibata/questions/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data", // Ensure correct content type
+        },
+      });
+
+      setMessage("Image updated successfully!");
+      // Optionally refetch questions to reflect the updated image
+      setQuestions((prevQuestions) =>
+        prevQuestions.map((q) =>
+          q.questionId === id ? { ...q, questionImage: URL.createObjectURL(newImage) } : q
+        )
+      );
+    } catch (err) {
+      console.error("Failed to update image:", err.response?.data || err.message);
+      setMessage("Failed to update image. Please try again.");
+    }
+  };
+
+  const deleteQuestion = async (id) => {
+    try {
+      await axios.delete(`https://alibata.duckdns.org/api/alibata/questions/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Question deleted successfully!");
+      setQuestions(questions.filter((q) => q.questionId !== id)); // Remove from local state
+    } catch (err) {
+      console.error("Failed to delete question:", err.response?.data || err.message);
+      setMessage("Failed to delete question. Please try again.");
+    }
+  };
+
+
+  const editChoice = async (id, updatedData) => {
+    try {
+      await axios.put(`https://alibata.duckdns.org/api/alibata/choices/${id}`, updatedData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Choice updated successfully!");
+      // Optionally refetch choices
+    } catch (err) {
+      console.error("Failed to update choice:", err.response?.data || err.message);
+      setMessage("Failed to update choice. Please try again.");
+    }
+  };
+
+  const deleteChoice = async (id) => {
+    try {
+      await axios.delete(`https://alibata.duckdns.org/api/alibata/choices/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setMessage("Choice deleted successfully!");
+      setChoices(choices.filter((c) => c.id !== id)); // Remove from local state
+    } catch (err) {
+      console.error("Failed to delete choice:", err.response?.data || err.message);
+      setMessage("Failed to delete choice. Please try again.");
+    }
+  };
+
+  const submitImage = async () => {
+    if (!image) {
+      setMessage("Please upload an image.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setMessage("You are not logged in. Please log in again.");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      // Create a FormData object to send as multipart/form-data
+      const formData = new FormData();
+      formData.append("questionDescription", "null"); // Set questionDescription to null
+      formData.append("questionText", "null"); // Set questionText to null
+      formData.append("image", image); // Add the image file
+
+      // Post the image to the backend
+      const response = await axios.post(
+        `https://alibata.duckdns.org/api/alibata/questions/activities/${activityId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token
+            "Content-Type": "multipart/form-data", // Set the correct Content-Type
+          },
+        }
+      );
+
+      setMessage("Image successfully submitted!");
+      setIsImageSubmitted(true);
+      setQuestions((prevQuestions) => [...prevQuestions, response.data]); // Add the new question to the list
+      setQuestionId(response.data.questionId); // Set the questionId from the backend response
+    } catch (err) {
+      console.error("Failed to submit image:", err.response?.data || err.message);
+      setMessage(`Failed to submit image: ${err.response?.data?.message || err.message}`);
+    }
+  };
+
+  const addChoice = () => {
+    if (!inputChoice) {
+      setMessage("Choice cannot be empty.");
+      return;
+    }
+
+    setChoices([...choices, inputChoice]); // Add the choice to the local state
+    setInputChoice("");
+    setMessage("Choice added successfully.");
+  };
+
+  const removeChoice = (choice) => {
+    setChoices(choices.filter((c) => c !== choice));
+    setMessage("Choice removed successfully.");
+  };
+
+  const handleSubmit = async () => {
+    if (!correctAnswer || choices.length < 3) {
+      setMessage("Please fill in all fields and add at least 3 choices.");
+      return;
+    }
+
+    if (!choices.includes(correctAnswer)) {
+      setMessage("The correct answer must be one of the choices.");
+      return;
+    }
+
+    try {
+      if (!questionId) {
+        setMessage("No question ID found. Please submit an image first.");
+        return;
+      }
+
+      let score = 0;
+
+      for (const choice of choices) {
+        const isCorrect = choice === correctAnswer;
+
+        // Add the choice to the backend
+        await axios.post(
+          `https://alibata.duckdns.org/api/alibata/choices/questions/${questionId}`,
+          {
+            choiceText: choice,
+            correct: isCorrect, // true for the correct answer, false for others
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+            },
+          }
+        );
+
+        // Increment score if the choice is correct
+        if (isCorrect) {
+          score++;
+        }
+      }
+
+      // Set the score for the question
+      await axios.post(
+        `https://alibata.duckdns.org/api/alibata/scores/questions/${questionId}`,
+        null,
+        {
+          params: { scoreValue: score },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+          },
+        }
+      );
+
+      setMessage("Choices and score successfully added to the question!");
+
+      // Reset the form fields
+      setCorrectAnswer("");
+      setChoices([]);
+      setImage(null);
+      setImagePreview(null);
+      setIsImageSubmitted(false);
+      setQuestionId(null); // Reset questionId for the next entry
+    } catch (err) {
+      console.error("Failed to add choices or score:", err.response?.data || err.message);
+      setMessage("Failed to add choices or score. Please try again.");
+    }
+  };
+
+  return (
+    <SidebarLayout>
+      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
+      <Typography
+        onClick={() => navigate("/activity")}
+        sx={{
+          color: "black",
+          cursor: "pointer",
+          textDecoration: "underline",
+          mb: 2,
+        }}
+      >
+        Back
+      </Typography>
+      <Typography variant="h5" fontWeight="bold" color="black" mb={3}>
+        1 Picture 4 Words Activity
+      </Typography>
+
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
+        <Typography color="black" fontWeight="bold">Upload Image:</Typography>
+        <Button variant="contained" component="label" sx={{ color:"black", bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}>
+          Upload Image
+          <input type="file" hidden onChange={handleImageUpload} />
+        </Button>
+        {image && <Typography color="black">Selected File: {image.name}</Typography>}
+        {imagePreview && (
+          <Box mt={2}>
+            <Typography color="black">Image Preview:</Typography>
+            <img
+              src={imagePreview}
+              alt="Preview"
+              style={{ width: "100%", maxHeight: "300px", objectFit: "contain", marginTop: "10px" }}
+            />
+          </Box>
+        )}
+        <Button
+          variant="contained"
+          onClick={submitImage}
+          sx={{
+            color: "black",
+            bgcolor: "#10B981",
+            ":hover": {  bgcolor: "#20DFA6" },
+          }}
+        >
+          Submit Image
+        </Button>
+
+        <TextField
+          label="Correct Answer"
+          variant="outlined"
+          value={correctAnswer}
+          onChange={(e) => setCorrectAnswer(e.target.value)}
+          fullWidth
+          sx={{
+            bgcolor: "#c8e3e3",
+            input: { color: "black" },
+            label: { color: "#BDBDBD" },
+          }}
+        />
+
+        {/* Add Choice Input */}
+        <TextField
+          label="Add Choice"
+          variant="outlined"
+          value={inputChoice}
+          onChange={(e) => setInputChoice(e.target.value)}
+          fullWidth
+          sx={{
+            bgcolor: "#c8e3e3",
+            input: { color: "black" },
+            label: { color: "#BDBDBD" },
+          }}
+        />
+        <Button
+          variant="contained"
+          onClick={addChoice}
+          disabled={!isImageSubmitted} // Disable if the image is not submitted
+          sx={{
+            color: "black",
+            bgcolor: isImageSubmitted ? "#10B981" : "#9CA3AF", // Change color if disabled
+            ":hover": isImageSubmitted ? { bgcolor: "#20DFA6" } : {},
+          }}
+        >
+          Add Choice
+        </Button>
+
+        <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
+          <Typography variant="h6" color="black" mb={2}>
+            Choices
+          </Typography>
+          <List>
+            {choices.map((choice, index) => (
+              <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                <ListItemText primary={choice} />
+                <Button
+                  variant="text"
+                  color="error"
+                  onClick={() => removeChoice(choice)}
+                >
+                  Remove
+                </Button>
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      </Box>
+
+      <Box mt={4}>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          sx={{
+            color: "black",
+            bgcolor: "#10B981",
+            ":hover": { bgcolor: "#20DFA6" },
+          }}
+        >
+          Save Choices
+        </Button>
+      </Box>
+
+      
+      {message && (
+        <Typography color="black" sx={{ mt: 2 }}>
+          {message}
+        </Typography>
+      )}
+
+      {/* List of Questions */}
+      <Box mt={4}>
+        <Typography variant="h6" color="black" mb={2}>
+          List of Questions
+        </Typography>
+        <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
+          <List>
+            {questions.length > 0 ? (
+              questions.map((question, index) => (
+                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    {question.questionImage && (
+                      <img
+                        src={question.questionImage}
+                        alt={`Question ${index + 1}`}
+                        style={{
+                          width: "100%",
+                          maxHeight: "200px",
+                          objectFit: "contain",
+                          marginBottom: "10px",
+                        }}
+                      />
+                    )}
+                    {/* Display the correct answer */}
+                    {/*<Typography color="white" variant="body1">
+                      <strong>Correct Answer:</strong> {question.setCorrectAnswer}
+                    </Typography>*/}
+                    <Typography color="black" variant="body1">
+                      <strong>Question ID:</strong> {question.questionId}
+                    </Typography>
+                    <Box sx={{ display: "flex", gap: 2 }}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => editQuestion(question.questionId, { questionText: "Updated Text" })}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => deleteQuestion(question.questionId)}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  </Box>
+                </ListItem>
+              ))
+            ) : (
+              <Typography color="black">No questions available.</Typography>
+            )}
+          </List>
+        </Paper>
+      </Box>
+      </Box>
+    </SidebarLayout>
+  );
+}
+
+export default OnePicFourWords;

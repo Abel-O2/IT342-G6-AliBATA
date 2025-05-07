@@ -14,6 +14,7 @@ import edu.cit.alibata.Repository.QuestionRepository;
 import edu.cit.alibata.Repository.ScoreRepository;
 import edu.cit.alibata.Repository.UserRepository;
 import edu.cit.alibata.Repository.UserScoreRepository;
+import edu.cit.alibata.model.UserScoreProjection;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -194,6 +195,11 @@ public class ScoreService {
         return userScoreRepo.findByUser_UserId(userId).stream()
             .mapToInt(userScore -> userScore.getScore())
             .sum();
+    }
+
+    // Get Leaderboard with Rank
+    public List<UserScoreProjection> getLeaderboardWithRank() {
+        return userScoreRepo.getLeaderboardWithRank();
     }
 }
 

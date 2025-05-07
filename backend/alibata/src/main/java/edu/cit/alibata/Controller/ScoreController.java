@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import edu.cit.alibata.Entity.ScoreEntity;
 import edu.cit.alibata.Service.ScoreService;
 import edu.cit.alibata.model.ErrorResponse;
+import edu.cit.alibata.model.UserScoreProjection;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -209,5 +210,22 @@ public class ScoreController {
     public ResponseEntity<Integer> getTotalScoreForUser(@PathVariable int userId) {
         int totalScore = scoreService.getTotalScoreForUser(userId);
         return ResponseEntity.ok().body(totalScore);
+    }
+
+    // Get Leaderboard with Rank
+    @GetMapping("/leaderboard")
+    @Operation(
+        summary = "Get leaderboard with ranks",
+        description = "Retrieves the leaderboard with users, their total scores, and ranks",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+        }
+    )
+    public ResponseEntity<List<UserScoreProjection>> getLeaderboardWithRank() {
+        List<UserScoreProjection> leaderboard = scoreService.getLeaderboardWithRank();
+        return ResponseEntity.ok().body(leaderboard);
     }
 }

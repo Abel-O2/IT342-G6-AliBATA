@@ -14,6 +14,7 @@ import edu.cit.alibata.model.UserScoreProjection;
 public interface UserScoreRepository extends JpaRepository<UserScore, Integer> {
     Optional<UserScore> findByUser_UserIdAndQuestion_QuestionId(int userId, int questionId);
     List<UserScoreProjection> findByUser_UserId(int userId);
+    List<UserScore> findByScoreEntity_ScoreId(int scoreId);
 
     @Query(value = """
             SELECT u.user_id AS user_UserId, u.first_name AS user_FirstName, u.last_name AS user_LastName, 

@@ -29,6 +29,10 @@ public class UserScore {
     @JoinColumn(name = "question_id", nullable = false)
     private QuestionEntity question;
 
+    @ManyToOne
+    @JoinColumn(name = "score_id", nullable = false)
+    private ScoreEntity scoreEntity;
+
     @Column(nullable = false)
     private int score;
 

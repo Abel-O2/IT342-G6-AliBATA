@@ -145,11 +145,11 @@ public class StoryController {
         return ResponseEntity.ok().body(putStory);
     }
 
-    // Delete
+    // Delete a StoryEntity by id
     @DeleteMapping("/{id}")
     @Operation(
         summary = "Delete a story",
-        description = "Deletes a story by its ID",
+        description = "Deletes a story by its ID along with all associated user stories",
         responses = {
             @ApiResponse(responseCode = "200", description = "Story deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Story not found",

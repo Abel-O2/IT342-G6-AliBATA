@@ -77,13 +77,16 @@ public class ActivityService {
         }
     }
 
-    // Delete
+    // Delete an ActivityEntity by id
     public String deleteActivityEntity(int activityId) {
         if (activityRepo.existsById(activityId)) {
+            List<UserActivity> userActivities = userActivityRepo.findByActivity_ActivityId(activityId);
+            userActivityRepo.deleteAll(userActivities);
+
             activityRepo.deleteById(activityId);
-            return "Activity " + activityId + " deleted successfully!";
+            return "Activity " + activityId + " and its associations deleted successfully!";
         } else {
-            return "Activity " + activityId + " not found!";
+            throw new EntityNotFoundException("Activity " + activityId + " not found!");
         }
     }
 

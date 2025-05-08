@@ -119,11 +119,11 @@ public class ScoreController {
         return ResponseEntity.ok().body(score);
     }
 
-    // Delete
+    // Delete a ScoreEntity by id
     @DeleteMapping("/{id}")
     @Operation(
         summary = "Delete a score",
-        description = "Deletes a score by its ID",
+        description = "Deletes a score by its ID along with all associated user scores",
         responses = {
             @ApiResponse(responseCode = "200", description = "Score deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Score not found",

@@ -1,9 +1,31 @@
 import { Box, Typography, Button, Paper, Grid } from "@mui/material";
 import SidebarLayout from "./SidebarLayout"; // Import the SidebarLayout component
 import { useState } from "react";
+import axios from 'axios';
 
 const Payment = () => {
   const [currentPlan, setCurrentPlan] = useState("Basic");
+
+    const handleUpgrade = async () => {
+    try {
+      // Replace with your actual Paymongo integration logic
+      // This is a placeholder - you'll need to use Paymongo's SDK
+      // to create a payment session or payment intent
+
+      // For demonstration purposes, let's assume the server returns a success status
+      const response = await axios.post('/api/upgrade-plan', { amount: 599.99 }); // Replace '/api/upgrade-plan' with your actual endpoint
+
+      if (response.status === 200) {
+        setCurrentPlan("Premium");
+        alert("Successfully upgraded to Premium!");
+      } else {
+        alert("Upgrade failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error upgrading plan:", error);
+      alert("An error occurred during the upgrade process.");
+    }
+  };
 
   return (
     <SidebarLayout>
@@ -77,7 +99,7 @@ const Payment = () => {
                   bgcolor: "#10B981",
                   ":hover": { bgcolor: "#20DFA6" },
                 }}
-                onClick={() => setCurrentPlan("Premium")}
+                onClick={handleUpgrade}
               >
                 Upgrade Now
               </Button>

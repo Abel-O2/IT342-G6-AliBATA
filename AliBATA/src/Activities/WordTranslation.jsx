@@ -17,14 +17,14 @@ function WordTranslation() {
   const [questionId, setQuestionId] = useState(null);
   const [editingQuestionId, setEditingQuestionId] = useState(null); // Track the question being edited
   const [editedQuestionText, setEditedQuestionText] = useState(""); // Track the edited text
-  const [editingChoiceId, setEditingChoiceId] = useState(null); // Track the choice being edited
-  const [editedChoiceText, setEditedChoiceText] = useState(""); // Track the edited choice text
+  const [editingChoicesQuestionId, setEditingChoicesQuestionId] = useState(null); // Track the question being edited
+  const [editingChoices, setEditingChoices] = useState([]); // Track the choices being edited
 
   // Fetch questions for the activity
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get(`https://alibata.duckdns.org/api/alibata/questions/activities/${activityId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/activities/${activityId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
           },
@@ -61,7 +61,7 @@ function WordTranslation() {
 
       // Post the word to the backend
       const response = await axios.post(
-        `https://alibata.duckdns.org/api/alibata/questions/activities/${activityId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/activities/${activityId}`,
         formData,
         {
           headers: {
@@ -126,7 +126,7 @@ function WordTranslation() {
 
         // Add the choice to the backend
         await axios.post(
-          `https://alibata.duckdns.org/api/alibata/choices/questions/${questionId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/questions/${questionId}`,
           {
             choiceText: choice,
             choiceOrder: isGeneratedChoice ? i + 1 : null, // Add choiceOrder for generated choices, null for manual choices
@@ -147,7 +147,7 @@ function WordTranslation() {
 
       // Set the score for the question
       await axios.post(
-        `https://alibata.duckdns.org/api/alibata/scores/questions/${questionId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/scores/questions/${questionId}`,
         null,
         {
           params: { scoreValue: score },
@@ -171,7 +171,7 @@ function WordTranslation() {
 
   const editQuestion = async (id, updatedData) => {
     try {
-      await axios.put(`https://alibata.duckdns.org/api/alibata/questions/${id}`, updatedData, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -188,7 +188,7 @@ function WordTranslation() {
 
   const deleteQuestion = async (id) => {
     try {
-      await axios.delete(`https://alibata.duckdns.org/api/alibata/questions/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -201,49 +201,9 @@ function WordTranslation() {
     }
   };
 
-  const editChoice = async (id, updatedData) => {
-    try {
-      await axios.put(`https://alibata.duckdns.org/api/alibata/choices/${id}`, updatedData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      setMessage("Choice updated successfully!");
-      setChoices((prevChoices) =>
-        prevChoices.map((c) => (c.id === id ? { ...c, ...updatedData } : c))
-      );
-    } catch (err) {
-      console.error("Failed to update choice:", err.response?.data || err.message);
-      setMessage("Failed to update choice. Please try again.");
-    }
-  };
-
-  const saveEditedChoice = async (id) => {
-    try {
-      await axios.put(
-        `https://alibata.duckdns.org/api/alibata/choices/${id}`,
-        { choiceText: editedChoiceText },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setMessage("Choice updated successfully!");
-      setChoices((prevChoices) =>
-        prevChoices.map((c) => (c.id === id ? { ...c, choiceText: editedChoiceText } : c))
-      );
-      setEditingChoiceId(null); // Exit editing mode
-    } catch (err) {
-      console.error("Failed to update choice:", err.response?.data || err.message);
-      setMessage("Failed to update choice. Please try again.");
-    }
-  };
-  
-  
   const deleteChoice = async (id) => {
     try {
-      await axios.delete(`https://alibata.duckdns.org/api/alibata/choices/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -264,7 +224,7 @@ function WordTranslation() {
   const saveEditedQuestion = async (id) => {
     try {
       await axios.put(
-        `https://alibata.duckdns.org/api/alibata/questions/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/${id}`,
         { questionText: editedQuestionText },
         {
           headers: {
@@ -285,9 +245,71 @@ function WordTranslation() {
     }
   };
 
+  const startEditingChoices = async (question) => {
+    setEditingChoicesQuestionId(question.questionId);
+    setEditedQuestionText(question.questionText);
+
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/questions/${question.questionId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setEditingChoices(response.data);
+    } catch (err) {
+      console.error("Failed to fetch choices:", err.response?.data || err.message);
+      setMessage("Failed to fetch choices. Please try again.");
+    }
+  };
+
+  const handleChoiceChange = (index, value) => {
+    const newChoices = [...editingChoices];
+    newChoices[index].choiceText = value;
+    setEditingChoices(newChoices);
+  };
+
+  const saveEditedChoices = async (questionId) => {
+    try {
+      for (const choice of editingChoices) {
+        await axios.put(
+          `${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/${choice.choiceId}`,
+          { choiceText: choice.choiceText },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+      }
+
+      setMessage("Choices updated successfully!");
+      setEditingChoicesQuestionId(null);
+
+      // Refetch questions to update the list
+      const fetchQuestions = async () => {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/activities/${activityId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+            },
+          });
+          setQuestions(response.data); // Store the questions in state
+        } catch (err) {
+          console.error("Failed to fetch questions:", err.response?.data || err.message);
+          setMessage("Failed to fetch questions. Please try again.");
+        }
+      };
+
+      fetchQuestions();
+    } catch (err) {
+      console.error("Failed to update choices:", err.response?.data || err.message);
+      setMessage("Failed to update choices. Please try again.");
+    }
+  };
+
   return (
     <SidebarLayout>
-      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
+      <Box sx={{ maxHeight: "85vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4, overflowY: "auto" }}>  
         <Typography
           onClick={() => navigate("/activity")}
           sx={{
@@ -377,64 +399,15 @@ function WordTranslation() {
             <List>
               {choices.map((choice, index) => (
                 <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                  {editingChoiceId === choice.id ? (
-                    <TextField
-                      variant="outlined"
-                      value={editedChoiceText}
-                      onChange={(e) => setEditedChoiceText(e.target.value)}
-                      fullWidth
-                      sx={{
-                        bgcolor: "#c8e3e3",
-                        input: { color: "white" },
-                        label: { color: "#BDBDBD" },
-                      }}
-                    />
-                  ) : (
-                    <ListItemText primary={choice.choiceText || choice} />
-                  )}
+                  <ListItemText primary={choice.choiceText || choice} />
                   <Box sx={{ display: "flex", gap: 2 }}>
-                    {editingChoiceId === choice.id ? (
-                      <>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => saveEditedChoice(choice.id)}
-                        >
-                          Save
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="error"
-                          onClick={() => setEditingChoiceId(null)}
-                        >
-                          Cancel
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Button
-                          variant="contained"
-                          sx={{
-                            color: "black",
-                            bgcolor: "#10B981",
-                            ":hover": { bgcolor: "#20DFA6" },
-                          }}
-                          onClick={() => {
-                            setEditingChoiceId(choice.id);
-                            setEditedChoiceText(choice.choiceText || choice);
-                          }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="error"
-                          onClick={() => deleteChoice(choice.id)}
-                        >
-                          Delete
-                        </Button>
-                      </>
-                    )}
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => deleteChoice(choice.id)}
+                    >
+                      Delete
+                    </Button>
                   </Box>
                 </ListItem>
               ))}
@@ -476,6 +449,8 @@ function WordTranslation() {
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                       {editingQuestionId === question.questionId ? (
                         <TextField
+                          label="Edit Word"
+                          variant="outlined"
                           value={editedQuestionText}
                           onChange={(e) => setEditedQuestionText(e.target.value)}
                           fullWidth
@@ -492,13 +467,22 @@ function WordTranslation() {
                       )}
                       <Box sx={{ display: "flex", gap: 2 }}>
                         {editingQuestionId === question.questionId ? (
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => saveEditedQuestion(question.questionId)}
-                          >
-                            Save
-                          </Button>
+                          <>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => saveEditedQuestion(question.questionId)}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              onClick={() => setEditingQuestionId(null)}
+                            >
+                              Cancel
+                            </Button>
+                          </>
                         ) : (
                           <Button
                             variant="contained"
@@ -508,6 +492,13 @@ function WordTranslation() {
                             Edit
                           </Button>
                         )}
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => startEditingChoices(question)}
+                        >
+                          Edit Choices
+                        </Button>
                         <Button
                           variant="contained"
                           color="error"
@@ -525,6 +516,50 @@ function WordTranslation() {
             </List>
           </Paper>
         </Box>
+
+        {editingChoicesQuestionId && (
+          <Box mt={4}>
+            <Typography variant="h6" color="black" mb={2}>
+              Edit Choices for Question
+            </Typography>
+            <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
+              <List>
+                {editingChoices.map((choice, index) => (
+                  <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                    <TextField
+                      label={`Choice ${index + 1}`}
+                      variant="outlined"
+                      value={choice.choiceText}
+                      onChange={(e) => handleChoiceChange(index, e.target.value)}
+                      fullWidth
+                      sx={{
+                        bgcolor: "#c8e3e3",
+                        input: { color: "black" },
+                        label: { color: "#BDBDBD" },
+                      }}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+              <Box mt={2} sx={{ display: "flex", gap: 2 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => saveEditedChoices(editingChoicesQuestionId)}
+                >
+                  Save Choices
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => setEditingChoicesQuestionId(null)}
+                >
+                  Cancel
+                </Button>
+              </Box>
+            </Paper>
+          </Box>
+        )}
       </Box>
     </SidebarLayout>
   );

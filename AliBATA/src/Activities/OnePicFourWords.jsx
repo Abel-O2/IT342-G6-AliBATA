@@ -16,12 +16,14 @@ function OnePicFourWords() {
   const { activityId } = useParams(); // Get activityId from the route
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(null);
+  const [editingChoicesQuestionId, setEditingChoicesQuestionId] = useState(null);
+  const [editingChoices, setEditingChoices] = useState([]);
 
   // Fetch questions for the activity
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get(`https://alibata.duckdns.org/api/alibata/questions/activities/${activityId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/activities/${activityId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
           },
@@ -48,7 +50,7 @@ function OnePicFourWords() {
 
   const editQuestion = async (id, updatedData) => {
     try {
-      await axios.put(`https://alibata.duckdns.org/api/alibata/questions/${id}`, updatedData, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -71,7 +73,7 @@ function OnePicFourWords() {
       const formData = new FormData();
       formData.append("image", newImage); // Add the new image file
 
-      await axios.put(`https://alibata.duckdns.org/api/alibata/questions/${id}`, formData, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "multipart/form-data", // Ensure correct content type
@@ -80,11 +82,11 @@ function OnePicFourWords() {
 
       setMessage("Image updated successfully!");
       // Optionally refetch questions to reflect the updated image
-      setQuestions((prevQuestions) =>
-        prevQuestions.map((q) =>
-          q.questionId === id ? { ...q, questionImage: URL.createObjectURL(newImage) } : q
-        )
-      );
+       setQuestions((prevQuestions) =>
+         prevQuestions.map((q) =>
+           q.questionId === id ? { ...q, questionImage: URL.createObjectURL(newImage) } : q
+         )
+       );
     } catch (err) {
       console.error("Failed to update image:", err.response?.data || err.message);
       setMessage("Failed to update image. Please try again.");
@@ -93,7 +95,7 @@ function OnePicFourWords() {
 
   const deleteQuestion = async (id) => {
     try {
-      await axios.delete(`https://alibata.duckdns.org/api/alibata/questions/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -109,13 +111,12 @@ function OnePicFourWords() {
 
   const editChoice = async (id, updatedData) => {
     try {
-      await axios.put(`https://alibata.duckdns.org/api/alibata/choices/${id}`, updatedData, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       setMessage("Choice updated successfully!");
-      // Optionally refetch choices
     } catch (err) {
       console.error("Failed to update choice:", err.response?.data || err.message);
       setMessage("Failed to update choice. Please try again.");
@@ -124,13 +125,13 @@ function OnePicFourWords() {
 
   const deleteChoice = async (id) => {
     try {
-      await axios.delete(`https://alibata.duckdns.org/api/alibata/choices/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       setMessage("Choice deleted successfully!");
-      setChoices(choices.filter((c) => c.id !== id)); // Remove from local state
+      setChoices(choices.filter((c) => c !== id)); // Remove from local state
     } catch (err) {
       console.error("Failed to delete choice:", err.response?.data || err.message);
       setMessage("Failed to delete choice. Please try again.");
@@ -159,7 +160,7 @@ function OnePicFourWords() {
 
       // Post the image to the backend
       const response = await axios.post(
-        `https://alibata.duckdns.org/api/alibata/questions/activities/${activityId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/activities/${activityId}`,
         formData,
         {
           headers: {
@@ -219,7 +220,7 @@ function OnePicFourWords() {
 
         // Add the choice to the backend
         await axios.post(
-          `https://alibata.duckdns.org/api/alibata/choices/questions/${questionId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/questions/${questionId}`,
           {
             choiceText: choice,
             correct: isCorrect, // true for the correct answer, false for others
@@ -239,7 +240,7 @@ function OnePicFourWords() {
 
       // Set the score for the question
       await axios.post(
-        `https://alibata.duckdns.org/api/alibata/scores/questions/${questionId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/scores/questions/${questionId}`,
         null,
         {
           params: { scoreValue: score },
@@ -264,189 +265,290 @@ function OnePicFourWords() {
     }
   };
 
+  const startEditingChoices = async (question) => {
+    setEditingChoicesQuestionId(question.questionId);
+
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/questions/${question.questionId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setEditingChoices(response.data);
+    } catch (err) {
+      console.error("Failed to fetch choices:", err.response?.data || err.message);
+      setMessage("Failed to fetch choices. Please try again.");
+    }
+  };
+
+  const handleChoiceChange = (index, value) => {
+    const newChoices = [...editingChoices];
+    newChoices[index].choiceText = value;
+    setEditingChoices(newChoices);
+  };
+
+  const saveEditedChoices = async (questionId) => {
+    try {
+      for (const choice of editingChoices) {
+        await axios.put(
+          `${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/${choice.choiceId}`,
+          { choiceText: choice.choiceText },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+      }
+
+      setMessage("Choices updated successfully!");
+      setEditingChoicesQuestionId(null);
+      // Refetch questions to update the list
+      const fetchQuestions = async () => {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/activities/${activityId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+            },
+          });
+          setQuestions(response.data); // Store the questions in state
+        } catch (err) {
+          console.error("Failed to fetch questions:", err.response?.data || err.message);
+          setMessage("Failed to fetch questions. Please try again.");
+        }
+      };
+      fetchQuestions();
+
+    } catch (err) {
+      console.error("Failed to update choices:", err.response?.data || err.message);
+      setMessage("Failed to update choices. Please try again.");
+    }
+  };
+
   return (
     <SidebarLayout>
-      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
-      <Typography
-        onClick={() => navigate("/activity")}
-        sx={{
-          color: "black",
-          cursor: "pointer",
-          textDecoration: "underline",
-          mb: 2,
-        }}
-      >
-        Back
-      </Typography>
-      <Typography variant="h5" fontWeight="bold" color="black" mb={3}>
-        1 Picture 4 Words Activity
-      </Typography>
+      <Box sx={{ maxHeight: "85vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4, overflowY: "auto" }}>
+        <Typography
+          onClick={() => navigate("/activity")}
+          sx={{
+            color: "black",
+            cursor: "pointer",
+            textDecoration: "underline",
+            mb: 2,
+          }}
+        >
+          Back
+        </Typography>
+        <Typography variant="h5" fontWeight="bold" color="black" mb={3}>
+          1 Picture 4 Words Activity
+        </Typography>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
-        <Typography color="black" fontWeight="bold">Upload Image:</Typography>
-        <Button variant="contained" component="label" sx={{ color:"black", bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}>
-          Upload Image
-          <input type="file" hidden onChange={handleImageUpload} />
-        </Button>
-        {image && <Typography color="black">Selected File: {image.name}</Typography>}
-        {imagePreview && (
-          <Box mt={2}>
-            <Typography color="black">Image Preview:</Typography>
-            <img
-              src={imagePreview}
-              alt="Preview"
-              style={{ width: "100%", maxHeight: "300px", objectFit: "contain", marginTop: "10px" }}
-            />
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
+          <Typography color="black" fontWeight="bold">Upload Image:</Typography>
+          <Button variant="contained" component="label" sx={{ color: "black", bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}>
+            Upload Image
+            <input type="file" hidden onChange={handleImageUpload} />
+          </Button>
+          {image && <Typography color="black">Selected File: {image.name}</Typography>}
+          {imagePreview && (
+            <Box mt={2}>
+              <Typography color="black">Image Preview:</Typography>
+              <img
+                src={imagePreview}
+                alt="Preview"
+                style={{ width: "100%", maxHeight: "300px", objectFit: "contain", marginTop: "10px" }}
+              />
+            </Box>
+          )}
+          <Button
+            variant="contained"
+            onClick={submitImage}
+            sx={{
+              color: "black",
+              bgcolor: "#10B981",
+              ":hover": { bgcolor: "#20DFA6" },
+            }}
+          >
+            Submit Image
+          </Button>
+
+          <TextField
+            label="Correct Answer"
+            variant="outlined"
+            value={correctAnswer}
+            onChange={(e) => setCorrectAnswer(e.target.value)}
+            fullWidth
+            sx={{
+              bgcolor: "#c8e3e3",
+              input: { color: "black" },
+              label: { color: "#BDBDBD" },
+            }}
+          />
+
+          {/* Add Choice Input */}
+          <TextField
+            label="Add Choice"
+            variant="outlined"
+            value={inputChoice}
+            onChange={(e) => setInputChoice(e.target.value)}
+            fullWidth
+            sx={{
+              bgcolor: "#c8e3e3",
+              input: { color: "black" },
+              label: { color: "#BDBDBD" },
+            }}
+          />
+          <Button
+            variant="contained"
+            onClick={addChoice}
+            disabled={!isImageSubmitted} // Disable if the image is not submitted
+            sx={{
+              color: "black",
+              bgcolor: isImageSubmitted ? "#10B981" : "#9CA3AF", // Change color if disabled
+              ":hover": isImageSubmitted ? { bgcolor: "#20DFA6" } : {},
+            }}
+          >
+            Add Choice
+          </Button>
+
+          <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
+            <Typography variant="h6" color="black" mb={2}>
+              Choices
+            </Typography>
+            <List>
+              {choices.map((choice, index) => (
+                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                  <ListItemText primary={choice} />
+                  <Button
+                    variant="text"
+                    color="error"
+                    onClick={() => removeChoice(choice)}
+                  >
+                    Remove
+                  </Button>
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        </Box>
+
+        <Box mt={4}>
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            sx={{
+              color: "black",
+              bgcolor: "#10B981",
+              ":hover": { bgcolor: "#20DFA6" },
+            }}
+          >
+            Save Choices
+          </Button>
+        </Box>
+
+
+        {message && (
+          <Typography color="black" sx={{ mt: 2 }}>
+            {message}
+          </Typography>
+        )}
+
+        {/* List of Questions */}
+        <Box mt={4}>
+          <Typography variant="h6" color="black" mb={2}>
+            List of Questions
+          </Typography>
+          <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
+            <List>
+              {questions.length > 0 ? (
+                questions.map((question, index) => (
+                  <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                      {/* Display the image */}
+                       {question.questionImage && (
+                         <img
+                           src={
+                              question.questionImage.startsWith("http")
+                                ? question.questionImage
+                                : `${import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "")}/${question.questionImage.replace(/^\//, "")}`
+                            }
+                           alt={`Question ${index + 1}`}
+                           style={{
+                             width: "100%",
+                             maxHeight: "200px",
+                             objectFit: "contain",
+                             marginBottom: "10px",
+                           }}
+                         />
+                       )}
+                      <Box sx={{ display: "flex", gap: 2 }}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => startEditingChoices(question)}
+                        >
+                          Edit Choices
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => deleteQuestion(question.questionId)}
+                        >
+                          Delete
+                        </Button>
+                      </Box>
+                    </Box>
+                  </ListItem>
+                ))
+              ) : (
+                <Typography color="black">No questions available.</Typography>
+              )}
+            </List>
+          </Paper>
+        </Box>
+        {editingChoicesQuestionId && (
+          <Box mt={4}>
+            <Typography variant="h6" color="black" mb={2}>
+              Edit Choices for Question
+            </Typography>
+            <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
+              <List>
+                {editingChoices.map((choice, index) => (
+                  <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                    <TextField
+                      label={`Choice ${index + 1}`}
+                      variant="outlined"
+                      value={choice.choiceText}
+                      onChange={(e) => handleChoiceChange(index, e.target.value)}
+                      fullWidth
+                      sx={{
+                        bgcolor: "#c8e3e3",
+                        input: { color: "black" },
+                        label: { color: "#BDBDBD" },
+                      }}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+              <Box mt={2} sx={{ display: "flex", gap: 2 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => saveEditedChoices(editingChoicesQuestionId)}
+                >
+                  Save Choices
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => setEditingChoicesQuestionId(null)}
+                >
+                  Cancel
+                </Button>
+              </Box>
+            </Paper>
           </Box>
         )}
-        <Button
-          variant="contained"
-          onClick={submitImage}
-          sx={{
-            color: "black",
-            bgcolor: "#10B981",
-            ":hover": {  bgcolor: "#20DFA6" },
-          }}
-        >
-          Submit Image
-        </Button>
-
-        <TextField
-          label="Correct Answer"
-          variant="outlined"
-          value={correctAnswer}
-          onChange={(e) => setCorrectAnswer(e.target.value)}
-          fullWidth
-          sx={{
-            bgcolor: "#c8e3e3",
-            input: { color: "black" },
-            label: { color: "#BDBDBD" },
-          }}
-        />
-
-        {/* Add Choice Input */}
-        <TextField
-          label="Add Choice"
-          variant="outlined"
-          value={inputChoice}
-          onChange={(e) => setInputChoice(e.target.value)}
-          fullWidth
-          sx={{
-            bgcolor: "#c8e3e3",
-            input: { color: "black" },
-            label: { color: "#BDBDBD" },
-          }}
-        />
-        <Button
-          variant="contained"
-          onClick={addChoice}
-          disabled={!isImageSubmitted} // Disable if the image is not submitted
-          sx={{
-            color: "black",
-            bgcolor: isImageSubmitted ? "#10B981" : "#9CA3AF", // Change color if disabled
-            ":hover": isImageSubmitted ? { bgcolor: "#20DFA6" } : {},
-          }}
-        >
-          Add Choice
-        </Button>
-
-        <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
-          <Typography variant="h6" color="black" mb={2}>
-            Choices
-          </Typography>
-          <List>
-            {choices.map((choice, index) => (
-              <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                <ListItemText primary={choice} />
-                <Button
-                  variant="text"
-                  color="error"
-                  onClick={() => removeChoice(choice)}
-                >
-                  Remove
-                </Button>
-              </ListItem>
-            ))}
-          </List>
-        </Paper>
-      </Box>
-
-      <Box mt={4}>
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          sx={{
-            color: "black",
-            bgcolor: "#10B981",
-            ":hover": { bgcolor: "#20DFA6" },
-          }}
-        >
-          Save Choices
-        </Button>
-      </Box>
-
-      
-      {message && (
-        <Typography color="black" sx={{ mt: 2 }}>
-          {message}
-        </Typography>
-      )}
-
-      {/* List of Questions */}
-      <Box mt={4}>
-        <Typography variant="h6" color="black" mb={2}>
-          List of Questions
-        </Typography>
-        <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
-          <List>
-            {questions.length > 0 ? (
-              questions.map((question, index) => (
-                <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
-                  <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    {question.questionImage && (
-                      <img
-                        src={question.questionImage}
-                        alt={`Question ${index + 1}`}
-                        style={{
-                          width: "100%",
-                          maxHeight: "200px",
-                          objectFit: "contain",
-                          marginBottom: "10px",
-                        }}
-                      />
-                    )}
-                    {/* Display the correct answer */}
-                    {/*<Typography color="white" variant="body1">
-                      <strong>Correct Answer:</strong> {question.setCorrectAnswer}
-                    </Typography>*/}
-                    <Typography color="black" variant="body1">
-                      <strong>Question ID:</strong> {question.questionId}
-                    </Typography>
-                    <Box sx={{ display: "flex", gap: 2 }}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => editQuestion(question.questionId, { questionText: "Updated Text" })}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => deleteQuestion(question.questionId)}
-                      >
-                        Delete
-                      </Button>
-                    </Box>
-                  </Box>
-                </ListItem>
-              ))
-            ) : (
-              <Typography color="black">No questions available.</Typography>
-            )}
-          </List>
-        </Paper>
-      </Box>
       </Box>
     </SidebarLayout>
   );

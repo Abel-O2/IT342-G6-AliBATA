@@ -15,6 +15,8 @@ function PhraseTranslation() {
   const [questionId, setQuestionId] = useState(null); // State for the current questionId
   const [editingQuestionId, setEditingQuestionId] = useState(null); // Track the question being edited
   const [editedPhrase, setEditedPhrase] = useState(""); // Track the edited phrase
+  const [editingChoicesQuestionId, setEditingChoicesQuestionId] = useState(null); // Track the question being edited
+  const [editingChoices, setEditingChoices] = useState([]); // Track the choices being edited
   const { activityId } = useParams(); // Get activityId from the route
   const navigate = useNavigate();
 
@@ -22,12 +24,12 @@ function PhraseTranslation() {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get(`https://alibata.duckdns.org/api/alibata/questions/activities/${activityId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/activities/${activityId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, 
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        setQuestions(response.data); 
+        setQuestions(response.data);
       } catch (err) {
         console.error("Failed to fetch questions:", err.response?.data || err.message);
         setMessage("Failed to fetch questions. Please try again.");
@@ -59,7 +61,7 @@ function PhraseTranslation() {
 
       // Post the phrase to the backend
       const response = await axios.post(
-        `https://alibata.duckdns.org/api/alibata/questions/activities/${activityId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/activities/${activityId}`,
         formData,
         {
           headers: {
@@ -138,7 +140,7 @@ function PhraseTranslation() {
 
         // Add the choice to the backend
         await axios.post(
-          `https://alibata.duckdns.org/api/alibata/choices/questions/${questionId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/questions/${questionId}`,
           {
             choiceText: choice,
             choiceOrder: isGeneratedChoice ? i + 1 : null, // Add choiceOrder for generated choices, null for manual choices
@@ -159,7 +161,7 @@ function PhraseTranslation() {
 
       // Set the score for the question
       await axios.post(
-        `https://alibata.duckdns.org/api/alibata/scores/questions/${questionId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/scores/questions/${questionId}`,
         null,
         {
           params: { scoreValue: score },
@@ -185,7 +187,7 @@ function PhraseTranslation() {
 
   const editQuestion = async (id, updatedData) => {
     try {
-      await axios.put(`https://alibata.duckdns.org/api/alibata/questions/${id}`, updatedData, {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -203,7 +205,7 @@ function PhraseTranslation() {
 
   const deleteQuestion = async (id) => {
     try {
-      await axios.delete(`https://alibata.duckdns.org/api/alibata/questions/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -216,26 +218,9 @@ function PhraseTranslation() {
     }
   };
 
-  const editChoice = async (id, updatedData) => {
-    try {
-      await axios.put(`https://alibata.duckdns.org/api/alibata/choices/${id}`, updatedData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      setMessage("Choice updated successfully!");
-      setChoices((prevChoices) =>
-        prevChoices.map((c) => (c.id === id ? { ...c, ...updatedData } : c))
-      );
-    } catch (err) {
-      console.error("Failed to update choice:", err.response?.data || err.message);
-      setMessage("Failed to update choice. Please try again.");
-    }
-  };
-
   const deleteChoice = async (id) => {
     try {
-      await axios.delete(`https://alibata.duckdns.org/api/alibata/choices/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -257,9 +242,71 @@ function PhraseTranslation() {
     await editQuestion(id, { questionDescription: editedPhrase });
   };
 
+  const startEditingChoices = async (question) => {
+    setEditingChoicesQuestionId(question.questionId);
+    setEditedPhrase(question.questionDescription);
+
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/questions/${question.questionId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setEditingChoices(response.data);
+    } catch (err) {
+      console.error("Failed to fetch choices:", err.response?.data || err.message);
+      setMessage("Failed to fetch choices. Please try again.");
+    }
+  };
+
+  const handleChoiceChange = (index, value) => {
+    const newChoices = [...editingChoices];
+    newChoices[index].choiceText = value;
+    setEditingChoices(newChoices);
+  };
+
+  const saveEditedChoices = async (questionId) => {
+    try {
+      for (const choice of editingChoices) {
+        await axios.put(
+          `${import.meta.env.VITE_API_BASE_URL}/api/alibata/choices/${choice.choiceId}`,
+          { choiceText: choice.choiceText },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+      }
+
+      setMessage("Choices updated successfully!");
+      setEditingChoicesQuestionId(null);
+
+      // Refetch questions to update the list
+      const fetchQuestions = async () => {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/questions/activities/${activityId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token
+            },
+          });
+          setQuestions(response.data); // Store the questions in state
+        } catch (err) {
+          console.error("Failed to fetch questions:", err.response?.data || err.message);
+          setMessage("Failed to fetch questions. Please try again.");
+        }
+      };
+
+      fetchQuestions();
+    } catch (err) {
+      console.error("Failed to update choices:", err.response?.data || err.message);
+      setMessage("Failed to update choices. Please try again.");
+    }
+  };
+
   return (
     <SidebarLayout>
-      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
+      <Box sx={{ maxHeight: "85vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4, overflowY: "auto" }}>
         <Typography
           onClick={() => navigate("/activity")}
           sx={{
@@ -362,13 +409,6 @@ function PhraseTranslation() {
                   <Box sx={{ display: "flex", gap: 2 }}>
                     <Button
                       variant="contained"
-                      color="primary"
-                      onClick={() => editChoice(choice.id, { choiceText: "Updated Choice" })}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="contained"
                       color="error"
                       onClick={() => deleteChoice(choice.id)}
                     >
@@ -423,7 +463,7 @@ function PhraseTranslation() {
                           }}
                         />
                       ) : (
-                        <Typography color="white" variant="body1">
+                        <Typography color="black" variant="body1">
                           <strong>Phrase:</strong> {question.questionDescription || "N/A"}
                         </Typography>
                       )}
@@ -458,6 +498,13 @@ function PhraseTranslation() {
                             </Button>
                             <Button
                               variant="contained"
+                              color="secondary"
+                              onClick={() => startEditingChoices(question)}
+                            >
+                              Edit Choices
+                            </Button>
+                            <Button
+                              variant="contained"
                               color="error"
                               onClick={() => deleteQuestion(question.questionId)}
                             >
@@ -475,6 +522,50 @@ function PhraseTranslation() {
             </List>
           </Paper>
         </Box>
+
+        {editingChoicesQuestionId && (
+          <Box mt={4}>
+            <Typography variant="h6" color="black" mb={2}>
+              Edit Choices for Question
+            </Typography>
+            <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
+              <List>
+                {editingChoices.map((choice, index) => (
+                  <ListItem key={index} sx={{ borderBottom: "1px solid #444" }}>
+                    <TextField
+                      label={`Choice ${index + 1}`}
+                      variant="outlined"
+                      value={choice.choiceText}
+                      onChange={(e) => handleChoiceChange(index, e.target.value)}
+                      fullWidth
+                      sx={{
+                        bgcolor: "#c8e3e3",
+                        input: { color: "black" },
+                        label: { color: "#BDBDBD" },
+                      }}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+              <Box mt={2} sx={{ display: "flex", gap: 2 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => saveEditedChoices(editingChoicesQuestionId)}
+                >
+                  Save Choices
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => setEditingChoicesQuestionId(null)}
+                >
+                  Cancel
+                </Button>
+              </Box>
+            </Paper>
+          </Box>
+        )}
       </Box>
     </SidebarLayout>
   );

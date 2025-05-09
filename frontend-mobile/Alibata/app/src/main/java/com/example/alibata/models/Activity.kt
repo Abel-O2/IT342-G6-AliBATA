@@ -5,5 +5,5 @@ data class Activity(
     val activityName: String,
     val gameType: String,
     val questions: List<Question>,
-    var completed: Boolean // mutable copy to be updated with user data
+    var completed: Boolean
 )

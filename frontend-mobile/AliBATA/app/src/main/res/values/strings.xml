@@ -22,60 +22,108 @@
     <string name="regPasswordInput">Enter Password</string>
     <string name="regPasswordAgainInput">Enter Password Again</string>
     <string name="regTermsAndConditions">Agree to Terms and Conditions</string>
+    <string name="legalTermsAndConditions">Our Terms and Conditions</string>
+    <string name="helpFAQ">Frequently Asked Questions</string>
     <string name="regTermsAndConditionsText">
-        Welcome to AliBata! By accessing or using our mobile application (the "App"), provided by Mena ("we," "us," or "our"), you ("you" or "User") agree to be bound by these Terms and Conditions of Use (the "Terms"). Please read these Terms carefully before using the App.
+    Welcome to AliBata!\n\n
+    By accessing or using our mobile application (the "App"), provided by Mena ("we," "us," or "our"), you ("you" or "User") agree to be bound by these Terms and Conditions of Use (the "Terms"). Please read these Terms carefully before using the App.\n\n
 
-        1. Acceptance of Terms
-        By downloading, installing, accessing, or using the App, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree to these Terms, you may not access or use the App.
+    1. Acceptance of Terms\n
+    By downloading, installing, accessing, or using the App, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree to these Terms, you may not access or use the App.\n\n
 
-        2. Description of the App
-        AliBata is a mobile application designed to teach users about [Specify the cultural aspects your app focuses on, e.g., Filipino culture, specific regional culture, language, traditions, history, etc.]. The App may include features such as interactive lessons, quizzes, multimedia content, and other educational materials related to [mention the cultural focus again].
+    2. Description of the App\n
+    AliBata is a mobile application designed to teach users about [Specify the cultural aspects your app focuses on, e.g., Filipino culture, specific regional culture, language, traditions, history, etc.]. The App may include features such as interactive lessons, quizzes, multimedia content, and other educational materials related to [mention the cultural focus again].\n\n
 
-        3. User Accounts (If Applicable)
-        * Account Creation: If the App requires user account creation, you are responsible for providing accurate and complete information during the registration process. You are also responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
-        * Account Security: You agree to notify us immediately of any unauthorized access to or use of your account. We will not be liable for any loss or damage arising from your failure to comply with this section.
-        * Account Termination: We reserve the right to suspend or terminate your account at any time, with or without cause, and without prior notice.
+    3. User Accounts (If Applicable)\n
+    • Account Creation: If the App requires user account creation, you are responsible for providing accurate and complete information during the registration process. You are also responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.\n
+    • Account Security: You agree to notify us immediately of any unauthorized access to or use of your account. We will not be liable for any loss or damage arising from your failure to comply with this section.\n
+    • Account Termination: We reserve the right to suspend or terminate your account at any time, with or without cause, and without prior notice.\n\n
 
-        4. User Conduct
-        By using the App, you agree that you will not:
-        * Use the App for any unlawful purpose or in violation of these Terms.
-        * Engage in any conduct that could damage, disable, overburden, or impair the App or interfere with any other partys use of the App.
-        * Attempt to gain unauthorized access to any part of the App, user accounts, or computer systems or networks connected to the App.
-        * Transmit any viruses, worms, malware, or other harmful code.
-        * Collect or harvest any personally identifiable information from other users without their consent.
-        * Impersonate any person or entity or misrepresent your affiliation with any person or entity.
-        * Post, upload, or transmit any content that is defamatory, libelous, obscene, offensive, or otherwise objectionable.
-        * Infringe upon our intellectual property rights or the intellectual property rights of others.
+    4. User Conduct\n
+    By using the App, you agree that you will not:\n
+    • Use the App for any unlawful purpose or in violation of these Terms.\n
+    • Engage in any conduct that could damage, disable, overburden, or impair the App or interfere with any other party’s use of the App.\n
+    • Attempt to gain unauthorized access to any part of the App, user accounts, or computer systems or networks connected to the App.\n
+    • Transmit any viruses, worms, malware, or other harmful code.\n
+    • Collect or harvest any personally identifiable information from other users without their consent.\n
+    • Impersonate any person or entity or misrepresent your affiliation with any person or entity.\n
+    • Post, upload, or transmit any content that is defamatory, libelous, obscene, offensive, or otherwise objectionable.\n
+    • Infringe upon our intellectual property rights or the intellectual property rights of others.\n\n
 
-        5. Intellectual Property
-        * Our Content: The App and its original content, features, and functionality (including but not limited to text, graphics, images, audio, video, software, and code) are owned by [Your Company Name/Your Name] or its licensors and are protected by copyright, trademark, and other intellectual property laws.
-        * User Content (If Applicable): If the App allows users to submit content (e.g., comments, feedback), you retain ownership of your content. However, by submitting content, you grant us a non-exclusive, worldwide, royalty-free, perpetual, irrevocable, and sublicensable right to use, reproduce, modify, adapt, publish, translate, distribute, and display such content in connection with the App. You represent and warrant that you have all necessary rights to grant us this license.
+    5. Intellectual Property\n
+    • Our Content: The App and its original content, features, and functionality (including but not limited to text, graphics, images, audio, video, software, and code) are owned by [Your Company Name/Your Name] or its licensors and are protected by copyright, trademark, and other intellectual property laws.\n
+    • User Content (If Applicable): If the App allows users to submit content (e.g., comments, feedback), you retain ownership of your content. However, by submitting content, you grant us a non-exclusive, worldwide, royalty-free, perpetual, irrevocable, and sublicensable right to use, reproduce, modify, adapt, publish, translate, distribute, and display such content in connection with the App. You represent and warrant that you have all necessary rights to grant us this license.\n\n
 
-        6. Privacy
-        Your use of the App is also governed by our Privacy Policy, which is incorporated into these Terms by reference. Please review our Privacy Policy [Link to your Privacy Policy] to understand how we collect, use, and disclose your information.
+    6. Privacy\n
+    Your use of the App is also governed by our Privacy Policy, which is incorporated into these Terms by reference. Please review our Privacy Policy [Link to your Privacy Policy] to understand how we collect, use, and disclose your information.\n\n
 
-        7. Disclaimer of Warranties
-        THE APP IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND ANY WARRANTIES ARISING OUT OF COURSE OF DEALING OR USAGE OF TRADE. WE DO NOT WARRANT THAT THE APP WILL BE UNINTERRUPTED, ERROR-FREE, SECURE, OR FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS.
+    7. Disclaimer of Warranties\n
+    THE APP IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, AND ANY WARRANTIES ARISING OUT OF COURSE OF DEALING OR USAGE OF TRADE. WE DO NOT WARRANT THAT THE APP WILL BE UNINTERRUPTED, ERROR-FREE, SECURE, OR FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS.\n\n
 
-        8. Limitation of Liability
-        TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL AliBata OR ITS AFFILIATES, OFFICERS, DIRECTORS, EMPLOYEES, AGENTS, SUPPLIERS, OR LICENSORS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES) ARISING OUT OF OR RELATING TO YOUR USE OF OR INABILITY TO USE THE APP, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. OUR TOTAL LIABILITY TO YOU FOR ALL CLAIMS ARISING OUT OF OR RELATING TO THESE TERMS OR YOUR USE OF THE APP SHALL NOT EXCEED THE AMOUNT, IF ANY, PAID BY YOU TO US FOR THE USE OF THE APP.
+    8. Limitation of Liability\n
+    TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL Alibata OR ITS AFFILIATES, OFFICERS, DIRECTORS, EMPLOYEES, AGENTS, SUPPLIERS, OR LICENSORS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES) ARISING OUT OF OR RELATING TO YOUR USE OF OR INABILITY TO USE THE APP, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. OUR TOTAL LIABILITY TO YOU FOR ALL CLAIMS ARISING OUT OF OR RELATING TO THESE TERMS OR YOUR USE OF THE APP SHALL NOT EXCEED THE AMOUNT, IF ANY, PAID BY YOU TO US FOR THE USE OF THE APP.\n\n
 
-        Contact Us
-        If you have any questions about these Terms, please contact us at:
+    Contact Us\n
+    If you have any questions about these Terms, please contact us at:\n
+    hanzharvey.baliguat@gmail.com
+</string>
 
+    <string name="helpQuestions">
+        What is Alibata?\n
+        AliBATA is an interactive e-learning application designed to promote the learning and preservation of the Visayan language and culture among young children\n\n
+
+        What are the games?\n
+        In Alibata, we have 3 game modes: \n
+        \t Word Translation\n
+        \t Phrase Translation\n
+        \t One Pic Four Words\n\n
+
+        What is the ranking system and how can i obtain them?\n
+        Alibata has 5 ranking system based on your accumulated score\n
+        \t Novice score>0\n
+        \t Bronze score>5\n
+        \t Silver score>10\n
+        \t Gold score>15\n
+        \t Diamond score>20\n
+        By accumulating points you can progress through the ranks\n\n
+
+        What are the videos obtained?\n
+        By integrating Youtube into our application we are able to display videos sourced from Youtube. \n\n
+
+        How do i play Word Translate?\n
+        You need to select the right word that correctly translates the given word \n\n
+
+        How do i play Phrase Translate?\n
+        You need to select the right words in the correct order that correctly translates the given word \n\n
+
+        How do i play One Pic Four Words Translate?\n
+        You need to select the right word that correctly translates the given image \n\n
+
+        Contact Us\n
+        If you have any questions more questions feel free to email us at:\n
         hanzharvey.baliguat@gmail.com
     </string>
+
     <string name="regTermsAndConditionsAgree">I agree to the terms and conditions</string>
     <string name="regConfirm">Confirm</string>
 
     <string name="return_label">Return</string>
     <string name="regIDNumberInput">Enter ID Number</string>
     <string name="regRoleInput">Role</string>
-
+    <string name="profileInformation">Profile Information</string>
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="question_progress">Question %1$d of %2$d</string>
+    <string name="score_format">Score: %1$d</string>
+    <string name="final_score_format">Your score is %1$d out of %2$d</string>
+
+    <string name="rank_novice">Novice</string>
+    <string name="rank_bronze">Bronze</string>
+    <string name="rank_silver">Silver</string>
+    <string name="rank_gold">Gold</string>
+    <string name="rank_diamond">Diamond</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -126,6 +174,7 @@
     <string name="profileFragLogout">Logout</string>
     <string name="profileFragName">Admin D. Admin</string>
     <string name="profileFragLeaderboard">Leaderboard Rank #23</string>
+    <string name="profileFragLeaderboardRanking">Leaderboard</string>
     <string name="profileFragGems">0</string>
     <string name="profileFragActivitiesComplete">Activities Completed</string>
     <string name="profileFragActivitiesCompleteAmount">0</string>

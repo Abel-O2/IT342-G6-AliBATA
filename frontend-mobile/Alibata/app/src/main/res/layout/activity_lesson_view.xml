@@ -1,65 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rootLayout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootScroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/pastel_background"
     android:padding="16dp">
 
-    <!-- Progress Bar -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="100"
-        android:progress="0"
-        android:indeterminate="false"
-        android:layout_marginBottom="16dp" />
-    <TextView
-        android:id="@+id/scoreTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Score: 0"
-        android:textSize="18sp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="16dp"/>
-
-
-    <!-- Activity Title -->
-    <TextView
-        android:id="@+id/activityTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Activity Title"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- Progress Text -->
-    <TextView
-        android:id="@+id/progressText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Question 1 of 10"
-        android:textSize="18sp"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- Question Text -->
-    <TextView
-        android:id="@+id/questionText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="What is the translation for 'Hello'?"
-        android:textSize="20sp"
-        android:layout_marginBottom="24dp"/>
-
-    <!-- Container for Choices -->
     <LinearLayout
-        android:id="@+id/choicesContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"/>
+        android:orientation="vertical"
+        android:paddingTop="60dp">
 
-</LinearLayout>
+        <!-- Title -->
+        <TextView
+            android:id="@+id/activityTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Activity Title"
+            android:textColor="@color/text_primary_dark"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <!-- Score -->
+        <TextView
+            android:id="@+id/scoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Score: 0"
+            android:textColor="@color/text_primary_dark"
+            android:textSize="18sp" />
+
+        <!-- Progress Bar + Counter -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="0dp"
+                android:layout_height="15dp"
+                android:layout_weight="1"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="0"
+                android:progressDrawable="@drawable/pastel_background_bar" />
+
+            <TextView
+                android:id="@+id/progressText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="1 / 10"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Question / Image + Choices -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical">
+
+            <!-- Question Text (hidden in GAME1) -->
+            <TextView
+                android:id="@+id/questionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text="Question goes here"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="20sp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+            <ImageView
+                android:id="@+id/questionImageView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@color/text_primary_dark"/>
+
+            <!-- 2-column container for ImageView (GAME1) & choice buttons -->
+            <GridLayout
+                android:id="@+id/choicesContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alignmentMode="alignMargins"
+                android:columnCount="2"
+                android:columnOrderPreserved="false"
+                android:rowOrderPreserved="false"
+                android:useDefaultMargins="true" />
+
+        </LinearLayout>
+
+
+        <!-- Submit Button (for GAME2) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/phraseSubmitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/pastel_mint_light"
+            android:text="Submit"
+            android:textColor="@color/text_primary_dark"
+            android:visibility="gone"
+            app:cornerRadius="20dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

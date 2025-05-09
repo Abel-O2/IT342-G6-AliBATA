@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/pastel_lavender_light"
@@ -11,15 +12,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Title -->
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/legalHeader"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Profile Information"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary_dark"
-            android:layout_marginBottom="24dp"/>
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/legal_title"
+                android:layout_width="294dp"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/profileInformation"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/profile_return"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="15dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:paddingTop="30dp"
+                android:text="Return To Account"
+                android:textColor="@color/text_primary_dark"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toTopOf="@+id/youtube_web_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/story_title"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+        </LinearLayout>
 
         <!-- First Name -->
         <com.google.android.material.textfield.TextInputLayout
@@ -27,7 +61,15 @@
             style="@style/ChildTextInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="First Name">
+            android:hint="First Name"
+            app:boxBackgroundMode="outline"
+            app:boxBackgroundColor="@color/pastel_yellow_light"
+            app:boxStrokeColor="@color/pastel_peach_light"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etFirstName"
                 android:layout_width="match_parent"
@@ -42,7 +84,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Middle Name"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="12dp"
+            app:boxBackgroundMode="outline"
+            app:boxBackgroundColor="@color/pastel_yellow_light"
+            app:boxStrokeColor="@color/pastel_peach_light"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            >
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etMiddleName"
                 android:layout_width="match_parent"
@@ -57,7 +108,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Last Name"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="12dp"
+            app:boxBackgroundMode="outline"
+            app:boxBackgroundColor="@color/pastel_yellow_light"
+            app:boxStrokeColor="@color/pastel_peach_light"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            >
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etLastName"
                 android:layout_width="match_parent"
@@ -72,7 +132,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="12dp"
+            app:boxBackgroundMode="outline"
+            app:boxBackgroundColor="@color/pastel_yellow_light"
+            app:boxStrokeColor="@color/pastel_peach_light"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            >
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
                 android:inputType="textEmailAddress"
@@ -97,14 +166,12 @@
                 android:textSize="16sp"
                 android:textColor="@color/text_primary_dark"/>
 
-            <!-- Colored status bar -->
             <View
                 android:id="@+id/viewSubscriptionStatus"
                 android:layout_width="60dp"
                 android:layout_height="20dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_gravity="center_vertical"
                 android:background="@drawable/status_indicator_round"
                 android:contentDescription="Subscription status indicator" />
         </LinearLayout>
@@ -115,22 +182,27 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="24dp"
-            android:gravity="end">
+            android:gravity="end"
+            android:spacing="12dp">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEdit"
-                style="@style/ChildButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit"/>
+                android:text="Edit"
+                app:cornerRadius="16dp"
+                android:backgroundTint="@color/pastel_peach_light"
+                android:textColor="@color/text_primary_dark"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
-                style="@style/ChildButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Save"
+                app:cornerRadius="16dp"
                 android:layout_marginStart="12dp"
+                android:backgroundTint="@color/pastel_mint_light"
+                android:textColor="@color/text_primary_dark"
                 android:visibility="gone"/>
         </LinearLayout>
 

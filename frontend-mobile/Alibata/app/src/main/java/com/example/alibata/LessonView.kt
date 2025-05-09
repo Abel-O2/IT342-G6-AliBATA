@@ -2,10 +2,12 @@ package com.example.alibata
 
 import android.os.Bundle
 import android.util.Base64
+import android.view.View
+import android.widget.GridLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -22,150 +24,318 @@ class LessonView : AppCompatActivity() {
     companion object {
         const val EXTRA_LESSON_ID = "EXTRA_LESSON_ID"
         const val EXTRA_TITLE = "EXTRA_TITLE"
+        const val EXTRA_GAME_TYPE = "EXTRA_GAME_TYPE"
     }
 
+    enum class GameMode { GAME1, GAME2, GAME3 }
+
     private lateinit var titleTextView: TextView
+    private lateinit var scoreTextView: TextView
     private lateinit var progressTextView: TextView
     private lateinit var questionTextView: TextView
-    private lateinit var choicesContainer: LinearLayout
+    private lateinit var questionImageView: ImageView
+    private lateinit var choicesContainer: GridLayout
     private lateinit var progressBar: ProgressBar
+    private lateinit var submitButton: MaterialButton
 
-    private var lessonId: Int = -1
+    private var lessonId = -1
     private var questions: List<Question> = emptyList()
     private var currentQuestionIndex = 0
     private var score = 0
+    private lateinit var gameMode: GameMode
 
     private val api by lazy { RetrofitInstance.apiService }
-    // Retrofit endpoints:
-    // suspend fun getQuestionsForActivity(@Header("Authorization") token: String, @Path("activityId") lessonId: Int): List<Question>
-    // suspend fun markActivityAsCompleted(@Header("Authorization") token: String, @Path("id") activityId: Int, @Path("userId") userId: Int): Response<Void>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lesson_view)
-        // Find views by id
+
+        intent.getStringExtra(EXTRA_GAME_TYPE)?.let {
+            gameMode = GameMode.valueOf(it)
+        } ?: throw IllegalArgumentException("EXTRA_GAME_TYPE is required")
+
         titleTextView = findViewById(R.id.activityTitle)
+        scoreTextView = findViewById(R.id.scoreTextView)
         progressBar = findViewById(R.id.progressBar)
         progressTextView = findViewById(R.id.progressText)
         questionTextView = findViewById(R.id.questionText)
+        questionImageView = findViewById(R.id.questionImageView)
         choicesContainer = findViewById(R.id.choicesContainer)
+        submitButton = findViewById(R.id.phraseSubmitButton)
+        submitButton.visibility = View.GONE
 
         lessonId = intent.getIntExtra(EXTRA_LESSON_ID, -1)
-        val title = intent.getStringExtra(EXTRA_TITLE)
-        titleTextView.text = title
+        titleTextView.text = intent.getStringExtra(EXTRA_TITLE)
+        scoreTextView.text = getString(R.string.score_format, 0)
+
+        submitButton.setOnClickListener {
+            (it.tag as? Pair<Question, List<Int>>)?.let { pair ->
+                handlePhraseSubmit(pair.first, pair.second)
+            }
+        }
 
         fetchQuestions()
     }
 
-    private fun fetchQuestions() {
-        lifecycleScope.launch {
-            val token = TokenManager.getToken(this@LessonView)
-            if (token.isNullOrEmpty()) {
-                //Toast.makeText(this@LessonView, "Token not found", //Toast.LENGTH_SHORT).show()
-                return@launch
-            }
-            val bearer = "Bearer $token"
+    private fun dpToPx(dp: Int): Int =
+        (dp * resources.displayMetrics.density).toInt()
+
+    private fun fetchQuestions() = lifecycleScope.launch {
+        TokenManager.getToken(this@LessonView)?.let { token ->
             try {
-                questions = api.getQuestionsForActivity(bearer, lessonId)
-                if (questions.isNotEmpty()) {
-                    currentQuestionIndex = 0
-                    score = 0
-                    // Initialize progress bar max to number of questions
-                    progressBar.max = questions.size
-                    progressBar.progress = 0
-                    displayQuestion(questions[currentQuestionIndex])
-                } else {
-                    //Toast.makeText(this@LessonView, "No questions found for this activity", //Toast.LENGTH_SHORT).show()
-                }
+                questions = api.getQuestionsForActivity("Bearer $token", lessonId)
+                if (questions.isEmpty()) return@launch
+                progressBar.max = questions.size
+                currentQuestionIndex = 0
+                score = 0
+                showQuestion(questions[0])
             } catch (e: Exception) {
                 e.printStackTrace()
-                //Toast.makeText(this@LessonView, "Failed to load questions", //Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun displayQuestion(question: Question) {
-        questionTextView.text = question.questionText
-        choicesContainer.removeAllViews()
-        progressTextView.text = "Question ${currentQuestionIndex + 1} of ${questions.size}"
-        // Update the progress bar progress
+    private fun showQuestion(q: Question) {
+        submitButton.visibility = View.GONE
+        questionTextView.visibility = View.VISIBLE
+        progressTextView.text = getString(
+            R.string.question_progress,
+            currentQuestionIndex + 1,
+            questions.size
+        )
         progressBar.progress = currentQuestionIndex
 
-        question.choices.forEach { choice ->
-            val choiceButton = MaterialButton(this).apply {
+        choicesContainer.apply {
+            columnCount = 2
+            removeAllViews()
+        }
+
+        when (gameMode) {
+            GameMode.GAME1 -> displayOnePicFourWords(q)
+            GameMode.GAME2 -> displayPhraseTranslation(q)
+            GameMode.GAME3 -> displayWordTranslation(q)
+        }
+    }
+
+    private fun displayOnePicFourWords(q: Question) {
+        questionTextView.visibility = View.GONE
+
+        q.questionImage?.let { base64 ->
+            val decoded = Base64.decode(base64, Base64.DEFAULT)
+            val bmp = android.graphics.BitmapFactory.decodeByteArray(decoded, 0, decoded.size)
+            questionImageView.setImageBitmap(bmp)
+            questionImageView.visibility = View.VISIBLE
+        } ?: run {
+            questionImageView.visibility = View.GONE
+        }
+
+        q.choices.shuffled().forEach { choice ->
+            val btn = MaterialButton(this).apply {
                 text = choice.choiceText
-                setOnClickListener { onChoiceSelected(question, choice) }
+                layoutParams = GridLayout.LayoutParams(
+                    GridLayout.spec(GridLayout.UNDEFINED, 1f),
+                    GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                ).apply {
+                    width = 0
+                    setMargins(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8))
+                }
+                setOnClickListener { handlePicChoice(q, choice) }
             }
-            choicesContainer.addView(choiceButton)
+            choicesContainer.addView(btn)
         }
     }
 
-    private fun onChoiceSelected(question: Question, selectedChoice: Choice) {
-        if (selectedChoice.correct) {
-            score++
-            //Toast.makeText(this, "Correct!", //Toast.LENGTH_SHORT).show()
-        } else {
-            //Toast.makeText(this, "Incorrect!", //Toast.LENGTH_SHORT).show()
+    private fun displayWordTranslation(q: Question) {
+        questionTextView.visibility = View.VISIBLE
+        questionTextView.text = q.questionText
+        questionImageView.visibility = View.GONE
+
+        q.choices.shuffled().forEach { choice ->
+            val btn = MaterialButton(this).apply {
+                text = choice.choiceText
+                layoutParams = GridLayout.LayoutParams(
+                    GridLayout.spec(GridLayout.UNDEFINED, 1f),
+                    GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                ).apply {
+                    width = 0
+                    setMargins(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8))
+                }
+                setOnClickListener { handleWordChoice(q, choice) }
+            }
+            choicesContainer.addView(btn)
         }
+    }
 
-        // Increment the question index
+    private fun displayPhraseTranslation(q: Question) {
+        questionTextView.visibility = View.VISIBLE
+        questionTextView.text = q.questionDescription
+        questionImageView.visibility = View.GONE
+
+        val seq = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+        }
+        seq.layoutParams = GridLayout.LayoutParams(
+            GridLayout.spec(GridLayout.UNDEFINED, 1),
+            GridLayout.spec(0, 2)
+        ).apply {
+            width = GridLayout.LayoutParams.MATCH_PARENT
+            setMargins(0, 0, 0, dpToPx(8))
+        }
+        choicesContainer.addView(seq)
+
+        val selected = mutableListOf<Int>()
+
+        q.choices.shuffled().forEach { choice ->
+            val btn = MaterialButton(this).apply {
+                text = choice.choiceText
+                isAllCaps = false
+                tag = choice.choiceId
+                layoutParams = GridLayout.LayoutParams(
+                    GridLayout.spec(GridLayout.UNDEFINED, 1f),
+                    GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                ).apply {
+                    width = 0
+                    setMargins(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8))
+                }
+                setOnClickListener {
+                    isEnabled = false
+                    selected += choice.choiceId
+
+                    val tv = TextView(this@LessonView).apply {
+                        text = choice.choiceText
+                        tag = choice.choiceId
+                        setPadding(dpToPx(8), dpToPx(4), dpToPx(8), dpToPx(4))
+                        setOnClickListener { view ->
+                            val id = view.tag as Int
+                            seq.removeView(view)
+                            selected.remove(id)
+                            for (i in 0 until choicesContainer.childCount) {
+                                val child = choicesContainer.getChildAt(i)
+                                if (child is MaterialButton && child.tag == id) {
+                                    child.isEnabled = true
+                                    break
+                                }
+                            }
+                            if (selected.isEmpty()) {
+                                submitButton.visibility = View.GONE
+                            } else {
+                                submitButton.tag = Pair(q, selected.toList())
+                            }
+                        }
+                    }
+                    seq.addView(tv)
+
+                    submitButton.tag = Pair(q, selected.toList())
+                    submitButton.visibility = View.VISIBLE
+                }
+            }
+            choicesContainer.addView(btn)
+        }
+    }
+
+    private fun handlePicChoice(q: Question, choice: Choice) {
+        for (i in 0 until choicesContainer.childCount) {
+            (choicesContainer.getChildAt(i) as? MaterialButton)?.isEnabled = false
+        }
+        if (choice.correct) {
+            score += q.score?.score ?: 0
+            scoreTextView.text = getString(R.string.score_format, score)
+        }
+        lifecycleScope.launch {
+            TokenManager.getToken(this@LessonView)?.let { token ->
+                val userId = decodeJwt(token)?.userId ?: return@let
+                try {
+                    api.awardScoreToUser("Bearer $token", q.questionId, userId, choice.choiceId)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                advance()
+            }
+        }
+    }
+
+    private fun handleWordChoice(q: Question, choice: Choice) {
+        if (choice.correct) {
+            score += q.score?.score ?: 0
+            scoreTextView.text = getString(R.string.score_format, score)
+        }
+        lifecycleScope.launch {
+            TokenManager.getToken(this@LessonView)?.let { token ->
+                val userId = decodeJwt(token)?.userId ?: return@let
+                try {
+                    api.awardScoreToUser("Bearer $token", q.questionId, userId, choice.choiceId)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                advance()
+            }
+        }
+    }
+
+    private fun handlePhraseSubmit(q: Question, selectedIds: List<Int>) {
+        val correctSeq = q.choices.filter { it.correct }
+            .sortedBy { it.choiceOrder ?: Int.MAX_VALUE }
+            .map { it.choiceId }
+        if (selectedIds == correctSeq) {
+            score++
+            scoreTextView.text = getString(R.string.score_format, score)
+        }
+        lifecycleScope.launch {
+            TokenManager.getToken(this@LessonView)?.let { token ->
+                val userId = decodeJwt(token)?.userId ?: return@let
+                try {
+                    api.awardScoreForTranslationGame("Bearer $token", q.questionId, userId, selectedIds)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                advance()
+            }
+        }
+    }
+
+    private fun advance() {
         currentQuestionIndex++
-        // Update the progress bar immediately
         progressBar.progress = currentQuestionIndex
-
-        // Load the next question or finish if all questions are answered
         if (currentQuestionIndex < questions.size) {
-            displayQuestion(questions[currentQuestionIndex])
+            showQuestion(questions[currentQuestionIndex])
         } else {
             showFinalScore()
         }
     }
 
-
     private fun showFinalScore() {
-        // If perfect score, mark the activity as completed on the server
-        if (score == questions.size) {
-            markActivityCompleted()
-        }
+        if (score == questions.size) markActivityCompleted()
         AlertDialog.Builder(this)
             .setTitle("Game Over")
-            .setMessage("Your score is $score out of ${questions.size}")
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-                finish()
-            }
+            .setMessage(getString(R.string.final_score_format, score, questions.size))
+            .setPositiveButton("OK") { dlg, _ -> dlg.dismiss(); finish() }
             .show()
     }
 
-    private fun markActivityCompleted() {
-        lifecycleScope.launch {
-            val token = TokenManager.getToken(this@LessonView)
-            if (token.isNullOrEmpty()) {
-                //Toast.makeText(this@LessonView, "Token not found", //Toast.LENGTH_SHORT).show()
-                return@launch
-            }
-            val bearer = "Bearer $token"
-            val payload = decodeJwt(token)
-            val userId = if (payload?.userId != 0) {
-                payload?.userId ?: -1
-            } else {
-                payload?.sub?.toIntOrNull() ?: -1
-            }
-            if (userId == -1) {
-                //Toast.makeText(this@LessonView, "User not found", //Toast.LENGTH_SHORT).show()
-                return@launch
-            }
+    private fun markActivityCompleted() = lifecycleScope.launch {
+        TokenManager.getToken(this@LessonView)?.let { token ->
+            val userId = decodeJwt(token)?.userId ?: return@let
             try {
-                val response = api.markActivityAsCompleted(bearer, lessonId, userId)
-                if (response.isSuccessful) {
-                    //Toast.makeText(this@LessonView, "Activity marked as completed", //Toast.LENGTH_SHORT).show()
-                } else {
-                    //Toast.makeText(this@LessonView, "Failed to mark activity complete", //Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                //Toast.makeText(this@LessonView, "Error marking activity complete", //Toast.LENGTH_SHORT).show()
-            }
+                api.markActivityAsCompleted("Bearer $token", lessonId, userId)
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun decodeJwt(token: String): JwtPayload? {
+        return try {
+            val parts = token.split('.')
+            if (parts.size != 3) return null
+            val json = JSONObject(
+                String(Base64.decode(parts[1], Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP))
+            )
+            JwtPayload(
+                userId = json.optInt("userId"),
+                sub = json.optString("sub"),
+                iat = json.optLong("iat"),
+                exp = json.optLong("exp")
+            )
+        } catch (_: Exception) {
+            null
         }
     }
 
@@ -175,26 +345,4 @@ class LessonView : AppCompatActivity() {
         val iat: Long,
         val exp: Long
     )
-
-    private fun decodeJwt(token: String): JwtPayload? {
-        return try {
-            val parts = token.split('.')
-            if (parts.size != 3) null
-            else {
-                val payloadJson = String(
-                    Base64.decode(parts[1], Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP),
-                    charset("UTF-8")
-                )
-                val json = JSONObject(payloadJson)
-                val userId = json.optInt("userId", 0)
-                val sub = json.optString("sub", "")
-                val iat = json.optLong("iat", 0L)
-                val exp = json.optLong("exp", 0L)
-                JwtPayload(userId, sub, iat, exp)
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            null
-        }
-    }
 }

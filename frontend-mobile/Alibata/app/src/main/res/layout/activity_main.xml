@@ -6,17 +6,18 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/pastel_mint_light"
+    android:background="@color/pastel_background"
     tools:context=".MainActivity">
 
     <ImageView
         android:id="@+id/logoImageView"
         android:layout_width="254dp"
         android:layout_height="235dp"
-        android:layout_marginTop="272dp"
-        android:src="@mipmap/alibatalogo"
+        android:layout_marginTop="200dp"
+        android:foregroundGravity="center"
+        android:src="@drawable/alibata_logo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="@color/pastel_mint_light"
+    android:background="@color/pastel_background"
     tools:context=".Login">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,7 +25,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/btnLoginEnter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.3" />
 
         <TextView
             android:id="@+id/txtSchoolID"
@@ -50,9 +51,12 @@
             app:layout_constraintTop_toTopOf="@id/txtSchoolID">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/userNameHint" />
+                android:hint="@string/userNameHint"
+                android:inputType="textEmailAddress"
+                android:imeOptions="actionNext" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -72,28 +76,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            app:endIconMode="password_toggle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtPassword">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/userPasswordHint" />
+                android:hint="@string/userPasswordHint"
+                android:inputType="textPassword"
+                android:imeOptions="actionDone" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            style="@style/ChildButton"
             android:id="@+id/btnLoginEnter"
+            style="@style/ChildButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textPasswordInputLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/textPasswordInputLayout"
+            app:layout_constraintVertical_bias="0.262" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

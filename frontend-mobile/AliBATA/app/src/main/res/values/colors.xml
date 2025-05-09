@@ -7,6 +7,15 @@
     <color name="pastel_yellow">#FFF9C4</color> <!-- Light pastel yellow -->
     <color name="pastel_yellow_light">#FFFDE7</color> <!-- Even lighter yellow -->
     <color name="pastel_green">#C8E6C9</color>
+    <color name="pastel_background">#fff4de</color>
+
+    <color name="rank_color_novice">#DFF7E4</color>      <!-- mint light -->
+    <color name="rank_color_bronze">#FFD1A3</color>      <!-- pastel orange -->
+    <color name="rank_color_silver">#D3D3D3</color>      <!-- pastel gray -->
+    <color name="rank_color_gold">#FFF7A1</color>        <!-- pastel yellow -->
+    <color name="rank_color_diamond">#DDEFFE</color>     <!-- pastel blue light -->
+
+
 
     <!-- Darker text for readability -->
     <color name="text_primary_dark">#2E2E34</color>

@@ -40,6 +40,11 @@ class StoriesFragment : Fragment(R.layout.fragment_stories) {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        fetchStories()
+    }
+
     private fun fetchStories() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {

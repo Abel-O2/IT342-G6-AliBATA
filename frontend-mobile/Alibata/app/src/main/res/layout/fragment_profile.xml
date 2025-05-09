@@ -10,6 +10,7 @@
     tools:context=".ProfileFragment">
 
     <!-- Profile Image -->
+    <!--
     <ImageView
         android:id="@+id/profileimage"
         android:layout_width="80dp"
@@ -20,24 +21,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
+        -->
     <!-- Name -->
+
     <TextView
         android:id="@+id/profile_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
         android:text="@string/profileFragName"
+        android:textColor="@color/text_primary_dark"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/text_primary_dark"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/profileimage"
+
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Rank Badge -->
     <TextView
-        android:id="@+id/rank_text"
+        android:id="@+id/leaderboard_rank"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/profileFragRank"
@@ -58,7 +61,7 @@
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/rank_text"
+        app:layout_constraintTop_toBottomOf="@id/leaderboard_rank"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -92,7 +95,7 @@
         <!-- Activities Completed -->
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
             android:padding="12dp"
@@ -117,20 +120,23 @@
 
         <!-- Rank -->
         <LinearLayout
+            android:id="@+id/rank_container"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
             android:padding="12dp"
             android:background="@color/pastel_green">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:id="@+id/rank_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:text="@string/profileFragRank"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary_dark" />
+                android:textColor="@color/text_primary_dark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
@@ -158,12 +164,12 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <Button
-            android:id="@+id/btnSettings"
+            android:id="@+id/btnLeaderboard"
             style="@style/ChildButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/stories"
-            android:text="@string/profileFragSetting"
+            android:text="@string/profileFragLeaderboardRanking"
             android:layout_marginBottom="8dp" />
 
         <Button

@@ -7,25 +7,40 @@ const Payment = () => {
   const [currentPlan, setCurrentPlan] = useState("Basic");
 
     const handleUpgrade = async () => {
+     const options = {
+      method: "POST",
+      url: "https://api.paymongo.com/v1/links",
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        authorization: "Basic c2tfdGVzdF96TnJRa2kzMnNaRWgxRVRQQWRFRWY3czE6",
+      },
+      data: {
+        data: {
+          attributes: {
+            amount: 29999.99,
+            description: "Subscription",
+          },
+        },
+      },
+    };
+
     try {
-      // Replace with your actual Paymongo integration logic
-      // This is a placeholder - you'll need to use Paymongo's SDK
-      // to create a payment session or payment intent
+      const response = await axios.request(options);
+      const paymentLink = response?.data?.data?.attributes?.checkout_url;
 
-      // For demonstration purposes, let's assume the server returns a success status
-      const response = await axios.post('/api/upgrade-plan', { amount: 599.99 }); // Replace '/api/upgrade-plan' with your actual endpoint
-
-      if (response.status === 200) {
-        setCurrentPlan("Premium");
-        alert("Successfully upgraded to Premium!");
+      if (paymentLink) {
+        window.location.href = paymentLink;
       } else {
-        alert("Upgrade failed. Please try again.");
+        alert("Payment link not found. Please try again.");
       }
     } catch (error) {
-      console.error("Error upgrading plan:", error);
-      alert("An error occurred during the upgrade process.");
+      console.error("Error making payment request:", error);
+      alert("Failed to create the payment link. Please try again.");
     }
   };
+
+
 
   return (
     <SidebarLayout>
@@ -89,7 +104,7 @@ const Payment = () => {
               <Typography sx={{ mt: 2, fontSize: "14px", color: "black" }}>
                 Full access with exclusive benefits
               </Typography>
-              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold", color:"black" }}>₱599.99 / month</Typography>
+              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold", color:"black" }}>₱299.99 / month</Typography>
               <Button
                 variant="contained"
                 fullWidth

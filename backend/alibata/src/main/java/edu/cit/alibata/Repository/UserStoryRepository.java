@@ -13,4 +13,5 @@ import edu.cit.alibata.model.UserStoryProjection;
 public interface UserStoryRepository extends JpaRepository<UserStory, Integer> {
     Optional<UserStory> findByUser_UserIdAndStory_StoryId(int userId, int storyId);
     List<UserStoryProjection> findByUser_UserId(int userId);
+    List<UserStory> findByStory_StoryId(int storyId);
 }

@@ -99,10 +99,13 @@ public class StoryService {
     // Delete a StoryEntity by id
     public String deleteStoryEntity(int storyId) {
         if (storyRepo.existsById(storyId)) {
+            List<UserStory> userStories = userStoryRepo.findByStory_StoryId(storyId);
+            userStoryRepo.deleteAll(userStories);
+    
             storyRepo.deleteById(storyId);
-            return "Story " + storyId + " deleted successfully!";
+            return "Story " + storyId + " and its associations deleted successfully!";
         } else {
-            return "Story " + storyId + " not found!";
+            throw new EntityNotFoundException("Story " + storyId + " not found!");
         }
     }
 

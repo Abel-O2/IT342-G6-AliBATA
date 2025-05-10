@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.cit.alibata.Entity.ActivityEntity;
+import edu.cit.alibata.Entity.ChoiceEntity;
+import edu.cit.alibata.Entity.QuestionEntity;
 import edu.cit.alibata.Entity.UserActivity;
 import edu.cit.alibata.Entity.UserEntity;
 import edu.cit.alibata.Repository.ActivityRepository;
+import edu.cit.alibata.Repository.ChoiceRepository;
+import edu.cit.alibata.Repository.QuestionRepository;
 import edu.cit.alibata.Repository.UserActivityRepository;
 import edu.cit.alibata.Repository.UserRepository;
 import edu.cit.alibata.model.UserActivityProjection;
@@ -26,6 +30,12 @@ public class ActivityService {
 
     @Autowired
     private UserActivityRepository userActivityRepo;
+
+    @Autowired
+    private QuestionRepository questionRepo;
+
+    @Autowired
+    private ChoiceRepository choiceRepo;
 
     // Create and assign to users
     public ActivityEntity postActivityEntity(ActivityEntity activity) {
@@ -77,13 +87,23 @@ public class ActivityService {
         }
     }
 
-    // Delete
+    // Delete an ActivityEntity by id
     public String deleteActivityEntity(int activityId) {
         if (activityRepo.existsById(activityId)) {
+            List<UserActivity> userActivities = userActivityRepo.findByActivity_ActivityId(activityId);
+            userActivityRepo.deleteAll(userActivities);
+
+            List<QuestionEntity> questions = questionRepo.findByActivity_ActivityId(activityId);
+            for (QuestionEntity question : questions) {
+                List<ChoiceEntity> choices = choiceRepo.findByQuestion_QuestionId(question.getQuestionId());
+                choiceRepo.deleteAll(choices);
+                questionRepo.delete(question);
+            }
+
             activityRepo.deleteById(activityId);
-            return "Activity " + activityId + " deleted successfully!";
+            return "Activity " + activityId + " and its associations deleted successfully!";
         } else {
-            return "Activity " + activityId + " not found!";
+            throw new EntityNotFoundException("Activity " + activityId + " not found!");
         }
     }
 

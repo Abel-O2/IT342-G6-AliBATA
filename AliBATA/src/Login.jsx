@@ -13,7 +13,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   const API = axios.create({
-    baseURL: 'https://alibata.duckdns.org/api/alibata/auth',
+    baseURL: `${import.meta.env.VITE_API_BASE_URL}/api/alibata/auth`,
     timeout: 1000,
     headers: {
       "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export default function Login() {
       console.log("Decoded token:", decodedToken);
 
       // Fetch user details using the token
-      const userResponse = await API.get(`https://alibata.duckdns.org/api/alibata/users/${decodedToken.userId}`, {
+      const userResponse = await API.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/users/${decodedToken.userId}`, {
         headers: {
           Authorization: `Bearer ${res.data.token}`,
         },
@@ -50,7 +50,6 @@ export default function Login() {
       const userDetails = userResponse.data; // Assuming the API returns user details
       console.log("Fetched user details:", userDetails);
 
-      // Redirect based on user role
       if (userDetails.role === "ADMIN") {
         navigate("/admin");
       } else {

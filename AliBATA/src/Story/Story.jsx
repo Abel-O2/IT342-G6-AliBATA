@@ -30,7 +30,7 @@ const Story = () => {
         setUserId(decodedToken.userId); // Extract userId from the token
 
         // Fetch user details using the token
-        const userResponse = await axios.get(`https://alibata.duckdns.org/api/alibata/users/${decodedToken.userId}`, {
+        const userResponse = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/users/${decodedToken.userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -46,7 +46,7 @@ const Story = () => {
         }
 
         // Fetch stories
-        const storiesResponse = await axios.get("https://alibata.duckdns.org/api/alibata/stories", {
+        const storiesResponse = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/stories`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -75,7 +75,7 @@ const Story = () => {
 
     try {
       const response = await axios.post(
-        "https://alibata.duckdns.org/api/alibata/stories",
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/stories`,
         { title, storyText, youtubeVideoId, completed: false },
         {
           headers: {
@@ -117,7 +117,7 @@ const Story = () => {
       console.log("Story Details:", story);
 
       await axios.put(
-        `https://alibata.duckdns.org/api/alibata/stories/${story.storyId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/stories/${story.storyId}`,
         {
           title: story.title,
           storyText: story.storyText,

@@ -1,9 +1,46 @@
 import { Box, Typography, Button, Paper, Grid } from "@mui/material";
 import SidebarLayout from "./SidebarLayout"; // Import the SidebarLayout component
 import { useState } from "react";
+import axios from 'axios';
 
 const Payment = () => {
   const [currentPlan, setCurrentPlan] = useState("Basic");
+
+    const handleUpgrade = async () => {
+     const options = {
+      method: "POST",
+      url: "https://api.paymongo.com/v1/links",
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        authorization: "Basic c2tfdGVzdF96TnJRa2kzMnNaRWgxRVRQQWRFRWY3czE6",
+      },
+      data: {
+        data: {
+          attributes: {
+            amount: 29900,
+            description: "Subscription",
+          },
+        },
+      },
+    };
+
+    try {
+      const response = await axios.request(options);
+      const paymentLink = response?.data?.data?.attributes?.checkout_url;
+
+      if (paymentLink) {
+        window.open(paymentLink, "_blank");
+      } else {
+        alert("Payment link not found. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error making payment request:", error);
+      alert("Failed to create the payment link. Please try again.");
+    }
+  };
+
+
 
   return (
     <SidebarLayout>
@@ -67,7 +104,7 @@ const Payment = () => {
               <Typography sx={{ mt: 2, fontSize: "14px", color: "black" }}>
                 Full access with exclusive benefits
               </Typography>
-              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold", color:"black" }}>₱599.99 / month</Typography>
+              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold", color:"black" }}>₱299 / month</Typography>
               <Button
                 variant="contained"
                 fullWidth
@@ -77,7 +114,7 @@ const Payment = () => {
                   bgcolor: "#10B981",
                   ":hover": { bgcolor: "#20DFA6" },
                 }}
-                onClick={() => setCurrentPlan("Premium")}
+                onClick={handleUpgrade}
               >
                 Upgrade Now
               </Button>

@@ -23,6 +23,8 @@ const ContactUs = () => {
                 textAlign: "center",
                 color: "black",
                 borderRadius: "10px",
+                boxShadow: "0px 4px 10px rgba(255,255,255,0.5)",
+                height: "110px",
               }}
             >
               <Typography variant="h6" fontWeight="bold" color="black">App/Software Gmail</Typography>
@@ -43,11 +45,14 @@ const ContactUs = () => {
                 color: "black",
                 borderRadius: "10px",
                 boxShadow: "0px 4px 10px rgba(255,255,255,0.5)",
+                height: "110px",
               }}
             >
               <Typography variant="h6" fontWeight="bold" color="black">Dev's Gmail</Typography>
               <Typography sx={{ mt: 2, fontSize: "14px", color: "black" }}>
-                sample.com
+                vernon.lastimado@cit.edu<br/>
+                samuel.abrenica@cit.edu<br/>
+                hanzhervey.baliguat@cit.edu
               </Typography>
             </Paper>
           </Grid>

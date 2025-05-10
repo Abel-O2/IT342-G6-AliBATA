@@ -15,7 +15,7 @@ const Activities = () => {
     const fetchActivities = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.get("https://alibata.duckdns.org/api/alibata/activities", {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/activities`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -34,7 +34,7 @@ const Activities = () => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.post(
-        "https://alibata.duckdns.org/api/alibata/activities",
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/activities`,
         {
           activityName,
           gameType,
@@ -79,13 +79,13 @@ const Activities = () => {
   const handleDelete = async (activityId) => {
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`https://alibata.duckdns.org/api/alibata/activities/${activityId}`, {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/activities/${activityId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setActivities((prev) => prev.filter((activity) => activity.activityId !== activityId));
-      alert("Activity deleted successfully.");
+      //alert("Activity deleted successfully.");
     } catch (err) {
       console.error("Error deleting activity:", err.response?.data || err.message);
       alert("Failed to delete activity. Please try again.");
@@ -115,6 +115,7 @@ const Activities = () => {
           </Typography>
         )}
         
+        {/*Activity List*/}
         <Paper sx={{ bgcolor: "#F4F8D3", p: 2, color: "black" }}>
           <Box  
           sx={{
@@ -125,16 +126,16 @@ const Activities = () => {
             {activities.map((activity) => (
               <ListItem key={activity.activityId} sx={{ borderBottom: "1px solid #444" }}>
                 <ListItemText
-                  primary={activity.activityName}
+                  primary={`${activity.activityName} (ID: ${activity.activityId})`}
                   secondary={`Game Type: ${activity.gameType}`}
                 />
                 <ListItemSecondaryAction>
                   <IconButton edge="end" color="primary" onClick={() => handleEdit(activity.activityId, activity.gameType)}>
                     <EditIcon />
                   </IconButton>
-                  {/*<IconButton edge="end" color="error" onClick={() => handleDelete(activity.activityId)}>
+                  <IconButton edge="end" color="error" onClick={() => handleDelete(activity.activityId)}>
                     <DeleteIcon />
-                  </IconButton>*/}
+                  </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
             ))}
@@ -146,7 +147,7 @@ const Activities = () => {
           <Typography variant="h6" color="black" mb={2}>
             Create a New Activity
           </Typography>
-          <Grid container spacing={3} sx={{ display: "flex" }}>
+          <Grid container spacing={3} sx={{ display: "flex" }} justifyContent="center">
             <Grid item xs={12} sm={4}>
               <Button
                 fullWidth

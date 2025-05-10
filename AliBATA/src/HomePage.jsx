@@ -12,6 +12,7 @@ const HomePage = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [userId, setUserId] = useState(null);
+  const [totalScore, setTotalScore] = useState(0);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,7 +26,7 @@ const HomePage = () => {
 
     const fetchActivities = async () => {
       try {
-        const response = await axios.get("https://alibata.duckdns.org/api/alibata/activities", {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/activities`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -42,7 +43,7 @@ const HomePage = () => {
 
     const fetchStories = async () => {
       try {
-        const response = await axios.get("https://alibata.duckdns.org/api/alibata/stories", {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/stories`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -57,8 +58,23 @@ const HomePage = () => {
       }
     };
 
+    const fetchTotalScore = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/scores/users/${decoded.userId}/total`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setTotalScore(response.data);
+      } catch (err) {
+        console.error("Failed to fetch total score:", err.message || err.response?.data);
+        setError("Failed to fetch total score. Please try again.");
+      }
+    };
+
     fetchActivities();
     fetchStories();
+    fetchTotalScore();
   }, []);
 
   const handleWatchVideo = async (storyId) => {
@@ -74,7 +90,7 @@ const HomePage = () => {
   
       
       await axios.put(
-        `https://alibata.duckdns.org/api/alibata/stories/${story.storyId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/alibata/stories/${story.storyId}`,
         {
           title: story.title,
           storyText: story.storyText,
@@ -104,7 +120,7 @@ const HomePage = () => {
 
   return (
     <SidebarLayout>
-      <Box sx={{ maxHeight: "90vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4 }}>
+      <Box sx={{ maxHeight: "200vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4, overflowY: "auto", overflowX: "hidden" }}>
         <Typography variant="h4" fontWeight="bold" color="black" sx={{ mb: 3 }}>
           Progress Dashboard
         </Typography>
@@ -143,7 +159,7 @@ const HomePage = () => {
               activities.map((activity) => (
                 <ListItem key={activity.activityId} sx={{ borderBottom: "1px solid #444" }}>
                   <ListItemText
-                    primary={`Activity Name: ${activity.activityName}`}
+                    primary={`Activity Name: ${activity.activityName} (ID: ${activity.activityId})`}
                     secondary={`Activity: ${activity.gameType}`}
                   />
                 </ListItem>
@@ -206,6 +222,19 @@ const HomePage = () => {
             </ListItem>
           ))}
           </List>
+        </Paper>
+         <Paper
+          sx={{
+            p: 2,
+            mt: 3,
+            textAlign: "center",
+            bgcolor: "#F4F8D3",
+            color: "black",
+            borderRadius: "10px",
+            boxShadow: "0px 4px 10px rgba(255,255,255,0.5)",
+          }}
+        >
+          <Typography variant="h5">Total Score: {totalScore}</Typography>
         </Paper>
       </Box>
     </SidebarLayout>

@@ -1,14 +1,15 @@
 import { Grid, Box, Typography, Button, List, ListItem, ListItemText, Modal, TextField } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import EditUserModal from "./EditDetails";
 
 const drawerWidth = 240;
 
 const SidebarLayout = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
   const [userData, setUserData] = useState({
@@ -16,8 +17,38 @@ const SidebarLayout = ({ children }) => {
     firstName: "",
     middleName: "",
     lastName: "",
+    role: "", // Initialize role here
   });
   const [username, setUsername] = useState("");
+
+  const fetchUser = useCallback(async (token, userId) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/alibata/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const user = response.data;
+      console.log("Fetched user:", user);
+
+      // Set the username and user data, including the role
+      setUsername(user.firstName);
+      setUserData({
+        userId: user.userId,
+        firstName: user.firstName,
+        middleName: user.middleName || "",
+        lastName: user.lastName || "",
+        role: user.role, // Include the role property
+      });
+
+      if (!username) {
+        setUsername(user.firstName);
+        localStorage.setItem("username", user.firstName);
+      }
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
+    }
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,43 +56,12 @@ const SidebarLayout = ({ children }) => {
       try {
         const decoded = jwtDecode(token);
         console.log("Decoded token:", decoded);
-
-        // Fetch user details from the backend
-        const fetchUser = async () => {
-          try {
-            const response = await axios.get(`https://alibata.duckdns.org/api/alibata/users/${decoded.userId}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            const user = response.data;
-            console.log("Fetched user:", user);
-
-            // Set the username and user data, including the role
-            setUsername(user.firstName);
-            setUserData({
-              userId: user.userId,
-              firstName: user.firstName,
-              middleName: user.middleName || "",
-              lastName: user.lastName || "",
-              role: user.role, // Include the role property
-            });
-            
-            if (!username) {
-              setUsername(user.firstName);
-              localStorage.setItem("username", user.firstName);
-            }
-          } catch (err) {
-            console.error("Failed to fetch user:", err);
-          }
-        };
-        
-        fetchUser();
+        fetchUser(token, decoded.userId);
       } catch (err) {
         console.error("Failed to decode token:", err);
       }
     }
-  }, []);
+  }, [fetchUser]);
 
   const handleLogout = () => {
     localStorage.removeItem("username");
@@ -69,11 +69,14 @@ const SidebarLayout = ({ children }) => {
     navigate("/login");
   };
 
-  const handleSave = (updatedUserData) => {
-    setUserData(updatedUserData);
-    setUsername(updatedUserData.firstName);
-    localStorage.setItem("username", updatedUserData.firstName);
-  };
+  const handleSave = useCallback(
+    (updatedUserData) => {
+      setUserData(updatedUserData);
+      setUsername(updatedUserData.firstName);
+      localStorage.setItem("username", updatedUserData.firstName);
+    },
+    []
+  );
 
   const handleNameSubmit = () => {
     if (userData.firstName.trim()) {
@@ -86,6 +89,11 @@ const SidebarLayout = ({ children }) => {
   const handleNameChange = (e) => {
     setUserData({ ...userData, firstName: e.target.value });
   };
+
+  // Function to determine the correct navigation path
+  const getNavigationPath = useCallback(() => {
+    return userData.role === "ADMIN" ? "/admin" : "/home";
+  }, [userData.role]);
 
   return (
     <Box
@@ -133,7 +141,7 @@ const SidebarLayout = ({ children }) => {
             {[
               {
                 text: userData.role === "ADMIN" ? "🛠 Admin Dashboard" : "🏠 Home",
-                action: userData.role === "ADMIN" ? () => navigate("/admin") : () => navigate("/home"),
+                action: () => navigate(getNavigationPath()), // Use the function here
               },
               { text: "💳 Subscriptions", action: () => navigate("/payment") },
               { text: "📞 Contact Us", action: () => navigate("/contact") },

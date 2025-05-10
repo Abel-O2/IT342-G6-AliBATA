@@ -121,7 +121,7 @@ public class ScoreService {
                 throw new IllegalStateException("User already has a score for this question.");
             });
 
-        UserScore userScore = new UserScore(user, question, question.getScore().getScore());
+        UserScore userScore = new UserScore(user, question, question.getScore(), question.getScore().getScore());
         userScoreRepo.save(userScore);
     }
     
@@ -142,7 +142,7 @@ public class ScoreService {
                 throw new IllegalStateException("User already has a score for this question.");
             });
     
-        UserScore userScore = new UserScore(user, question, question.getScore().getScore());
+        UserScore userScore = new UserScore(user, question, question.getScore(), question.getScore().getScore());
         userScoreRepo.save(userScore);
     }
 

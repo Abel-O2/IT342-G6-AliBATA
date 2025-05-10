@@ -40,9 +40,10 @@ public class UserScore {
         super();
     }
 
-    public UserScore(UserEntity user, QuestionEntity question, int score) {
+    public UserScore(UserEntity user, QuestionEntity question, ScoreEntity scoreEntity, int score) {
         this.user = user;
         this.question = question;
+        this.scoreEntity = scoreEntity;
         this.score = score;
     }
 }

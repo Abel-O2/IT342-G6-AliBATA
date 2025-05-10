@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light">
+    android:background="@color/pastel_mint_light">
 
     <ScrollView
         android:id="@+id/scroll"
@@ -31,10 +31,10 @@
 
                 <ImageButton
                     android:id="@+id/btnRegReturn"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:backgroundTint="@color/pastel_green"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:src="@drawable/return_button"
+                    android:background="@drawable/return_button"
                     android:contentDescription="@string/return_label"/>
 
                 <TextView
@@ -43,12 +43,12 @@
                     android:text="@string/regSignUpLabel"
                     android:textSize="28sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/text_primary_dark"
                     android:fontFamily="sans-serif"
                     android:layout_marginStart="8dp"/>
             </LinearLayout>
 
-            <!-- Inputs -->
+            <!-- First Name -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/PastelInput"
                 android:id="@+id/textInputLayout"
@@ -56,9 +56,12 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/regFirstNameInput">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFirstName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"/>
+                    android:fontFamily="sans-serif"
+                    android:inputType="textPersonName"
+                    android:imeOptions="actionNext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Middle Name -->
@@ -70,9 +73,12 @@
                 android:hint="@string/regMiddleNameInput"
                 android:layout_marginTop="12dp">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etMiddleName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"/>
+                    android:fontFamily="sans-serif"
+                    android:inputType="textPersonName"
+                    android:imeOptions="actionNext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Last Name -->
@@ -84,9 +90,12 @@
                 android:hint="@string/regLastNameInput"
                 android:layout_marginTop="12dp">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLastName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"/>
+                    android:fontFamily="sans-serif"
+                    android:inputType="textPersonName"
+                    android:imeOptions="actionNext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Email -->
@@ -98,10 +107,12 @@
                 android:hint="@string/regEmailInput"
                 android:layout_marginTop="12dp">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:inputType="textEmailAddress"
+                    android:id="@+id/etRegEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"/>
+                    android:fontFamily="sans-serif"
+                    android:inputType="textEmailAddress"
+                    android:imeOptions="actionNext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Password -->
@@ -111,12 +122,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/userPasswordHint"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="12dp"
+                app:endIconMode="password_toggle">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:inputType="textPassword"
+                    android:id="@+id/etRegPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"/>
+                    android:fontFamily="sans-serif"
+                    android:inputType="textPassword"
+                    android:imeOptions="actionNext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Confirm Password -->
@@ -126,12 +140,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/regPasswordAgainInput"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="12dp"
+                app:endIconMode="password_toggle">
                 <com.google.android.material.textfield.TextInputEditText
-                    android:inputType="textPassword"
+                    android:id="@+id/etConfirmPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"/>
+                    android:fontFamily="sans-serif"
+                    android:inputType="textPassword"
+                    android:imeOptions="actionDone"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Terms & Conditions -->
@@ -140,36 +157,40 @@
                 android:layout_height="wrap_content"
                 android:text="@string/regTermsAndConditions"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/text_primary_dark"
                 android:fontFamily="sans-serif"
                 android:layout_marginTop="24dp"/>
 
-            <ScrollView
+            <!-- Scrollable Terms Text -->
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/pastel_yellow"
-                android:padding="8dp">
+                android:backgroundTint="@color/pastel_yellow_light"
+                android:padding="8dp"
+                android:scrollbars="vertical">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/regTermsAndConditionsText"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/text_primary_dark"
                     android:fontFamily="sans-serif"/>
-            </ScrollView>
+            </androidx.core.widget.NestedScrollView>
 
             <CheckBox
                 android:id="@+id/regAgreeToTerms"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/regTermsAndConditionsAgree"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/text_primary_dark"
                 android:fontFamily="sans-serif"
                 android:layout_marginTop="12dp"/>
 
             <Button
                 android:id="@+id/btnRegister"
-                style="@style/PastelButton"
+                style="@style/ChildButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/regConfirm"

@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.alibata.databinding.ActivityProfileDetailsBinding
 import com.example.alibata.models.UserEntity
@@ -18,6 +20,7 @@ import org.json.JSONObject
 class ProfileDetails : AppCompatActivity() {    private lateinit var binding: ActivityProfileDetailsBinding
     private var currentUser: UserEntity? = null
     private val api by lazy { RetrofitInstance.apiService }
+    private lateinit var tvYourRank: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +53,11 @@ class ProfileDetails : AppCompatActivity() {    private lateinit var binding: Ac
 
         // Load profile data
         fetchProfile(userId)
+        binding.profileReturn.setOnClickListener {
+            finish()
+        }
     }
+
 
     private fun fetchProfile(userId: Int) {
         lifecycleScope.launch {
@@ -72,12 +79,17 @@ class ProfileDetails : AppCompatActivity() {    private lateinit var binding: Ac
         binding.etMiddleName.setText(user.middleName)
         binding.etLastName.setText(user.lastName)
         binding.etEmail.setText(user.email)
+
         val subscribed = user.subscriptionStatus
-        val colorRes = if (subscribed) R.color.green else android.R.color.darker_gray
-        binding.viewSubscriptionStatus.setBackgroundResource(colorRes)
+        Log.d("SubscriptionCheck", "Subscription status: $subscribed")
+
+        val colorRes = if (subscribed) R.color.pastel_green else android.R.color.darker_gray
+        val color = ContextCompat.getColor(this, colorRes)
+        binding.viewSubscriptionStatus.setBackgroundColor(color)
 
         binding.btnSave.visibility = View.GONE
         binding.btnEdit.visibility = View.VISIBLE
+
         setInputsEnabled(false)
     }
 
@@ -119,6 +131,26 @@ class ProfileDetails : AppCompatActivity() {    private lateinit var binding: Ac
         }
     }
 
+    private suspend fun computeAndShowUserRank(userId: Int, rawToken: String) {
+        try {
+            val board = api.getLeaderboard("Bearer $rawToken")
+                .sortedByDescending { it.score }
+
+            // find your 0‑based position, then +1
+            val position = board.indexOfFirst { it.userId == userId } + 1
+
+            // if not on the board, show “–”
+            tvYourRank.text = if (position > 0)
+                "Leaderboard Rank #$position"
+            else
+                "Leaderboard Rank # –"
+
+        } catch (e: Exception) {
+            Log.e("ProfileFragment", "Failed to fetch leaderboard", e)
+            tvYourRank.text = "Leaderboard Rank # –"
+        }
+    }
+
     private fun setInputsEnabled(enabled: Boolean) {
         binding.tilFirstName.isEnabled = enabled
         binding.tilMiddleName.isEnabled = enabled
@@ -149,4 +181,5 @@ class ProfileDetails : AppCompatActivity() {    private lateinit var binding: Ac
         val iat: Long,
         val exp: Long
     )
+
 }

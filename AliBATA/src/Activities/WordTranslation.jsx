@@ -309,7 +309,7 @@ function WordTranslation() {
 
   return (
     <SidebarLayout>
-      <Box sx={{ maxHeight: "85vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4, overflowY: "auto" }}>  
+      <Box sx={{ maxHeight: "85vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4, overflowY: "auto", alignItems:"center"}}>  
         <Typography
           onClick={() => navigate("/activity")}
           sx={{
@@ -325,7 +325,7 @@ function WordTranslation() {
           Word Translation Activity
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400, alignSelf: "center", mx: "auto" }}>
           {/* Word Input */}
           <TextField
             label="Word to Post"

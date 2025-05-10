@@ -147,7 +147,7 @@ const Activities = () => {
           <Typography variant="h6" color="black" mb={2}>
             Create a New Activity
           </Typography>
-          <Grid container spacing={3} sx={{ display: "flex" }}>
+          <Grid container spacing={3} sx={{ display: "flex" }} justifyContent="center">
             <Grid item xs={12} sm={4}>
               <Button
                 fullWidth

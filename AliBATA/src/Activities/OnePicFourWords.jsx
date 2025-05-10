@@ -327,7 +327,7 @@ function OnePicFourWords() {
 
   return (
     <SidebarLayout>
-      <Box sx={{ maxHeight: "85vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4, overflowY: "auto" }}>
+      <Box sx={{ maxHeight: "85vh", minHeight: "60vh", bgcolor: "#A6D6D6", p: 4, overflowY: "auto", alignContent:"center" }}>
         <Typography
           onClick={() => navigate("/activity")}
           sx={{
@@ -343,7 +343,7 @@ function OnePicFourWords() {
           1 Picture 4 Words Activity
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 400, alignSelf: "center", mx: "auto" }}>
           <Typography color="black" fontWeight="bold">Upload Image:</Typography>
           <Button variant="contained" component="label" sx={{ color: "black", bgcolor: "#3B82F6", ":hover": { bgcolor: "#2563EB" } }}>
             Upload Image
@@ -467,11 +467,7 @@ function OnePicFourWords() {
                       {/* Display the image */}
                        {question.questionImage && (
                          <img
-                           src={
-                              question.questionImage.startsWith("http")
-                                ? question.questionImage
-                                : `${import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "")}/${question.questionImage.replace(/^\//, "")}`
-                            }
+                           src={`data:image/jpeg;base64,${question.questionImage}`}
                            alt={`Question ${index + 1}`}
                            style={{
                              width: "100%",

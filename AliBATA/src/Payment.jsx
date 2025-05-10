@@ -18,7 +18,7 @@ const Payment = () => {
       data: {
         data: {
           attributes: {
-            amount: 29999.99,
+            amount: 29900,
             description: "Subscription",
           },
         },
@@ -30,7 +30,7 @@ const Payment = () => {
       const paymentLink = response?.data?.data?.attributes?.checkout_url;
 
       if (paymentLink) {
-        window.location.href = paymentLink;
+        window.open(paymentLink, "_blank");
       } else {
         alert("Payment link not found. Please try again.");
       }
@@ -104,7 +104,7 @@ const Payment = () => {
               <Typography sx={{ mt: 2, fontSize: "14px", color: "black" }}>
                 Full access with exclusive benefits
               </Typography>
-              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold", color:"black" }}>₱299.99 / month</Typography>
+              <Typography sx={{ mt: 2, fontSize: "18px", fontWeight: "bold", color:"black" }}>₱299 / month</Typography>
               <Button
                 variant="contained"
                 fullWidth

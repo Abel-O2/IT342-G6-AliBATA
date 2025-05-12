@@ -1,9 +1,11 @@
 package com.example.alibata
 
 import android.content.Intent
-import android.content.Context
 import android.os.Bundle
-import android.widget.*
+import android.view.inputmethod.EditorInfo
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,7 +14,6 @@ import com.example.alibata.network.LoginRequest
 import com.example.alibata.network.RetrofitInstance
 import com.example.alibata.utils.TokenManager
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,9 +32,30 @@ class Login : AppCompatActivity() {
             insets
         }
 
+        // Locate views by their new IDs
+        val emailET = findViewById<TextInputEditText>(R.id.etEmail)
+        val passET  = findViewById<TextInputEditText>(R.id.etPassword)
         val btnLogin = findViewById<Button>(R.id.btnLoginEnter)
-        val emailET = (findViewById<TextInputLayout>(R.id.textInputLayout)).editText as TextInputEditText
-        val passET  = (findViewById<TextInputLayout>(R.id.textPasswordInputLayout)).editText as TextInputEditText
+
+        // When “Next” is pressed on the email field, move focus to password
+        emailET.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                passET.requestFocus()
+                true
+            } else {
+                false
+            }
+        })
+
+        // When “Done” is pressed on the password field, trigger login
+        passET.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                btnLogin.performClick()
+                true
+            } else {
+                false
+            }
+        })
 
         btnLogin.setOnClickListener {
             val email = emailET.text.toString().trim()
@@ -49,26 +71,44 @@ class Login : AppCompatActivity() {
     private fun loginUser(email: String, password: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val req: LoginRequest = LoginRequest(email, password)
-                val response: Response<com.example.alibata.models.AuthenticationResponse> =
-                    RetrofitInstance.apiService.loginUser(req)
+                val req = LoginRequest(email, password)
+                val response = RetrofitInstance.apiService.loginUser(req)
 
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful && response.body() != null) {
                         val token = response.body()!!.token
                         TokenManager.saveToken(this@Login, token)
-                        TokenManager.savePassword(this@Login, password) // Save password securely
+                        TokenManager.savePassword(this@Login, password)
 
                         startActivity(Intent(this@Login, Homepage::class.java))
                         finish()
                     } else {
-                        val err = response.errorBody()?.string() ?: response.message()
-                        Toast.makeText(this@Login, "Login failed: $err", Toast.LENGTH_SHORT).show()
+                        when (response.code()) {
+                            400, 401, 403 -> {
+                                Toast.makeText(
+                                    this@Login,
+                                    "Incorrect email or password. Please try again.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            else -> {
+                                val errBody = response.errorBody()?.string()
+                                Toast.makeText(
+                                    this@Login,
+                                    "Login failed: ${errBody ?: "Unexpected error occurred"}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@Login, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    val msg = when (e) {
+                        is java.net.UnknownHostException -> "No internet connection."
+                        else -> "An error occurred: ${e.localizedMessage}"
+                    }
+                    Toast.makeText(this@Login, msg, Toast.LENGTH_LONG).show()
                 }
             }
         }

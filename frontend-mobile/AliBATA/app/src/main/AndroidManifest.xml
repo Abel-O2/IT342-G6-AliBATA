@@ -17,6 +17,18 @@
         android:theme="@style/Theme.Alibata"
         tools:targetApi="31">
         <activity
+            android:name=".Help"
+            android:exported="false" />
+        <activity
+            android:name=".Legal"
+            android:exported="false" />
+        <activity
+            android:name=".Leaderboards"
+            android:exported="false" />
+        <activity
+            android:name=".LessonView"
+            android:exported="false" />
+        <activity
             android:name=".ProfileDetails"
             android:exported="false" />
         <activity
@@ -39,6 +51,9 @@
             android:name=".RegisterPage"
             android:exported="false"
             android:theme="@style/Theme.Alibata" />
+        <activity
+            android:name=".StoryView"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
